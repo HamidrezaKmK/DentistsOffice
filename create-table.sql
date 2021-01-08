@@ -3,7 +3,7 @@ create domain Gender as varchar(6) check(
 or	VALUE ~ 'FEMALE'
 );
 
-create domain EducationalDegree as varchar(10) check(
+create domain EducationalDegree as varchar(50) check(
 	VALUE ~ 'High-School-Diploma' or
     VALUE ~ 'Associate-Degree' or
     VALUE ~ 'Bachelors-Degree' or
