@@ -1,0 +1,10 @@
+PageNo. should be consequtive
+PaidAmount <= wholeAmount
+NextAppointmentDate > TimeIDEndtime
+OccupiedTime should be in the time interval of the referenced available time
+OccupiedTimes should not intersect
+Occupied time duration should be in the Available time
+Available time should be in the same day
+Available times should not intersect
+Weekly schedules should not intersect
+PersonalInfoPage number should be '1'
