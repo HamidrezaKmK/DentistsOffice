@@ -1,0 +1,4 @@
+patient_id,page_no,content_address,image_type,reason
+1,2,someContentAddress,OPG,dental check
+2,2,someContentAddress,CT-Scan,someToothCheck
+4,3,someContentAddress,CT-Scan,someToothCheck

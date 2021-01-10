@@ -1,0 +1,11 @@
+patient_id,page_no,general_medical_records,dental_records,sensitive_medicine,does_smoke,signature_image_address
+1,1,p1 general medical records,p1 dental records,p1 some sensitive medicine,NO,p1 signature address
+2,1,p2 general medical records,p2 dental records,p2 some sensitive medicine,NO,p2 signature address
+3,1,p3 general medical records,p3 dental records,p3 some sensitive medicine,YES,p3 signature address
+4,1,p4 general medical records,p4 dental records,p4 some sensitive medicine,YES,p4 signature address
+5,1,p5 general medical records,p5 dental records,p5 some sensitive medicine,NO,p5 signature address
+6,1,p6 general medical records,p6 dental records,p6 some sensitive medicine,NO,p6 signature address
+7,1,p7 general medical records,p7 dental records,p7 some sensitive medicine,NO,p7 signature address
+8,1,p8 general medical records,p8 dental records,p8 some sensitive medicine,NO,p8 signature address
+9,1,p9 general medical records,p9 dental records,p9 some sensitive medicine,NO,p9 signature address
+10,1,p10 general medical records,p10 dental records,p10 some sensitive medicine,NO,p10 signature address

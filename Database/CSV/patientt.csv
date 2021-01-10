@@ -1,0 +1,11 @@
+patient_id,first_name,last_name,age,gender,occupation,reference,education,homeaddress,workaddress
+1,hamid,kamkari,20,MALE,student,,Bachelors-Degree,,
+2,Kian,Bakhtari,20,MALE,DBcsvGenerator,some reference,High-School-Diploma,myHomeAddress,myWorkAddress
+3,Mostafa,Ojaghi,20,MALE,Naad,reff,High-School-Diploma,some addr,some addr
+4,GhamarOlmolook,vaziri,60,FEMALE,Singer,some reference,Other,addr,addr
+5,Hassan,Kilid,62,MALE,President,someReff,Doctoral-Degree,someAddr,someAddr
+6,Morteza,Amini,45,MALE,Proff,someReff,Doctoral-Degree,someAddr,SharifUniversityOfTechnology
+7,Abbas,Abbaszadeh,30,MALE,someOcc,someReff,Masters-Degree,someAddr,SharifUniversityOfTechnology
+8,Mohammad,Mohammdi,20,MALE,student,someReff,High-School-Diploma,mamadAddr,mamadAddr
+9,Sdegh,Kesha,20,MALE,Mostanad,Mostafa,High-School-Diploma,sadeghAddr,SadeghAddr
+10,Ostad,Raefipoor,40,MALE,ArajifGoo,no one,Other,addr,addr
