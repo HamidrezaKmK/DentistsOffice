@@ -96,7 +96,7 @@ create domain WEEK_DAY as char(3) check (
     VALUE ~ 'MON' or
     VALUE ~ 'TUE' or
     VALUE ~ 'WED' or
-    VALUE ~ 'THE' or
+    VALUE ~ 'THU' or
     VALUE ~ 'FRI'
   );
 
