@@ -1,13 +1,20 @@
--- appointment page triggers:
+------------------------------------------
+-- Triggers related to appointment page --
+------------------------------------------
 
--- -- trigger for after insert:
+---
+-- trigger related to insert, it reverts changes if
+-- the newly added record does not match some constraints
+---
 create function insert_appointment_page_trigger_function() returns trigger as
 $$
 begin
+  -- check if the paid payment <= whole payment if not revert changes
   if new.whole_payment_amount < new.paid_payment_amount then
     delete from AppointmentPageT where patient_id = new.patient_id and page_no = new.page_no;
     raise exception 'paid amount is larger than whole amount in query, %', now();
   end if;
+  -- check if next appointment date is after the current appointment date if not revert changes
   if new.next_appointment_date < new.occupied_time_slot_date_ref then
     delete from AppointmentPageT where patient_id = new.patient_id and page_no = new.page_no;
     raise exception 'next appointment date is not after the current appointment date, %', now();
@@ -16,13 +23,18 @@ end;
 $$
   language plpgsql;
 
+-- define insert trigger:
 create trigger insert_appointment_page
   after insert
   on AppointmentPageT
   for each row
 execute procedure insert_appointment_page_trigger_function();
 
--- -- trigger for update
+
+---
+-- trigger related to update it uses the previous function
+-- and rewrites update as a delete and insert
+---
 create function update_appointment_page_trigger_function() returns trigger as
 $$
 begin
