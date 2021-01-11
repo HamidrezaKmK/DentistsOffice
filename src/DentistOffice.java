@@ -10,10 +10,10 @@ public class DentistOffice {
     public static void main(String[] args) throws Exception{
         Connection conn = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/DentisOfficeDB";
+            String url = "jdbc:postgresql://localhost:5432/DentistOfficeDB";
             Properties props = new Properties();
             props.setProperty("user","postgres"); // it is good to change this!
-            props.setProperty("password","password"); //change to your password
+            props.setProperty("password","dibimibi"); //change to your password
             conn = DriverManager.getConnection(url, props);
 
             Statement stmt = null;
