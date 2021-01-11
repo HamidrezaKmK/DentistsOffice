@@ -1,3 +1,11 @@
+CREATE TEMPORARY TABLE path_name(
+  path varchar(100) primary key;
+);
+
+insert into path_name values('G:\Projects\DB\DentistsOffice\Database\CSV\');
+
+
+
 copy PatientT
 from 'G:\Projects\DB\DentistsOffice\Database\CSV\patientt.csv'
 delimiter ','
