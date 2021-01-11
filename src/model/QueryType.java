@@ -10,11 +10,11 @@ public enum QueryType {
     EDIT_PERSONAL_INFO,
     DELETE_PAGE,
 
-    // show file queries
-    SHOW_FILE_SUMMARY,
-    SHOW_PAGE,
-    SHOW_LIST_OF_PATIENT_FILES_BY_CREATION_DATE,
-    SHOW_PATIENTS_WHO_OWE_MONEY,
+    // refresh file queries
+    REFRESH_FILE_SUMMARY,
+    REFRESH_PAGE,
+    REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE,
+    REFRESH_PATIENTS_WHO_OWE_MONEY,
 
     // appointment edit queries
     CANCEL_APPOINTMENT,
@@ -25,5 +25,5 @@ public enum QueryType {
     ADD_NEW_AVAILABLE_TIME,
 
     //
-    SHOW_SCHEDULE_IN_TIME_INTERVAL
+    REFRESH_SCHEDULE_IN_TIME_INTERVAL
 }
