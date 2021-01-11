@@ -2,9 +2,7 @@ package controller;
 
 import model.QueryType;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 
 public class DataBaseQueryController {
@@ -12,7 +10,7 @@ public class DataBaseQueryController {
     private String username;
     private String password;
     private String url;
-    private Connection current_connection;
+    private Connection current_connection = null;
 
     public void setUsername(String username) {
         this.username = username;
@@ -34,7 +32,8 @@ public class DataBaseQueryController {
             current_connection = DriverManager.getConnection(url, props);
         } catch (SQLException e) {
             throw new Error("Problem", e);
-        } finally {
+        }
+        /*finally {
             try {
                 if (current_connection != null) {
                     current_connection.close();
@@ -42,13 +41,16 @@ public class DataBaseQueryController {
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
-        }
+        }*/
+    }
+
+    public void disconnect() throws Exception {
+        if (current_connection != null)
+            current_connection.close();
     }
 
     public void handleQuery(QueryType queryType, String[] args) throws Exception {
-        Connection conn = null;
         try {
-            //String url = "jdbc:postgresql://localhost:5432/DentistOfficeDB";
             switch (queryType) {
                 case CREATE_FILE:
                     handleCreateFile(args);
@@ -102,21 +104,19 @@ public class DataBaseQueryController {
 
         } catch (SQLException e) {
             throw new Error("Problem", e);
-        } finally {
-            try {
-                if (current_connection != null) {
-                    current_connection.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
         }
+//        } finally {
+//            try {
+//                if (current_connection != null) {
+//                    current_connection.close();
+//                }
+//            } catch (SQLException ex) {
+//                System.out.println(ex.getMessage());
+//            }
+//        }
     }
 
     private void handleShowScheduleInTimeInterval(String[] args) throws Exception {
-        System.out.println("yay");
-        for (String arg : args)
-            System.out.println(arg);
     }
 
     private void handleAddNewAvailableTime(String[] args) throws Exception {
@@ -132,6 +132,25 @@ public class DataBaseQueryController {
     }
 
     private void handleShowPatientsWhoOweMoney(String[] args) throws Exception {
+        Statement stmt = null;
+        String query = "select occupied_time_slot_date_ref as date_of_appointment, " +
+                "patient_id, first_name, last_name, whole_payment_amount - paid_payment_amount as debt\n" +
+                "\tfrom AppointmentPageT natural join PatientT\n" +
+                "\twhere whole_payment_amount > paid_payment_amount;";
+        System.out.println("Hello there");
+        try {
+            stmt = current_connection.createStatement();
+            System.out.println("chiz");
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                String name = rs.getString("first_name");
+                System.out.println(name + " has debt = " + rs.getString("debt"));
+            }
+        } catch (SQLException e ) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) { stmt.close(); }
+        }
     }
 
     private void handleShowListOfPatientFilesByCreationDate(String[] args) throws Exception {

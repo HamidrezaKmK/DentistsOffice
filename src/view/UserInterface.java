@@ -31,8 +31,10 @@ public class UserInterface {
             dbcontroller.handleQuery(QueryType.values()[id], parts);
             System.out.print("Do you wish to coninue? [y/n] ");
             String response = scanner.nextLine();
-            if (response.charAt(0) == 'n')
+            if (response.charAt(0) == 'n') {
+                dbcontroller.disconnect();
                 break;
+            }
         }
     }
 }
