@@ -1,8 +1,8 @@
 package controller;
 
 import model.QueryType;
-import view.Schedule;
-import view.TimeInterval;
+import model.Schedule;
+import model.TimeInterval;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -158,10 +158,12 @@ public class DataBaseQueryController {
 
                 ResultSet rs = stmt.executeQuery(query);
                 LocalTime lastTime = LocalTime.parse("00:00:00");
-                if (date.equals(beginDate) && lastTime.isBefore(LocalTime.parse(begin_time)))
+                if (date.equals(beginDate) && lastTime.isBefore(LocalTime.parse(begin_time))) {
                     lastTime = LocalTime.parse(begin_time);
+                 //   System.out.println("Chiiiz " + lastTime);
+                }
 
-                while (rs.next()) {
+                    while (rs.next()) {
                     LocalTime availableTimeL = LocalTime.parse(rs.getString("begin_time"));
                     if (availableTimeL.isAfter(LocalTime.parse(end_time)))
                         availableTimeL = LocalTime.parse(end_time);
