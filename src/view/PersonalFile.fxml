@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="mainPane" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.PersonalFile">
+   <children>
+      <SplitPane dividerPositions="0.2" layoutX="14.0" layoutY="14.0" prefHeight="573.0" prefWidth="872.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="14.0" text="Pages" />
+                  <ListView fx:id="pagesList" layoutX="14.0" layoutY="41.0" prefHeight="476.0" prefWidth="143.0" />
+                  <Button fx:id="btnId" layoutX="60.0" layoutY="526.0" mnemonicParsing="false" onAction="#paneClicked" text="Select Page" />
+                  <Button fx:id="backToPatientList" layoutX="14.0" layoutY="526.0" mnemonicParsing="false" onAction="#backToPatientListPress" text="&lt;" />
+               </children>
+            </AnchorPane>
+          <AnchorPane fx:id="filePagePane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

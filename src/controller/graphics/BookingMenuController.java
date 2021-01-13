@@ -1,4 +1,4 @@
-package controller;
+package controller.graphics;
 
 public class BookingMenuController {
     public void print() {

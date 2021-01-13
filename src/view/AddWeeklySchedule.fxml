@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.AddWeeklyScheduleController">
+   <children>
+      <BorderPane prefHeight="601.0" prefWidth="801.0">
+         <top>
+            <Label text="New Weekly Schedule" textFill="#1d0a28" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="27.0" />
+               </font>
+               <BorderPane.margin>
+                  <Insets top="20.0" />
+               </BorderPane.margin>
+            </Label>
+         </top>
+         <center>
+            <GridPane prefWidth="457.0" BorderPane.alignment="CENTER">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="170.0" minHeight="10.0" prefHeight="77.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="364.0" minHeight="10.0" prefHeight="364.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <BorderPane.margin>
+                  <Insets bottom="30.0" left="20.0" right="20.0" top="30.0" />
+               </BorderPane.margin>
+               <children>
+                  <Label text="SATURDAY" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label text="SUNDAY" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label text="MONDAY" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label text="TUESDAY" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label text="WEDESDAY" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label text="THURSDAY" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label text="FRIDAY" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Pane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                     <effect>
+                        <ColorAdjust />
+                     </effect>
+                     <children>
+                        <ListView prefHeight="364.0" prefWidth="112.0" />
+                     </children>
+                  </Pane>
+                  <Pane layoutX="10.0" layoutY="67.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <effect>
+                        <ColorAdjust />
+                     </effect>
+                     <children>
+                        <Label alignment="TOP_LEFT" layoutX="2.0" layoutY="4.0" prefHeight="21.0" prefWidth="78.0" text="Label" textAlignment="CENTER">
+                           <opaqueInsets>
+                              <Insets left="5.0" right="5.0" />
+                           </opaqueInsets>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="92.0" layoutY="67.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <effect>
+                        <ColorAdjust />
+                     </effect>
+                     <children>
+                        <Label alignment="TOP_LEFT" layoutX="2.0" layoutY="4.0" prefHeight="21.0" prefWidth="78.0" text="Label" textAlignment="CENTER">
+                           <opaqueInsets>
+                              <Insets left="5.0" right="5.0" />
+                           </opaqueInsets>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="175.0" layoutY="67.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <effect>
+                        <ColorAdjust />
+                     </effect>
+                     <children>
+                        <Label alignment="TOP_LEFT" layoutX="2.0" layoutY="4.0" prefHeight="21.0" prefWidth="78.0" text="Label" textAlignment="CENTER">
+                           <opaqueInsets>
+                              <Insets left="5.0" right="5.0" />
+                           </opaqueInsets>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="258.0" layoutY="67.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                     <effect>
+                        <ColorAdjust />
+                     </effect>
+                     <children>
+                        <Label alignment="TOP_LEFT" layoutX="2.0" layoutY="4.0" prefHeight="21.0" prefWidth="78.0" text="Label" textAlignment="CENTER">
+                           <opaqueInsets>
+                              <Insets left="5.0" right="5.0" />
+                           </opaqueInsets>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="341.0" layoutY="67.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                     <effect>
+                        <ColorAdjust />
+                     </effect>
+                     <children>
+                        <Label alignment="TOP_LEFT" layoutX="2.0" layoutY="4.0" prefHeight="21.0" prefWidth="78.0" text="Label" textAlignment="CENTER">
+                           <opaqueInsets>
+                              <Insets left="5.0" right="5.0" />
+                           </opaqueInsets>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="424.0" layoutY="67.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6" GridPane.rowIndex="1">
+                     <effect>
+                        <ColorAdjust />
+                     </effect>
+                     <children>
+                        <Label alignment="TOP_LEFT" layoutX="2.0" layoutY="4.0" prefHeight="21.0" prefWidth="78.0" text="Label" textAlignment="CENTER">
+                           <opaqueInsets>
+                              <Insets left="5.0" right="5.0" />
+                           </opaqueInsets>
+                        </Label>
+                     </children>
+                  </Pane>
+               </children>
+            </GridPane>
+         </center>
+         <bottom>
+            <HBox prefHeight="41.0" prefWidth="801.0" spacing="20.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Begin Date (YYYY-MM-DD)" />
+                  <TextField prefHeight="31.0" prefWidth="98.0" />
+                  <Label text="End Date (YYYY-MM-DD)" />
+                  <TextField prefHeight="31.0" prefWidth="102.0" />
+                  <Button mnemonicParsing="false" text="add schedule!" />
+               </children>
+               <padding>
+                  <Insets left="10.0" right="10.0" />
+               </padding>
+               <BorderPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </BorderPane.margin>
+            </HBox>
+         </bottom>
+      </BorderPane>
+   </children>
+</AnchorPane>
