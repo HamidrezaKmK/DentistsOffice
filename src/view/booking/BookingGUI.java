@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 public class BookingGUI extends Application {
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("booking/BookingMenu.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("BookingMenu.fxml"));
         stage.setTitle("booking");
         stage.setScene(new Scene(root, 800, 600));
         stage.show();
