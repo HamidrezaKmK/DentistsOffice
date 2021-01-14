@@ -14,12 +14,11 @@
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="399.0" opacity="0.37" stroke="BLACK" strokeType="INSIDE" width="666.0" />
          </children>
       </AnchorPane>
-      <Button layoutX="14.0" layoutY="421.0" mnemonicParsing="false" text="Download Image" />
+      <Button fx:id="imageButton" layoutX="14.0" layoutY="421.0" mnemonicParsing="false" text="Download Image" />
       <Label layoutX="482.0" layoutY="426.0" text="Image Type:" />
-      <Button layoutX="610.0" layoutY="488.0" mnemonicParsing="false" text="Refresh" />
-      <Button layoutX="634.0" layoutY="526.0" mnemonicParsing="false" text="Edit" />
-      <ChoiceBox layoutX="578.0" layoutY="421.0" prefHeight="31.0" prefWidth="102.0" />
+      <Button fx:id="editButton" layoutX="634.0" layoutY="526.0" mnemonicParsing="false" onAction="#editButtonPress" text="Edit" />
+      <ChoiceBox fx:id="imageTypeChoiceBox" layoutX="578.0" layoutY="421.0" prefHeight="31.0" prefWidth="102.0" />
       <Label layoutX="14.0" layoutY="461.0" text="Explanation:" />
-      <TextArea layoutX="14.0" layoutY="488.0" prefHeight="71.0" prefWidth="565.0" />
+      <TextArea fx:id="explanationTextArea" layoutX="14.0" layoutY="488.0" prefHeight="71.0" prefWidth="565.0" />
    </children>
 </AnchorPane>

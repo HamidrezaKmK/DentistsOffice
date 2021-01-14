@@ -29,11 +29,13 @@ public class PersonalFile implements Initializable {
     @FXML
     private Button addNewPageButton;
 
-    //ersonalFile() {
-        //FxmlFileLoader object = new FxmlFileLoader();
-        //filePagePane = object.getPage("PersonalFile", FilesGUI.class);
-    //
-    // }
+    @FXML
+    private Button deletePageButton;
+
+    @FXML
+    private void deletePageButtonPress(ActionEvent event) {
+        // TODO: query to delete page
+    }
 
     @FXML
     private void backToPatientListPress(ActionEvent event) {
@@ -50,6 +52,7 @@ public class PersonalFile implements Initializable {
         Pane view = object.getPage("SelectNewPageType", FilesGUI.class);
         filePagePane.getChildren().add(view);
         pagesList.getItems().add("new page...");
+        pagesList.setDisable(true);
         addNewPageButton.setDisable(true);
     }
 
@@ -93,6 +96,7 @@ public class PersonalFile implements Initializable {
 
     public void addPage(String pageName) {
         System.out.println("HOWDY FROM THE INSIDE");
+        pagesList.setDisable(false);
         pagesList.getItems().remove("new page...");
         pagesList.getItems().add(pageName);
         System.out.println(pagesList.getItems());

@@ -15,7 +15,8 @@
                   <Label layoutX="14.0" layoutY="14.0" text="Pages" />
                   <ListView fx:id="pagesList" layoutX="14.0" layoutY="41.0" prefHeight="476.0" prefWidth="143.0" />
                   <Button fx:id="backToPatientList" layoutX="14.0" layoutY="526.0" mnemonicParsing="false" onAction="#backToPatientListPress" text="&lt;" />
-                  <Button fx:id="addNewPageButton" layoutX="125.0" layoutY="526.0" mnemonicParsing="false" onAction="#addNewPageButtonPress" text="+" />
+                  <Button fx:id="addNewPageButton" layoutX="126.0" layoutY="526.0" mnemonicParsing="false" onAction="#addNewPageButtonPress" text="+" />
+                  <Button fx:id="deletePageButton" layoutX="70.0" layoutY="526.0" mnemonicParsing="false" onAction="#deletePageButtonPress" text="-" />
                </children>
             </AnchorPane>
           <AnchorPane fx:id="filePagePane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />

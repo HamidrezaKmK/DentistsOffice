@@ -8,19 +8,19 @@
 
 <AnchorPane prefHeight="571.0" prefWidth="692.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.files.AppointmentPage">
    <children>
-      <Button layoutX="634.0" layoutY="526.0" mnemonicParsing="false" text="Edit" />
+      <Button fx:id="editButton" layoutX="634.0" layoutY="526.0" mnemonicParsing="false" onAction="#editButtonPress" text="Edit" />
       <Label layoutX="14.0" layoutY="478.0" text="Appointment:" />
       <Label layoutX="14.0" layoutY="14.0" text="Treatment Summary:" />
-      <TextArea layoutX="14.0" layoutY="35.0" prefHeight="197.0" prefWidth="662.0" />
+      <TextArea fx:id="treatmentSummaryTextArea" layoutX="14.0" layoutY="35.0" prefHeight="197.0" prefWidth="662.0" />
       <Label layoutX="17.0" layoutY="247.0" text="Next Appointment Date:" />
       <Label layoutX="237.0" layoutY="336.0" text="Paid Amount" />
       <Label layoutX="14.0" layoutY="509.0" text="From (YYYY-MM-DD HH:MM:SS)" />
-      <Label layoutX="14.0" layoutY="531.0" text="YYYY-MM-DD HH:MM:SS" />
+      <Label fx:id="appointmentFromDateAndTime" layoutX="14.0" layoutY="531.0" text="YYYY-MM-DD HH:MM:SS" />
       <Label layoutX="252.0" layoutY="509.0" text="To (YYYY-MM-DD HH:MM:SS)" />
-      <Label layoutX="252.0" layoutY="531.0" text="YYYY-MM-DD HH:MM:SS" />
+      <Label fx:id="appointmentToDateAndTime" layoutX="252.0" layoutY="531.0" text="YYYY-MM-DD HH:MM:SS" />
       <Label layoutX="370.0" layoutY="336.0" text="Whole Amount" />
-      <TextField layoutX="187.0" layoutY="242.0" />
-      <TextField layoutX="227.0" layoutY="366.0" prefHeight="31.0" prefWidth="107.0" />
-      <TextField layoutX="367.0" layoutY="366.0" prefHeight="31.0" prefWidth="107.0" />
+      <TextField fx:id="nextAppointmentDateTextField" layoutX="187.0" layoutY="242.0" />
+      <TextField fx:id="paidAmountTextField" layoutX="227.0" layoutY="366.0" prefHeight="31.0" prefWidth="107.0" />
+      <Label fx:id="wholeAmountLabel" alignment="CENTER" layoutX="355.0" layoutY="371.0" prefHeight="21.0" prefWidth="121.0" text="AMOUNT" />
    </children>
 </AnchorPane>

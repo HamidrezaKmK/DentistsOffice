@@ -19,30 +19,30 @@
       <VBox layoutX="72.0" layoutY="170.0" prefHeight="323.0" prefWidth="297.0">
          <children>
             <Label text="Patient First Name:" />
-            <TextField />
+            <TextField fx:id="firstNameTextField" />
             <Label text="Patient Last Name:" />
-            <TextField />
+            <TextField fx:id="lastNameTextField" />
             <Label text="Age:" />
-            <TextField />
+            <TextField fx:id="ageTextField" />
             <Label text="Gender:" />
-            <TextField />
+            <ChoiceBox fx:id="genderChoiceBox" prefWidth="150.0" />
             <Label text="Occupation:" />
-            <TextField />
+            <TextField fx:id="occupationTextField" />
             <Label text="Reference:" />
-            <TextField />
+            <TextField fx:id="referenceTextField" />
          </children>
       </VBox>
       <VBox layoutX="538.0" layoutY="170.0" prefHeight="323.0" prefWidth="297.0">
          <children>
             <Label text="Education" />
-            <ChoiceBox prefWidth="150.0" />
+            <ChoiceBox fx:id="edicationChoiceBox" prefWidth="150.0" />
             <Label text="Home Address:" />
-            <TextArea prefHeight="133.0" prefWidth="297.0" />
+            <TextArea fx:id="homeAddressTextArea" prefHeight="133.0" prefWidth="297.0" />
             <Label text="Work Address:" />
-            <TextArea prefHeight="133.0" prefWidth="297.0" />
+            <TextArea fx:id="workAddressTextArea" prefHeight="133.0" prefWidth="297.0" />
          </children>
       </VBox>
-      <Button layoutX="787.0" layoutY="75.0" mnemonicParsing="false" text="Add" />
+      <Button fx:id="addButton" layoutX="787.0" layoutY="75.0" mnemonicParsing="false" onAction="#addButtonPress" text="Add" />
       <Button fx:id="backToPatientListButton" layoutX="741.0" layoutY="75.0" mnemonicParsing="false" onAction="#backToPatientListButtonPress" text="&lt;" />
    </children>
 </AnchorPane>
