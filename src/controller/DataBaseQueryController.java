@@ -16,6 +16,14 @@ public class DataBaseQueryController {
     private String url;
     private Connection current_connection = null;
 
+    private static DataBaseQueryController dBController = null;
+
+    public static DataBaseQueryController getInstance() {
+        if (dBController == null)
+            dBController = new DataBaseQueryController();
+        return dBController;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
