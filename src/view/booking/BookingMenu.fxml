@@ -114,16 +114,16 @@
                            <left>
                               <VBox prefHeight="113.0" prefWidth="329.0" BorderPane.alignment="CENTER">
                                  <children>
-                                    <Label text="From Date:" />
-                                    <TextField fx:id="scheduleQueryFromDate" />
+                                    <Label text="From time: (YYYY-MM-DD HH:MM:SS):" />
+                                    <TextField fx:id="scheduleQueryFromDateTextField" />
                                  </children>
                               </VBox>
                            </left>
                            <right>
                               <VBox prefHeight="113.0" prefWidth="311.0" BorderPane.alignment="CENTER">
                                  <children>
-                                    <Label text="From Date:" />
-                                    <TextField fx:id="scheduleQueryToDate" />
+                                    <Label text="To time: (YYYY-MM-DD HH:MM:SS)" />
+                                    <TextField fx:id="scheduleQueryToDateTextField" />
                                  </children>
                               </VBox>
                            </right>
@@ -165,11 +165,11 @@
                                           </Button>
                                           <Label text="Selected Time:" />
                                           <Label text="Date:" />
-                                          <TextField />
+                                          <TextField fx:id="selectedTimeDateTextField" />
                                           <Label text="Begin Time:" />
-                                          <TextField />
+                                          <TextField fx:id="selectedTimeBeginTimeTextField" />
                                           <Label text="End Time:" />
-                                          <TextField />
+                                          <TextField fx:id="selectedTimeEndTimeTextField" />
                                        </children></VBox>
                                  </children>
                                  <BorderPane.margin>

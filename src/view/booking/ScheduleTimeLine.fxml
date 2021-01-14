@@ -3,8 +3,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Circle?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.booking.TimeLine">
+<AnchorPane fx:id="mainPane" prefHeight="400.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.booking.ScheduleTimeLine">
    <children>
       <Circle fill="DODGERBLUE" layoutX="138.0" layoutY="168.0" radius="100.0" stroke="BLACK" strokeType="INSIDE" />
       <Circle fill="DODGERBLUE" layoutX="676.0" layoutY="192.0" radius="100.0" stroke="BLACK" strokeType="INSIDE" />

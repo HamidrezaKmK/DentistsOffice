@@ -17,6 +17,11 @@ public class Schedule {
         return singleInstance;
     }
 
+    public ArrayList<TimeInterval> getIntervals() {
+        Collections.sort(intervals);
+        return intervals;
+    }
+
     public void addBusyInterval(TimeInterval interval) {
         intervals.add(interval);
     }

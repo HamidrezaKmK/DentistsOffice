@@ -52,7 +52,7 @@ public class DataBaseQueryController {
             current_connection.close();
     }
 
-    public void handleQuery(QueryType queryType, String[] args) throws Exception {
+    public void handleQuery(QueryType queryType, String... args) throws Exception {
         try {
             switch (queryType) {
                 case CREATE_FILE:

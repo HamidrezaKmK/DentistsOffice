@@ -9,6 +9,7 @@ public class FXMLLoadersCommunicator {
     private static Hashtable<String, FXMLLoader> fxmlLoaders = new Hashtable<String, FXMLLoader>();
 
     public static void addLoader(String loaderName, FXMLLoader fxmlLoader) {
+
         if (fxmlLoaders.containsKey(loaderName))
             fxmlLoaders.remove(loaderName);
         fxmlLoaders.put(loaderName, fxmlLoader);
