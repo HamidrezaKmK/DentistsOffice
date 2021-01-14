@@ -1,4 +1,4 @@
-package controller.graphics;
+package controller.graphics.files;
 
 public class PersonalInfoPage {
 }

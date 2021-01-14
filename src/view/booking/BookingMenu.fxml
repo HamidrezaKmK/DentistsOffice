@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.BookingMenuController">
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.booking.BookingMenu">
    <children>
       <TabPane prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -143,7 +143,7 @@
                                  <bottom>
                                     <BorderPane prefHeight="61.0" prefWidth="620.0" BorderPane.alignment="CENTER">
                                        <center>
-                                          <Button fx:id="refreshSchedule" mnemonicParsing="false" onAction="#print" text="Get Schedule" BorderPane.alignment="CENTER" />
+                                          <Button fx:id="refreshSchedule" mnemonicParsing="false" text="Get Schedule" BorderPane.alignment="CENTER" />
                                        </center>
                                        <left>
                                           <Label prefHeight="21.0" prefWidth="192.0" text="Start Date:" BorderPane.alignment="CENTER">
@@ -169,7 +169,7 @@
                                                 <Font size="37.0" />
                                              </font>
                                           </Label>
-                                          <Button alignment="CENTER" mnemonicParsing="false" prefHeight="92.0" prefWidth="178.0" text="Add New Schedule" />
+                                          <Button fx:id="addWeeklyScheduleButton" alignment="CENTER" mnemonicParsing="false" onAction="#addWeeklyScheduleButtonPress" prefHeight="31.0" prefWidth="175.0" text="Add New Schedule" />
                                        </items>
                                        <opaqueInsets>
                                           <Insets left="10.0" right="10.0" />

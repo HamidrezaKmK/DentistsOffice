@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="mainPane" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.PatientsList">
+<AnchorPane fx:id="mainPane" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.files.PatientsList">
    <children>
       <SplitPane dividerPositions="0.1" layoutX="226.0" layoutY="78.0" orientation="VERTICAL" prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -22,28 +22,28 @@
                         <VBox prefHeight="56.0" prefWidth="187.0">
                            <children>
                               <Label text="First Name" />
-                              <TextField />
+                              <TextField fx:id="firstNameField" />
                            </children>
                         </VBox>
                         <VBox prefHeight="56.0" prefWidth="179.0">
                            <children>
                               <Label text="Last Name" />
-                              <TextField />
+                              <TextField fx:id="lastNameField" />
                            </children>
                         </VBox>
                         <VBox prefHeight="56.0" prefWidth="182.0">
                            <children>
                               <Label text="Patient ID" />
-                              <TextField />
+                              <TextField fx:id="patientIDField" />
                            </children>
                         </VBox>
                         <VBox prefHeight="56.0" prefWidth="188.0">
                            <children>
                               <Label />
-                              <CheckBox mnemonicParsing="false" prefHeight="21.0" prefWidth="227.0" text="In Debt / Not In Debt" />
+                              <CheckBox fx:id="isInDebt" mnemonicParsing="false" prefHeight="21.0" prefWidth="227.0" text="In Debt / Not In Debt" />
                            </children>
                         </VBox>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="31.0" prefWidth="112.0" text="Search">
+                        <Button fx:id="searchButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="31.0" prefWidth="112.0" text="Search">
                            <HBox.margin>
                               <Insets top="12.0" />
                            </HBox.margin>
@@ -56,7 +56,6 @@
                <children>
                   <ListView fx:id="patientList" prefHeight="475.0" prefWidth="898.0" />
                   <Button fx:id="addNewFile" layoutX="726.0" layoutY="489.0" mnemonicParsing="false" onAction="#addNewFileButtonPress" prefHeight="31.0" prefWidth="158.0" text="Add New File" />
-                  <Button fx:id="selectFileButton" layoutX="14.0" layoutY="489.0" mnemonicParsing="false" onAction="#selectFilePress" text="Select File" />
                </children>
             </AnchorPane>
         </items>

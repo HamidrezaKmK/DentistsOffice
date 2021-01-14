@@ -1,4 +1,4 @@
-package controller.graphics;
+package controller.graphics.files;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,7 +17,7 @@ public class FilesGUI implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FxmlFileLoader object = new FxmlFileLoader();
-        Pane view = object.getPage("PatientsList", view.FilesGUI.class);
+        Pane view = object.getPage("PatientsList", view.files.FilesGUI.class);
         mainPane.getChildren().add(view);
 
         //

@@ -1,5 +1,6 @@
 package view;
 
+import controller.graphics.FXMLLoadersCommunicator;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 
@@ -15,7 +16,9 @@ public class FxmlFileLoader {
             if (fileUrl == null) {
                 throw new java.io.FileNotFoundException("FXML can't be found!");
             }
-            view = new FXMLLoader().load(fileUrl);
+            FXMLLoader fxmlLoader = new FXMLLoader(fileUrl);
+            FXMLLoadersCommunicator.addLoader(filename, fxmlLoader);
+            view = fxmlLoader.load();
         } catch (Exception e) {
             System.out.println("No page " + filename + " please check FxmlFileLoader");
         }
