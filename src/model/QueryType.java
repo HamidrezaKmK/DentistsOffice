@@ -1,6 +1,9 @@
 package model;
 
 public enum QueryType {
+    // main search query:
+    MAIN_SEARCH,
+
     // file edit queries:
     CREATE_FILE,
     ADD_PERSONAL_INFO_PAGE,

@@ -55,6 +55,8 @@ public class DataBaseQueryController {
     public void handleQuery(QueryType queryType, String... args) throws Exception {
         try {
             switch (queryType) {
+                case MAIN_SEARCH:
+                    mainSearch(args);
                 case CREATE_FILE:
                     handleCreateFile(args);
                     break;
@@ -104,11 +106,109 @@ public class DataBaseQueryController {
                     handleRefreshScheduleInTimeInterval(args);
                     break;
             }
-
         } catch (SQLException e) {
             throw new Error("Problem", e);
         }
     }
+
+
+    public void mainSearch(String[] args) throws Exception {
+        String in_debt = args[3];
+        boolean checked_in_debt = in_debt.equals("0");
+        String query = null;
+        if (checked_in_debt) {
+            query = mainSearchNotInDebt(args);
+        } else {
+            query = mainSearchInDebt(args);
+        }
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            Array fn = rs.getArray("first_name");
+            Array ln = rs.getArray("last_name");
+            Array pi = rs.getArray("patient_id");
+            String[] first_name = (String[]) fn.getArray();
+            String[] last_name = (String[]) ln.getArray();
+            Integer[] patient_id = (Integer[]) pi.getArray();
+
+            model.SearchResult.getInstance().clear();
+            model.SearchResult.getInstance().setFirstName(first_name);
+            model.SearchResult.getInstance().setLastName(last_name);
+            model.SearchResult.getInstance().setPatientId(patient_id);
+            if(checked_in_debt) {
+                Array dt = rs.getArray("debt");
+                Integer[] debt = (Integer[]) dt.getArray();
+                model.SearchResult.getInstance().setDebt(debt);
+            }
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+    }
+
+    private String mainSearchInDebt(String[] args) throws Exception {
+        String first_name = args[0];
+        String last_name = args[1];
+        String patient_id = args[2];
+        String query = null;
+
+        if (patient_id != null) {
+            query = "select patient_id, first_name, last_name, whole_payment_amount - paid_payment_amount as debt\n"
+                    + "from patientt natural join appointmentpaget\n" + "where patient_id = " + patient_id
+                    + " and whole_payment_amount - paid_payment_amount > 0";
+        } else {
+            query = "select patient_id, first_name, last_name, whole_payment_amount - paid_payment_amount as debt\n"
+                    + "from patientt natural join appointmentpaget\n"
+                    + "where whole_payment_amount - paid_payment_amount > 0";
+            if (first_name != null) {
+                query += " and first_name = '" + first_name + "'";
+            }
+            if (last_name != null) {
+                query += " and last_name = '" + last_name + "'";
+            }
+        }
+        query += ";";
+        return query;
+    }
+
+    private String mainSearchNotInDebt(String[] args) throws Exception {
+        String first_name = args[0];
+        String last_name = args[1];
+        String patient_id = args[2];
+        String first_name_condition = "first_name = '" + first_name + "'";
+        String last_name_condition = "last_name = '" + last_name + "'";
+        String patient_id_condition = "patient_id = " + patient_id;
+
+        String query = "";
+        boolean had_first_name = false;
+        boolean had_last_name = false;
+        query = "select patient_id, first_name, last_name from patientt\nwhere ";
+        if (first_name != null) {
+            query += first_name_condition;
+            had_first_name = true;
+        }
+        if (last_name != null) {
+            if (had_first_name) {
+                query += " and ";
+            }
+            query += last_name_condition;
+            had_last_name = true;
+        }
+        if (patient_id != null) {
+            if (had_last_name || had_first_name) {
+                query += " and ";
+            }
+            query += patient_id_condition;
+            query += ";";
+        }
+        return query;
+    }
+
 
     private void handleRefreshScheduleInTimeInterval(String[] args) throws Exception {
         Schedule.getInstance().clear();
@@ -168,10 +268,10 @@ public class DataBaseQueryController {
                 LocalTime lastTime = LocalTime.parse("00:00:00");
                 if (date.equals(beginDate) && lastTime.isBefore(LocalTime.parse(begin_time))) {
                     lastTime = LocalTime.parse(begin_time);
-                 //   System.out.println("Chiiiz " + lastTime);
+                    //   System.out.println("Chiiiz " + lastTime);
                 }
 
-                    while (rs.next()) {
+                while (rs.next()) {
                     LocalTime availableTimeL = LocalTime.parse(rs.getString("begin_time"));
                     if (availableTimeL.isAfter(LocalTime.parse(end_time)))
                         availableTimeL = LocalTime.parse(end_time);
