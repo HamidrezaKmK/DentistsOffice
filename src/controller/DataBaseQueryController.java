@@ -1,5 +1,6 @@
 package controller;
 
+import com.sun.codemodel.internal.JMod;
 import model.QueryType;
 import model.Schedule;
 import model.TimeInterval;
@@ -7,6 +8,7 @@ import model.TimeInterval;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class DataBaseQueryController {
@@ -111,36 +113,38 @@ public class DataBaseQueryController {
         }
     }
 
-
+    // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
     public void mainSearch(String[] args) throws Exception {
         String in_debt = args[3];
-        boolean checked_in_debt = in_debt.equals("0");
+        boolean checked_in_debt = in_debt.equals("1");
         String query = null;
         if (checked_in_debt) {
-            query = mainSearchNotInDebt(args);
-        } else {
             query = mainSearchInDebt(args);
+        } else {
+            query = mainSearchNotInDebt(args);
         }
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
-
-            Array fn = rs.getArray("first_name");
-            Array ln = rs.getArray("last_name");
-            Array pi = rs.getArray("patient_id");
-            String[] first_name = (String[]) fn.getArray();
-            String[] last_name = (String[]) ln.getArray();
-            Integer[] patient_id = (Integer[]) pi.getArray();
-
+            ArrayList<String> names = new ArrayList<>();
+            ArrayList<String> last_names = new ArrayList<>();
+            ArrayList<Integer> ids = new ArrayList<>();
+            ArrayList<Integer> debts = new ArrayList<>();
+            while (rs.next()) {
+                names.add(rs.getString("first_name"));
+                last_names.add(rs.getString("last_name"));
+                ids.add(rs.getInt("patient_id"));
+                if (checked_in_debt) {
+                    debts.add(rs.getInt("debt"));
+                }
+            }
             model.SearchResult.getInstance().clear();
-            model.SearchResult.getInstance().setFirstName(first_name);
-            model.SearchResult.getInstance().setLastName(last_name);
-            model.SearchResult.getInstance().setPatientId(patient_id);
-            if(checked_in_debt) {
-                Array dt = rs.getArray("debt");
-                Integer[] debt = (Integer[]) dt.getArray();
-                model.SearchResult.getInstance().setDebt(debt);
+            model.SearchResult.getInstance().setFirstNames(names);
+            model.SearchResult.getInstance().setLastNames(last_names);
+            model.SearchResult.getInstance().setPatientIds(ids);
+            if (checked_in_debt) {
+                model.SearchResult.getInstance().setDebt(debts);
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);

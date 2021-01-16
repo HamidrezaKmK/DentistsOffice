@@ -6,10 +6,10 @@ public class SearchResult {
 
     private static SearchResult singleInstance = null;
 
-    private String[] firstName;
-    private String[] lastName;
-    private Integer[] patientId;
-    private Integer[] debt;
+    private ArrayList<String> firstNames = new ArrayList<>();
+    private ArrayList<String> lastNames = new ArrayList<>();
+    private ArrayList<Integer> patientIds = new ArrayList<>();
+    private ArrayList<Integer> debt = new ArrayList<>();
 
 
     public static SearchResult getInstance() {
@@ -19,41 +19,41 @@ public class SearchResult {
     }
 
     public void clear() {
-        this.firstName = null;
-        this.lastName = null;
-        this.patientId = null;
+        this.firstNames = null;
+        this.lastNames = null;
+        this.patientIds = null;
         this.debt = null;
     }
 
-    public void setFirstName(String[] firstName) {
-        this.firstName = firstName;
+    public ArrayList<String> getFirstNames() {
+        return firstNames;
     }
 
-    public String[] getFirstName() {
-        return firstName;
+    public void setFirstNames(ArrayList<String> firstNames) {
+        this.firstNames = firstNames;
     }
 
-    public String[] getLastName() {
-        return lastName;
+    public ArrayList<String> getLastNames() {
+        return lastNames;
     }
 
-    public void setLastName(String[] lastName) {
-        this.lastName = lastName;
+    public void setLastNames(ArrayList<String> lastNames) {
+        this.lastNames = lastNames;
     }
 
-    public Integer[] getPatientId() {
-        return patientId;
+    public ArrayList<Integer> getPatientIds() {
+        return patientIds;
     }
 
-    public void setPatientId(Integer[] patientId) {
-        this.patientId = patientId;
+    public void setPatientIds(ArrayList<Integer> patientIds) {
+        this.patientIds = patientIds;
     }
 
-    public Integer[] getDebt() {
+    public ArrayList<Integer> getDebt() {
         return debt;
     }
 
-    public void setDebt(Integer[] debt) {
+    public void setDebt(ArrayList<Integer> debt) {
         this.debt = debt;
     }
 }
