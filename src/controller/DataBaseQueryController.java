@@ -352,6 +352,20 @@ public class DataBaseQueryController {
     }
 
     private void handleDeletePage(String[] args) throws Exception {
+        String patient_id = args[0];
+        String page_no = args[1];
+        Statement stmt = null;
+        String query = "delete from paget\n" + "\twhere patient_id = " + patient_id + " and page_no = " + page_no;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
 
