@@ -58,8 +58,14 @@ public class DataBaseQueryController {
         try {
             switch (queryType) {
                 case MAIN_SEARCH:
+                    // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
+                    // Does: It fills the single instance of SearchResults.
                     mainSearch(args);
                 case CREATE_FILE:
+                    // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
+                    // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate"}
+                    // important: if any of entries is null, put "null" (string of null) in its place.
+                    // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
                     handleCreateFile(args);
                     break;
                 case ADD_PERSONAL_INFO_PAGE:
@@ -114,6 +120,7 @@ public class DataBaseQueryController {
     }
 
     // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
+    // Does: It fills the single instance of SearchResults.
     public void mainSearch(String[] args) throws Exception {
         String in_debt = args[3];
         boolean checked_in_debt = in_debt.equals("1");
@@ -155,6 +162,8 @@ public class DataBaseQueryController {
         }
     }
 
+
+    // mainSearch uses this function.
     private String mainSearchInDebt(String[] args) throws Exception {
         String first_name = args[0];
         String last_name = args[1];
@@ -180,6 +189,8 @@ public class DataBaseQueryController {
         return query;
     }
 
+
+    // mainSearch uses this function.
     private String mainSearchNotInDebt(String[] args) throws Exception {
         String first_name = args[0];
         String last_name = args[1];
@@ -214,6 +225,7 @@ public class DataBaseQueryController {
     }
 
 
+    // Hamid you wrote this function.
     private void handleRefreshScheduleInTimeInterval(String[] args) throws Exception {
         Schedule.getInstance().clear();
         Statement stmt = null;
@@ -306,6 +318,8 @@ public class DataBaseQueryController {
         Schedule.getInstance().printIntervals();
     }
 
+
+
     private void handleAddNewAvailableTime(String[] args) throws Exception {
     }
 
@@ -318,26 +332,12 @@ public class DataBaseQueryController {
     private void handleCancelAppointment(String[] args) throws Exception {
     }
 
+
+    // args: Nothing (empty string)
+    // does: It fills the single instance of SearchResult class.
     private void handleRefreshPatientsWhoOweMoney(String[] args) throws Exception {
-        Statement stmt = null;
-        String query = "select occupied_time_slot_date_ref as date_of_appointment, " +
-                "patient_id, first_name, last_name, whole_payment_amount - paid_payment_amount as debt\n" +
-                "\tfrom AppointmentPageT natural join PatientT\n" +
-                "\twhere whole_payment_amount > paid_payment_amount;";
-        try {
-            stmt = current_connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                String name = rs.getString("first_name");
-                System.out.println(name + " has debt = " + rs.getString("debt"));
-            }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-        }
+        String[] searchArgs= {null, null, null, "1"};
+        mainSearch(searchArgs);
     }
 
     private void handleRefreshListOfPatientFilesByCreationDate(String[] args) throws Exception {
@@ -368,6 +368,100 @@ public class DataBaseQueryController {
     private void handleAddPersonalInfoPage(String[] args) throws Exception {
     }
 
+
+
+    // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
+    // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate"}
+    // important: if any of entries is null, put "null" (string of null) in its place.
+    // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
     private void handleCreateFile(String[] args) throws Exception {
+        String id = args[0];
+        String add_patient_query = InsertPatientQuery(args);
+        String add_page_in_page_table_query = addPageQueryForPersonalInfoPage(args);
+        String add_personal_info_page_query = addPersonalInfoPageQuery(args);
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(add_patient_query);
+            stmt.executeUpdate(add_page_in_page_table_query);
+            stmt.executeUpdate(add_personal_info_page_query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
+
+
+    // CreateFile uses this function.
+    private String addPersonalInfoPageQuery(String[] args) {
+        String query = "insert into personalinfopaget values(";
+        String q = "'";
+        query += args[0] + ", 1, ";
+        for(int i = 10; i < 15; i++) {
+            if (args[i].toLowerCase().equals("null")) {
+                if (i == 14) {
+                    String adding = args[i];
+                    query += adding;
+                } else {
+                    String adding = args[i] + ", ";
+                    query += adding;
+                }
+            } else {
+                if (i == 14) {
+                    String adding = q + args[i] + q;
+                    query += adding;
+                } else {
+                    String adding = q + args[i] + q + ", ";
+                    query += adding;
+                }
+            }
+        }
+        query += ");";
+        return query;
+    }
+
+
+    // CreateFile uses this function.
+    private String addPageQueryForPersonalInfoPage(String[] args) {
+        String query;
+        if (args[15].toLowerCase().equals("null")) {
+            query = "insert into paget values(" + args[0] + ", " + "1, " + args[15] + ");";
+        } else {
+            query = "insert into paget values(" + args[0] + ", " + "1, " + "'" + args[15] + "');";
+        }
+        return query;
+    }
+
+
+    // CreateFile uses this function.
+    private String InsertPatientQuery(String[] args) {
+        String query = "insert into patientt values(";
+        String q = "'";
+        for (int i = 0; i < 10; i++) {
+            if (args[i].toLowerCase().equals("null")) {
+                if (i == 9) {
+                    String adding = args[i];
+                    query += adding;
+                } else {
+                    String adding = args[i] + ", ";
+                    query += adding;
+                }
+            } else {
+                if (i == 9) {
+                    String adding = q + args[i] + q;
+                    query += adding;
+                } else {
+                    String adding = q + args[i] + q + ", ";
+                    query += adding;
+                }
+            }
+        }
+        query += ");";
+        return query;
+    }
+
 }
