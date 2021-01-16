@@ -69,6 +69,7 @@ public class DataBaseQueryController {
                     handleCreateFile(args);
                     break;
                 case ADD_PERSONAL_INFO_PAGE:
+                    // Personal info page is created while creating the file. This function is empty.
                     handleAddPersonalInfoPage(args);
                     break;
                 case ADD_APPOINTMENT_PAGE:
@@ -81,6 +82,7 @@ public class DataBaseQueryController {
                     handleEditAppointmentPage(args);
                     break;
                 case EDIT_PERSONAL_INFO:
+                    // args: {"id", "1", "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr"}
                     handleEditPersonalInfo(args);
                     break;
                 case DELETE_PAGE:
@@ -319,7 +321,6 @@ public class DataBaseQueryController {
     }
 
 
-
     private void handleAddNewAvailableTime(String[] args) throws Exception {
     }
 
@@ -336,7 +337,7 @@ public class DataBaseQueryController {
     // args: Nothing (empty string)
     // does: It fills the single instance of SearchResult class.
     private void handleRefreshPatientsWhoOweMoney(String[] args) throws Exception {
-        String[] searchArgs= {null, null, null, "1"};
+        String[] searchArgs = {null, null, null, "1"};
         mainSearch(searchArgs);
     }
 
@@ -353,7 +354,48 @@ public class DataBaseQueryController {
     private void handleDeletePage(String[] args) throws Exception {
     }
 
+
+    // args: {"id", "1", "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr"}
     private void handleEditPersonalInfo(String[] args) throws Exception {
+        String query = "update personalinfopaget\nset ";
+        if (!args[2].toLowerCase().equals("null")) {
+            query += "general_medical_records = '" + args[2] + "', ";
+        } else {
+            query += "general_medical_records = " + args[2] + ", ";
+        }
+        if (!args[3].toLowerCase().equals("null")) {
+            query += "dental_records = '" + args[3] + "', ";
+        } else {
+            query += "dental_records = " + args[3] + ", ";
+        }
+        if (!args[4].toLowerCase().equals("null")) {
+            query += "sensitive_medicine = '" + args[4] + "', ";
+        } else {
+            query += "sensitive_medicine = " + args[4] + ", ";
+        }
+        if (!args[5].toLowerCase().equals("null")) {
+            query += "does_smoke = '" + args[5] + "', ";
+        } else {
+            query += "does_smoke = " + args[5] + ", ";
+        }
+        if (!args[6].toLowerCase().equals("null")) {
+            query += "signature_image_address = '" + args[5] + "'";
+        } else {
+            query += "signature_image_address = " + args[5];
+        }
+        query += "\nwhere patient_id = " + args[0] + ";";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     private void handleEditAppointmentPage(String[] args) throws Exception {
@@ -367,7 +409,6 @@ public class DataBaseQueryController {
 
     private void handleAddPersonalInfoPage(String[] args) throws Exception {
     }
-
 
 
     // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
@@ -401,7 +442,7 @@ public class DataBaseQueryController {
         String query = "insert into personalinfopaget values(";
         String q = "'";
         query += args[0] + ", 1, ";
-        for(int i = 10; i < 15; i++) {
+        for (int i = 10; i < 15; i++) {
             if (args[i].toLowerCase().equals("null")) {
                 if (i == 14) {
                     String adding = args[i];
