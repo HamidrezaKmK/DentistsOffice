@@ -88,10 +88,14 @@ public class DataBaseQueryController {
                     break;
 
                 case EDIT_MEDICAL_IMAGE_PAGE:
+                    //
+                    //
                     handleEditMedicalImagePage(args);
                     break;
 
                 case EDIT_APPOINTMENT_PAGE:
+                    // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
+                    // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref"}
                     handleEditAppointmentPage(args);
                     break;
 
@@ -551,7 +555,38 @@ public class DataBaseQueryController {
         }
     }
 
+
+    // args: {"id", "page_no", "content_address", "image_type", "reason"}
     private void handleEditMedicalImagePage(String[] args) throws Exception {
+        String query = "update medicalimagepaget\nset ";
+        if (!args[2].toLowerCase().equals("null")) {
+            query += "content_address = '" + args[2] + "', ";
+        } else {
+            query += "content_address = " + args[2] + ", ";
+        }
+        if (!args[3].toLowerCase().equals("null")) {
+            query += "image_type = '" + args[3] + "', ";
+        } else {
+            query += "image_type = " + args[3] + ", ";
+        }
+        if (!args[4].toLowerCase().equals("null")) {
+            query += "reason = '" + args[4] + "'";
+        } else {
+            query += "reason = " + args[4];
+        }
+        query += "\nwhere patient_id = " + args[0] + " and page_no = " + args[1] + ";";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
