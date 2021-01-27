@@ -61,6 +61,8 @@ public class DataBaseQueryController {
                     // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
                     // Does: It fills the single instance of SearchResults.
                     mainSearch(args);
+                    break;
+
                 case CREATE_FILE:
                     // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
                     // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate"}
@@ -68,55 +70,75 @@ public class DataBaseQueryController {
                     // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
                     handleCreateFile(args);
                     break;
+
                 case ADD_PERSONAL_INFO_PAGE:
                     // Personal info page is created while creating the file. This function is empty.
                     handleAddPersonalInfoPage(args);
                     break;
+
+                case ADD_MEDICAL_IMAGE_PAGE:
+                    // args: {"id", "page_no", "content_address", "image_type", "reason", "creation_date"}
+                    addMedicalImagePage(args);
+                    break;
+
                 case ADD_APPOINTMENT_PAGE:
                     // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
                     // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref", "creation_date"}
                     handleAddAppointmentPage(args);
                     break;
+
                 case EDIT_MEDICAL_IMAGE_PAGE:
                     handleEditMedicalImagePage(args);
                     break;
+
                 case EDIT_APPOINTMENT_PAGE:
                     handleEditAppointmentPage(args);
                     break;
+
                 case EDIT_PERSONAL_INFO:
                     // args: {"id", "1", "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr"}
                     handleEditPersonalInfo(args);
                     break;
+
                 case DELETE_PAGE:
                     // args: {"id", "page_no"}
                     handleDeletePage(args);
                     break;
+
                 case REFRESH_FILE_SUMMARY:
                     handleRefreshFileSummary(args);
                     break;
+
                 case REFRESH_PAGE:
                     // args: {"id", "page_no"
                     // does: fills the single object of the relative page (eg: AppointmentPage)
                     handleRefreshPage(args);
                     break;
+
                 case REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE:
                     handleRefreshListOfPatientFilesByCreationDate(args);
                     break;
+
                 case REFRESH_PATIENTS_WHO_OWE_MONEY:
                     handleRefreshPatientsWhoOweMoney(args);
                     break;
+
                 case CANCEL_APPOINTMENT:
                     handleCancelAppointment(args);
                     break;
+
                 case ADD_REFERRAL_TIME:
                     handleAddReferralTime(args);
                     break;
+
                 case CREATE_NEW_WEEKLY_SCHEDULE:
                     handleCreateNewWeeklySchedule(args);
                     break;
+
                 case ADD_NEW_AVAILABLE_TIME:
                     handleAddNewAvailableTime(args);
                     break;
+
                 case REFRESH_SCHEDULE_IN_TIME_INTERVAL:
                     handleRefreshScheduleInTimeInterval(args);
                     break;
@@ -416,10 +438,16 @@ public class DataBaseQueryController {
         String patient_id = args[0];
         String page_no = args[1];
         Statement stmt = null;
-        String query = "delete from paget\n" + "\twhere patient_id = " + patient_id + " and page_no = " + page_no;
+        String query_page = "delete from paget\n" + "\twhere patient_id = " + patient_id + " and page_no = " + page_no + ";";
+        String query_personal = "delete from personalinfopaget\nwhere patient_id = " + patient_id + " and page_no = " + page_no + ";";
+        String query_appointment = "delete from appointmentpaget\nwhere patient_id = " + patient_id + " and page_no = " + page_no + ";";
+        String query_medical = "delete from medicalimagepaget\nwhere patient_id = " + patient_id + " and page_no = " + page_no + ";";
         try {
             stmt = current_connection.createStatement();
-            stmt.executeUpdate(query);
+            stmt.executeUpdate(query_medical);
+            stmt.executeUpdate(query_personal);
+            stmt.executeUpdate(query_appointment);
+            stmt.executeUpdate(query_page);
         } catch (SQLException e) {
             throw new Error("Problem", e);
         } finally {
@@ -531,7 +559,61 @@ public class DataBaseQueryController {
         }
     }
 
+
+    // Personal info page is created while creating the file. This function is empty.
     private void handleAddPersonalInfoPage(String[] args) throws Exception {
+    }
+
+
+    // args: {"id", "page_no", "content_address", "image_type", "reason", "creation_date"}
+    private void addMedicalImagePage(String[] args) throws Exception {
+        String addPageQuery = "insert into paget values(" +
+                args[0] + ", " + args[1] + ", '" + args[5] + "');" ;
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(addPageQuery);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+        String query = "insert into medicalimagepaget values(";
+        String q = "'";
+        for (int i = 0; i < 5; i++) {
+            if (args[i].toLowerCase().equals("null")) {
+                if (i == 4) {
+                    String adding = args[i];
+                    query += adding;
+                } else {
+                    String adding = args[i] + ", ";
+                    query += adding;
+                }
+            } else {
+                if (i == 4) {
+                    String adding = q + args[i] + q;
+                    query += adding;
+                } else {
+                    String adding = q + args[i] + q + ", ";
+                    query += adding;
+                }
+            }
+        }
+        query += ");";
+        Statement stmt2 = null;
+        try {
+            stmt2 = current_connection.createStatement();
+            stmt2.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt2 != null) {
+                stmt2.close();
+            }
+        }
     }
 
 
