@@ -86,12 +86,15 @@ public class DataBaseQueryController {
                     handleEditPersonalInfo(args);
                     break;
                 case DELETE_PAGE:
+                    // args: {"id", "page_no"}
                     handleDeletePage(args);
                     break;
                 case REFRESH_FILE_SUMMARY:
                     handleRefreshFileSummary(args);
                     break;
                 case REFRESH_PAGE:
+                    // args: {"id", "page_no"
+                    // does: fills the single object of the relative page (eg: AppointmentPage)
                     handleRefreshPage(args);
                     break;
                 case REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE:
@@ -344,13 +347,69 @@ public class DataBaseQueryController {
     private void handleRefreshListOfPatientFilesByCreationDate(String[] args) throws Exception {
     }
 
+    // args: {"id", "page_no"
+    // does: fills the single object of the relative page (eg: AppointmentPage)
     private void handleRefreshPage(String[] args) throws Exception {
+        String id = args[0];
+        String pn = args[1];
+        String query_on_personalinfopaget = "select * from personalinfopaget\nwhere patient_id = " + id + " and page_no = 1;";
+        String query_on_appointmentpaget = "select * from appointmentpaget\nwhere patient_id = " + id + " and page_no = " +
+                pn + ";";
+        String query_on_medicalimagepaget = "select * from medicalimagepaget\nwhere patient_id = " + id + " and page_no = " +
+                pn + ";";
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            if (pn.equals("1")) {
+                ResultSet rs = stmt.executeQuery(query_on_personalinfopaget);
+                model.PersonalInfoPage.getInstance().clear();
+                while (rs.next()) {
+                    model.PersonalInfoPage.getInstance().setPatient_id(id);
+                    model.PersonalInfoPage.getInstance().setDoes_smoke(rs.getString("does_smoke"));
+                    model.PersonalInfoPage.getInstance().setDental_records(rs.getString("dental_records"));
+                    model.PersonalInfoPage.getInstance().setGeneral_medical_records(rs.getString("general_medical_records"));
+                    model.PersonalInfoPage.getInstance().setSensitive_medicine(rs.getString("sensitive_medicine"));
+                    model.PersonalInfoPage.getInstance().setSignature_image_address(rs.getString("signature_image_address"));
+                }
+            } else {
+                ResultSet rs_app = stmt.executeQuery(query_on_appointmentpaget);
+                model.AppointmentPage.getInstance().clear();
+                while (rs_app.next()) {
+                    model.AppointmentPage.getInstance().setPatient_id(rs_app.getString("patient_id"));
+                    model.AppointmentPage.getInstance().setPage_no(rs_app.getString("page_no"));
+                    model.AppointmentPage.getInstance().setTreatment_summary(rs_app.getString("treatment_summary"));
+                    model.AppointmentPage.getInstance().setNext_appointment_date(rs_app.getString("next_appointment_date"));
+                    model.AppointmentPage.getInstance().setWhole_payment_amount(rs_app.getString("whole_payment_amount"));
+                    model.AppointmentPage.getInstance().setPaid_payment_amount(rs_app.getString("paid_payment_amount"));
+                    model.AppointmentPage.getInstance().setOccupied_time_slot_date_ref(rs_app.getString("occupied_time_slot_date_ref"));
+                    model.AppointmentPage.getInstance().setOccupied_time_slot_begin_time_ref(rs_app.getString("occupied_time_slot_begin_time_ref"));
+                }
+
+                ResultSet rs_medicalImage = stmt.executeQuery(query_on_medicalimagepaget);
+                model.MedicalImagePage.getInstance().clear();
+                while (rs_medicalImage.next()) {
+                    model.MedicalImagePage.getInstance().setPatient_id(rs_medicalImage.getString("patient_id"));
+                    model.MedicalImagePage.getInstance().setContent_address(rs_medicalImage.getString("content_address"));
+                    model.MedicalImagePage.getInstance().setImage_type(rs_medicalImage.getString("image_type"));
+                    model.MedicalImagePage.getInstance().setReason(rs_medicalImage.getString("reason"));
+                    model.MedicalImagePage.getInstance().setPage_no(rs_medicalImage.getString("page_no"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     // 1st argument: patient_id
     private void handleRefreshFileSummary(String[] args) throws Exception {
     }
 
+
+    // args: {"id", "page_no"}
     private void handleDeletePage(String[] args) throws Exception {
         String patient_id = args[0];
         String page_no = args[1];
