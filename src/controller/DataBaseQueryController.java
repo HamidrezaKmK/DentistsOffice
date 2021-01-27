@@ -478,6 +478,53 @@ public class DataBaseQueryController {
     }
 
     private void handleAddAppointmentPage(String[] args) throws Exception {
+        String addPageQuery = "insert into paget values(" +
+                args[0] + ", " + args[1] + ", '" + args[8] + "');" ;
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(addPageQuery);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+        String query = "insert into appointmentpaget values(";
+        String q = "'";
+        for (int i = 0; i < 8; i++) {
+            if (args[i].toLowerCase().equals("null")) {
+                if (i == 7) {
+                    String adding = args[i];
+                    query += adding;
+                } else {
+                    String adding = args[i] + ", ";
+                    query += adding;
+                }
+            } else {
+                if (i == 7) {
+                    String adding = q + args[i] + q;
+                    query += adding;
+                } else {
+                    String adding = q + args[i] + q + ", ";
+                    query += adding;
+                }
+            }
+        }
+        query += ");";
+        Statement stmt2 = null;
+        try {
+            stmt2 = current_connection.createStatement();
+            stmt2.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt2 != null) {
+                stmt2.close();
+            }
+        }
     }
 
     private void handleAddPersonalInfoPage(String[] args) throws Exception {
