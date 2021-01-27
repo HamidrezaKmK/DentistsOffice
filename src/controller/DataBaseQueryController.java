@@ -482,11 +482,11 @@ public class DataBaseQueryController {
             query += "does_smoke = " + args[5] + ", ";
         }
         if (!args[6].toLowerCase().equals("null")) {
-            query += "signature_image_address = '" + args[5] + "'";
+            query += "signature_image_address = '" + args[6] + "'";
         } else {
-            query += "signature_image_address = " + args[5];
+            query += "signature_image_address = " + args[6];
         }
-        query += "\nwhere patient_id = " + args[0] + ";";
+        query += "\nwhere patient_id = " + args[0] + " and page_no = 1";
 
         Statement stmt = null;
         try {
@@ -501,7 +501,54 @@ public class DataBaseQueryController {
         }
     }
 
+
+    // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
+    // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref"}
     private void handleEditAppointmentPage(String[] args) throws Exception {
+        String query = "update appointmentpaget\nset ";
+        if (!args[2].toLowerCase().equals("null")) {
+            query += "treatment_summary = '" + args[2] + "', ";
+        } else {
+            query += "treatment_summary = " + args[2] + ", ";
+        }
+        if (!args[3].toLowerCase().equals("null")) {
+            query += "next_appointment_date = '" + args[3] + "', ";
+        } else {
+            query += "next_appointment_date = " + args[3] + ", ";
+        }
+        if (!args[4].toLowerCase().equals("null")) {
+            query += "whole_payment_amount = '" + args[4] + "', ";
+        } else {
+            query += "whole_payment_amount = " + args[4] + ", ";
+        }
+        if (!args[5].toLowerCase().equals("null")) {
+            query += "paid_payment_amount = '" + args[5] + "', ";
+        } else {
+            query += "paid_payment_amount = " + args[5] + ", ";
+        }
+        if (!args[6].toLowerCase().equals("null")) {
+            query += "occupied_time_slot_date_ref = '" + args[6] + "', ";
+        } else {
+            query += "occupied_time_slot_date_ref = " + args[6] + ", ";
+        }
+        if (!args[7].toLowerCase().equals("null")) {
+            query += "occupied_time_slot_begin_time_ref = '" + args[7] + "'";
+        } else {
+            query += "occupied_time_slot_begin_time_ref = " + args[7];
+        }
+        query += "\nwhere patient_id = " + args[0] + " and page_no = " + args[1] + ";";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     private void handleEditMedicalImagePage(String[] args) throws Exception {
