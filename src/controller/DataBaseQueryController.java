@@ -73,6 +73,8 @@ public class DataBaseQueryController {
                     handleAddPersonalInfoPage(args);
                     break;
                 case ADD_APPOINTMENT_PAGE:
+                    // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
+                    // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref", "creation_date"}
                     handleAddAppointmentPage(args);
                     break;
                 case EDIT_MEDICAL_IMAGE_PAGE:
@@ -477,6 +479,8 @@ public class DataBaseQueryController {
     private void handleEditMedicalImagePage(String[] args) throws Exception {
     }
 
+    // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
+    // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref", "creation_date"}
     private void handleAddAppointmentPage(String[] args) throws Exception {
         String addPageQuery = "insert into paget values(" +
                 args[0] + ", " + args[1] + ", '" + args[8] + "');" ;
