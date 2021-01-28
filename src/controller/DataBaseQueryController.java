@@ -1,6 +1,7 @@
 package controller;
 
 import com.sun.codemodel.internal.JMod;
+import model.FileTable;
 import model.QueryType;
 import model.Schedule;
 import model.TimeInterval;
@@ -88,8 +89,7 @@ public class DataBaseQueryController {
                     break;
 
                 case EDIT_MEDICAL_IMAGE_PAGE:
-                    //
-                    //
+                    // args: {"id", "page_no", "content_address", "image_type", "reason"}
                     handleEditMedicalImagePage(args);
                     break;
 
@@ -120,10 +120,14 @@ public class DataBaseQueryController {
                     break;
 
                 case REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE:
+                    // args: {} (empty array of Strings)
+                    // does: fills the single object of FileTable (fills arrayLists in matching order)
                     handleRefreshListOfPatientFilesByCreationDate(args);
                     break;
 
                 case REFRESH_PATIENTS_WHO_OWE_MONEY:
+                    // args: Nothing (empty string)
+                    // does: It fills the single instance of SearchResult class.
                     handleRefreshPatientsWhoOweMoney(args);
                     break;
 
@@ -372,7 +376,32 @@ public class DataBaseQueryController {
         mainSearch(searchArgs);
     }
 
+
+    // args: {} (empty array of Strings)
+    // does: fills the single object of FileTable (fills arrayLists in matching order)
     private void handleRefreshListOfPatientFilesByCreationDate(String[] args) throws Exception {
+        String query = "select * from filet\norder by creation_date;";
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ArrayList<String> patientIds = new ArrayList<>();
+            ArrayList<String> creation_dates = new ArrayList<>();
+            while(rs.next()) {
+                patientIds.add(rs.getString("patient_id"));
+                creation_dates.add(rs.getString("creation_date"));
+            }
+            model.FileTable.getInstance().clear();
+            model.FileTable.getInstance().setCreation_date(creation_dates);
+            model.FileTable.getInstance().setPatient_id(patientIds);
+
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     // args: {"id", "page_no"
@@ -434,6 +463,7 @@ public class DataBaseQueryController {
 
     // 1st argument: patient_id
     private void handleRefreshFileSummary(String[] args) throws Exception {
+
     }
 
 
