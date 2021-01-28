@@ -30,10 +30,6 @@ public class AppointmentPage {
         this.occupied_time_slot_begin_time_ref = null;
     }
 
-    public static AppointmentPage getSingleInstance() {
-        return singleInstance;
-    }
-
     public static void setSingleInstance(AppointmentPage singleInstance) {
         AppointmentPage.singleInstance = singleInstance;
     }

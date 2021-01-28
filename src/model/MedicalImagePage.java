@@ -24,10 +24,6 @@ public class MedicalImagePage {
         this.page_no = null;
     }
 
-    public static MedicalImagePage getSingleInstance() {
-        return singleInstance;
-    }
-
     public static void setSingleInstance(MedicalImagePage singleInstance) {
         MedicalImagePage.singleInstance = singleInstance;
     }
