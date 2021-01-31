@@ -26,10 +26,6 @@ public class PersonalInfoPage {
         this.sensitive_medicine = null;
     }
 
-    public static PersonalInfoPage getSingleInstance() {
-        return singleInstance;
-    }
-
     public static void setSingleInstance(PersonalInfoPage singleInstance) {
         PersonalInfoPage.singleInstance = singleInstance;
     }

@@ -110,6 +110,8 @@ public class DataBaseQueryController {
                     break;
 
                 case REFRESH_FILE_SUMMARY:
+                    // args: {"id"}
+                    // does: fills the single object of FileSummary
                     handleRefreshFileSummary(args);
                     break;
 
@@ -456,9 +458,49 @@ public class DataBaseQueryController {
         }
     }
 
-    // 1st argument: patient_id
+    // args: {"id"}
+    // does: fills the single object of FileSummary
     private void handleRefreshFileSummary(String[] args) throws Exception {
+        String id = args[0];
+        ArrayList<String> medicalImagePage_page_numbers = new ArrayList<>();
+        ArrayList<String> appointmentPage_page_numbers = new ArrayList<>();
+        ArrayList<String> medicalImagePage_creation_dates = new ArrayList<>();
+        ArrayList<String> appointmentPage_creation_dates = new ArrayList<>();
 
+        String query_AP = "select page_no, creation_date\n" +
+                "from paget natural join appointmentpaget\n" +
+                "where patient_id = " + id + ";";
+        String query_MIP = "select page_no, creation_date\n" +
+                "from paget natural join medicalimagepaget\n" +
+                "where patient_id = " + id + ";";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs_AP = stmt.executeQuery(query_AP);
+            ResultSet rs_MIP = stmt.executeQuery(query_MIP);
+            while(rs_AP.next()) {
+                appointmentPage_page_numbers.add(rs_AP.getString("page_no"));
+                appointmentPage_creation_dates.add(rs_AP.getString("creation_date"));
+            }
+            while (rs_MIP.next()) {
+                medicalImagePage_page_numbers.add(rs_MIP.getString("page_no"));
+                medicalImagePage_creation_dates.add(rs_MIP.getString("creation_date"));
+            }
+
+            model.FileSummary.getInstance().clear();
+            model.FileSummary.getInstance().setAppointmentPage_creation_dates(appointmentPage_creation_dates);
+            model.FileSummary.getInstance().setAppointmentPage_page_numbers(appointmentPage_page_numbers);
+            model.FileSummary.getInstance().setMedicalImagePage_creation_dates(medicalImagePage_creation_dates);
+            model.FileSummary.getInstance().setMedicalImagePage_page_numbers(medicalImagePage_page_numbers);
+
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
 
