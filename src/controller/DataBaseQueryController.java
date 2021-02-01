@@ -1152,7 +1152,7 @@ public class DataBaseQueryController {
         return query;
     }
 
-
+    // args: {"id"}
     private void refreshReferralWithNoAppointmentPage(String[] args) throws SQLException {
         String id = args[0];
         String query_on_ref = "select * from referraloccupiedtimeslotst\n" +
