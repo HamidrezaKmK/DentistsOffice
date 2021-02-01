@@ -879,20 +879,20 @@ public class DataBaseQueryController {
             query += "whole_payment_amount = " + args[4] + ", ";
         }
         if (!args[5].toLowerCase().equals("null")) {
-            query += "paid_payment_amount = '" + args[5] + "', ";
+            query += "paid_payment_amount = '" + args[5] + "'";
         } else {
-            query += "paid_payment_amount = " + args[5] + ", ";
+            query += "paid_payment_amount = " + args[5];
         }
-        if (!args[6].toLowerCase().equals("null")) {
-            query += "occupied_time_slot_date_ref = '" + args[6] + "', ";
-        } else {
-            query += "occupied_time_slot_date_ref = " + args[6] + ", ";
-        }
-        if (!args[7].toLowerCase().equals("null")) {
-            query += "occupied_time_slot_begin_time_ref = '" + args[7] + "'";
-        } else {
-            query += "occupied_time_slot_begin_time_ref = " + args[7];
-        }
+//        if (!args[6].toLowerCase().equals("null")) {
+//            query += "occupied_time_slot_date_ref = '" + args[6] + "', ";
+//        } else {
+//            query += "occupied_time_slot_date_ref = " + args[6] + ", ";
+//        }
+//        if (!args[7].toLowerCase().equals("null")) {
+//            query += "occupied_time_slot_begin_time_ref = '" + args[7] + "'";
+//        } else {
+//            query += "occupied_time_slot_begin_time_ref = " + args[7];
+//        }
         query += "\nwhere patient_id = " + args[0] + " and page_no = " + args[1] + ";";
 
         Statement stmt = null;
