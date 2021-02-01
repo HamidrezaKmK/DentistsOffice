@@ -1,6 +1,7 @@
 package controller;
 
 //import com.sun.codemodel.internal.JMod;
+
 import model.FileTable;
 import model.QueryType;
 import model.Schedule;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.jar.Attributes;
 
 import static java.lang.Integer.parseInt;
 
@@ -184,6 +186,11 @@ public class DataBaseQueryController {
                 case REFRESH_OCCUPIED_TIME_SLOT:
                     refreshOccupiedTimeSlots(args);
                     break;
+
+                case REFRESH_REFERRALS_WITHOUT_APPOINTMENT_PAGE:
+                    //
+                    refreshReferralWithNoAppointmentPage(args);
+                    break;
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);
@@ -218,9 +225,6 @@ public class DataBaseQueryController {
 
                 }
             }
-
-
-
         } catch (SQLException e) {
             throw new Error("Problem", e);
         } finally {
@@ -228,10 +232,6 @@ public class DataBaseQueryController {
                 stmt.close();
             }
         }
-
-
-
-
     }
 
 
@@ -309,7 +309,6 @@ public class DataBaseQueryController {
 
     // mainSearch uses this function.
     private String mainSearchNotInDebt(String[] args) throws Exception {
-
 
         String first_name = args[0];
         String last_name = args[1];
@@ -637,11 +636,11 @@ public class DataBaseQueryController {
         int totalMinutes = m1 + m2;
         int totalSeconds = s1 + s2;
         if (totalSeconds >= 60) {
-            totalMinutes ++;
+            totalMinutes++;
             totalSeconds = totalSeconds % 60;
         }
         if (totalMinutes >= 60) {
-            totalHours ++;
+            totalHours++;
             totalMinutes = totalMinutes % 60;
         }
         if (totalHours > 23) {
@@ -1152,5 +1151,66 @@ public class DataBaseQueryController {
         query += ");";
         return query;
     }
+
+
+    private void refreshReferralWithNoAppointmentPage(String[] args) throws SQLException {
+        String id = args[0];
+        String query_on_ref = "select * from referraloccupiedtimeslotst\n" +
+                "where patient_id = " + id + ";";
+
+        String query_on_ap = "select occupied_time_slot_date_ref, occupied_time_slot_begin_time_ref from appointmentpaget\n" +
+                "where patient_id = " + id + ";";
+
+        ArrayList<String> ref_dates = new ArrayList<>();
+        ArrayList<String> ref_begin_times = new ArrayList<>();
+        ArrayList<String> ref_reasons = new ArrayList<>();
+
+        ArrayList<String> ap_dates = new ArrayList<>();
+        ArrayList<String> ap_begin_times = new ArrayList<>();
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query_on_ref);
+            while (rs.next()) {
+                ref_dates.add(rs.getString("date"));
+                ref_begin_times.add(rs.getString("begin_time"));
+                ref_reasons.add(rs.getString("reason"));
+            }
+
+            stmt = current_connection.createStatement();
+            ResultSet rs2 = stmt.executeQuery(query_on_ap);
+            while (rs.next()) {
+                ap_dates.add(rs2.getString("occupied_time_slots_date_ref"));
+                ap_begin_times.add(rs2.getString("occupied_time_slot_begin_time_ref"));
+            }
+
+            ArrayList<Integer> toRemoveIndices = new ArrayList<>();
+            for (int i = 0; i < ref_begin_times.size(); i++) {
+                for (int j = 0; j < ap_begin_times.size(); j++) {
+                    if (ref_dates.get(i).equals(ap_dates.get(j)) && ref_begin_times.get(i).equals(ap_begin_times.get(j))) {
+                        toRemoveIndices.add(i);
+                    }
+                }
+            }
+            for(int index : toRemoveIndices) {
+                ref_dates.remove(index);
+                ref_begin_times.remove(index);
+                ref_reasons.remove(index);
+            }
+            model.ReferralOccupiedTimeSlots.getInstance().clear();
+            model.ReferralOccupiedTimeSlots.getInstance().setBegin_time(ref_begin_times);
+            model.ReferralOccupiedTimeSlots.getInstance().setDate(ref_dates);
+            model.ReferralOccupiedTimeSlots.getInstance().setReason(ref_reasons);
+
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+    }
+
 
 }
