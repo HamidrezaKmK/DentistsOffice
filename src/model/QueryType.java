@@ -15,6 +15,7 @@ public enum QueryType {
     DELETE_PAGE,
 
     // refresh file queries
+    REFRESH_PATIENT,
     REFRESH_FILE_SUMMARY,
     REFRESH_PAGE,
     REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE,
