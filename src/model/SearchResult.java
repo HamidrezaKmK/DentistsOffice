@@ -30,6 +30,10 @@ public class SearchResult {
         this.lastNames = null;
         this.patientIds = null;
         this.debt = null;
+        this.unique_last_names = null;
+        this.unique_first_names = null;
+        this.sum_debts = null;
+        this.unique_ids = null;
     }
 
     public ArrayList<String> getFirstNames() {
@@ -81,7 +85,7 @@ public class SearchResult {
                 ArrayList<Integer> a = debts.get(unique_ids.get(i));
                 int sum = 0;
                 for (int j = 0; j < a.size(); j++) {
-                    sum += a.get(i);
+                    sum += a.get(j);
                 }
                 sum_debts.add(sum);
 
