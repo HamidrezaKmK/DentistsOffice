@@ -16,6 +16,17 @@ import java.util.jar.Attributes;
 
 import static java.lang.Integer.parseInt;
 
+/*
+select *
+	from referraloccupiedtimeslotst as T1
+    where T1.patient_id = 1 and not exists(
+        select *
+        from appointmentPageT as T2
+        where T2.occupied_time_slot_date_ref = T1.date and
+        	T2.occupied_time_slot_begin_time_ref = T1.begin_time and
+        T2.patient_id = T1.patient_id);
+
+ */
 public class DataBaseQueryController {
 
     private String username;
@@ -247,6 +258,9 @@ public class DataBaseQueryController {
         } else {
             query = mainSearchNotInDebt(args);
         }
+
+        System.out.println(query);
+
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
@@ -325,7 +339,7 @@ public class DataBaseQueryController {
             query += " and " + first_name_condition;
         }
         if (last_name != null) {
-            query += "and " + last_name_condition;
+            query += " and " + last_name_condition;
         }
         if (patient_id != null) {
             query += " and " + patient_id_condition;
