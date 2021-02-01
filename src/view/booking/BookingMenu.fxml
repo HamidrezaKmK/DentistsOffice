@@ -141,24 +141,24 @@
                                        <children>
                                           <Label text="Enter Occupied Time:" />
                                           <Label text="Enter Date (YYYY-MM-DD)" />
-                                          <TextField />
+                                          <TextField fx:id="enterOccupiedTimeDate" />
                                           <Label text="Enter Begin Time (HH:MM:SS)" />
-                                          <TextField />
+                                          <TextField fx:id="enterOccupiedTimeBeginTime" />
                                           <Label text="Enter End Time (HH:MM:SS)" />
-                                          <TextField />
+                                          <TextField fx:id="enterOccupiedTimeEndTime" />
                                        </children>
                                     </VBox>
                                     <VBox prefHeight="200.0" prefWidth="225.0" spacing="3.0">
                                        <children>
                                           <Label text="Reason" />
-                                          <TextArea prefHeight="200.0" prefWidth="200.0" />
+                                          <TextArea fx:id="enterOccupiedTimeReason" prefHeight="200.0" prefWidth="200.0" />
                                           <Label text="Patient id (if it is a referral time)" />
-                                          <TextField />
-                                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Add Time to Schedule" />
+                                          <TextField fx:id="enterReferralTimePatientID" />
+                                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addTimeToScheduleButtonPress" text="Add Time to Schedule" />
                                        </children></VBox>
                                     <VBox prefHeight="200.0" prefWidth="225.0" spacing="4.0">
                                        <children>
-                                          <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="163.0" text="Cancel Appointment">
+                                          <Button mnemonicParsing="false" onAction="#cancelAppointmentButtonPress" prefHeight="31.0" prefWidth="163.0" text="Cancel Appointment">
                                              <VBox.margin>
                                                 <Insets left="30.0" right="30.0" />
                                              </VBox.margin>

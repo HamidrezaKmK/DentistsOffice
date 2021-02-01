@@ -52,13 +52,13 @@
                   <Label text="WEDESDAY" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                   <Label text="THURSDAY" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                   <Label text="FRIDAY" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                  <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
-                  <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                  <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                  <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                  <ListView fx:id="saturdayListView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
+                  <ListView fx:id="sundayListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ListView fx:id="mondayListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <ListView fx:id="tuesdayListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                  <ListView fx:id="wednesdayListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <ListView fx:id="thursdayListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                  <ListView fx:id="fridayListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </center>
@@ -66,10 +66,10 @@
             <HBox prefHeight="41.0" prefWidth="801.0" spacing="20.0" BorderPane.alignment="CENTER">
                <children>
                   <Label text="Begin Date (YYYY-MM-DD)" />
-                  <TextField prefHeight="31.0" prefWidth="98.0" />
+                  <TextField fx:id="fromDateTextField" prefHeight="31.0" prefWidth="98.0" />
                   <Label text="End Date (YYYY-MM-DD)" />
-                  <TextField prefHeight="31.0" prefWidth="102.0" />
-                  <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="128.0" text="add schedule!" />
+                  <TextField fx:id="endDateTextField" prefHeight="31.0" prefWidth="102.0" />
+                  <Button fx:id="addScheduleButton" mnemonicParsing="false" onAction="#addScheduleButtonPress" prefHeight="31.0" prefWidth="128.0" text="add schedule!" />
                </children>
                <padding>
                   <Insets left="10.0" right="10.0" />

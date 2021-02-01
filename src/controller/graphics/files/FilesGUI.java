@@ -33,6 +33,7 @@ public class FilesGUI implements Initializable {
 
         FxmlFileLoader object = new FxmlFileLoader();
         Pane view = object.getPage("PatientsList", view.files.FilesGUI.class);
+        mainPane.getChildren().clear();
         mainPane.getChildren().add(view);
     }
 

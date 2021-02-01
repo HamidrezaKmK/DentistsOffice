@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -14,10 +13,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import model.QueryType;
+import model.SearchResult;
 import view.FxmlFileLoader;
 import view.files.FilesGUI;
 
-import javax.xml.crypto.Data;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -49,14 +48,17 @@ public class PatientsList implements Initializable {
         mainPane.getChildren().add(view);
     }
 
-    private void sendSeachQuery(String firstName, String lastName, String patientID, String isInDebtQ) {
+    private void sendSearchQuery(String firstName, String lastName, String patientID, String isInDebtQ) {
         try {
+            // TODO: clear should be handled automatically for each query call
+            SearchResult.getInstance().clear();
             DataBaseQueryController.getInstance().handleQuery(QueryType.MAIN_SEARCH, firstName, lastName,
                     patientID, isInDebtQ);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void searchButtonPress(ActionEvent event) {
         String firstName = firstNameField.getText();
@@ -69,45 +71,72 @@ public class PatientsList implements Initializable {
         if (patientID.isEmpty())
             patientID = null;
         String isInDebtQ = isInDebt.isSelected() ? "1" : "0";
-        sendSeachQuery(firstName, lastName, patientID, isInDebtQ);
-        updateListView();
+        sendSearchQuery(firstName, lastName, patientID, isInDebtQ);
+        updateListView(isInDebtQ.equals("1"));
         // TODO: send query to search
     }
 
-    private void updateListView() {
+    private void updateListView(boolean isInDebt) {
 
         patientList.getItems().clear();
-        int sz = model.SearchResult.getInstance().getFirstNames().size();
-        for (int i = 0; i < sz; i++) {
-            StringBuilder stb = new StringBuilder();
-            stb.append(model.SearchResult.getInstance().getFirstNames().get(i));
-            stb.append(" ");
-            stb.append(model.SearchResult.getInstance().getLastNames().get(i));
-            String firstPart = stb.toString();
-            stb = new StringBuilder();
-            if (model.SearchResult.getInstance().getDebt() != null) {
-                stb.append(" Debt value: ");
-                stb.append(model.SearchResult.getInstance().getDebt().get(i));
+        if (!isInDebt) {
+            int sz = model.SearchResult.getInstance().getFirstNames().size();
+            for (int i = 0; i < sz; i++) {
+                StringBuilder stb = new StringBuilder();
+                stb.append(model.SearchResult.getInstance().getFirstNames().get(i));
+                stb.append(" ");
+                stb.append(model.SearchResult.getInstance().getLastNames().get(i));
+                String firstPart = stb.toString();
+                stb = new StringBuilder();
+
+                stb.append("Patient id: ");
+                stb.append(model.SearchResult.getInstance().getPatientIds().get(i));
+                String thirdPart = stb.toString();
+
+                String formatted = String.format("%-60s%60s", firstPart, thirdPart);
+
+                patientList.getItems().add(formatted);
+                //Node n = (Node) patientList.getItems().get(patientList.getItems().size() - 1);
+                //n.setOnMouseClicked();
             }
-            String secondPart = stb.toString();
-            stb = new StringBuilder();
+        } else {
+            model.SearchResult inst = model.SearchResult.getInstance();
+            inst.sumDebts();
+            int sz = inst.getSum_debts().size();
 
-            stb.append("Patient id: ");
-            stb.append(model.SearchResult.getInstance().getPatientIds().get(i));
-            String thirdPart = stb.toString();
+            System.out.println(inst.getSum_debts());
+            System.out.println(inst.getUnique_first_names());
+            System.out.println(inst.getUnique_last_names());
 
-            String formatted = String.format("%-60s%s%60s", firstPart, secondPart, thirdPart);
+            for (int i = 0; i < sz; i++) {
+                StringBuilder stb = new StringBuilder();
+                stb.append(model.SearchResult.getInstance().getUnique_first_names().get(i));
+                stb.append(" ");
+                stb.append(model.SearchResult.getInstance().getUnique_last_names().get(i));
+                String firstPart = stb.toString();
+                stb = new StringBuilder();
+                stb.append(" Debt value: ");
+                stb.append(model.SearchResult.getInstance().getSum_debts().get(i));
+                String secondPart = stb.toString();
+                stb = new StringBuilder();
 
-            patientList.getItems().add(formatted);
-            //Node n = (Node) patientList.getItems().get(patientList.getItems().size() - 1);
-            //n.setOnMouseClicked();
+                stb.append("Patient id: ");
+                stb.append(model.SearchResult.getInstance().getUnique_ids().get(i));
+                String thirdPart = stb.toString();
+
+                String formatted = String.format("%-60s%s%60s", firstPart, secondPart, thirdPart);
+
+                patientList.getItems().add(formatted);
+                //Node n = (Node) patientList.getItems().get(patientList.getItems().size() - 1);
+                //n.setOnMouseClicked();
+            }
         }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        sendSeachQuery(null, null, null, "0");
-        updateListView();
+        sendSearchQuery(null, null, null, "0");
+        updateListView(false);
         patientList.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {

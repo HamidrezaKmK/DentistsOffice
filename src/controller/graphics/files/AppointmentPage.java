@@ -33,10 +33,13 @@ public class AppointmentPage implements Initializable, EditablePage {
     private Label wholeAmountLabel;
 
     @FXML
-    private Label appointmentFromDateAndTime;
+    private Label appointmentDateLabel;
 
     @FXML
-    private Label appointmentToDateAndTime;
+    private Label appointmentFromTimeLabel;
+
+    @FXML
+    private Label appointmentToTimeLabel;
 
     @FXML
     private Button editButton;
@@ -57,11 +60,9 @@ public class AppointmentPage implements Initializable, EditablePage {
     }
 
     private void submit() {
-        // TODO: ref1 and ref2 should be removed
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.EDIT_APPOINTMENT_PAGE, Integer.toString(patientID), Integer.toString(pageNo),
-                    treatmentSummaryTextArea.getText(), nextAppointmentDateTextField.getText(), wholeAmountLabel.getText(), paidAmountTextField.getText(),
-                    ref1, ref2);
+                    treatmentSummaryTextArea.getText(), nextAppointmentDateTextField.getText(), wholeAmountLabel.getText(), paidAmountTextField.getText());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,15 +97,9 @@ public class AppointmentPage implements Initializable, EditablePage {
         paidAmountTextField.setText(inst.getPaid_payment_amount());
         wholeAmountLabel.setText(inst.getWhole_payment_amount());
 
-        // TODO: this should be removed
-        ref1 = inst.getOccupied_time_slot_date_ref();
-        ref2 = inst.getOccupied_time_slot_begin_time_ref();
+        appointmentDateLabel.setText(inst.getDate());
+        appointmentFromTimeLabel.setText(inst.getFrom());
+        appointmentToTimeLabel.setText(inst.getTo());
 
-        // TODO: set appointment from and to dates
-//        @FXML
-//        private Label appointmentFromDateAndTime;
-//
-//        @FXML
-//        private Label appointmentToDateAndTime;
     }
 }

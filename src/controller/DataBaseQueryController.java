@@ -188,7 +188,7 @@ public class DataBaseQueryController {
                     break;
 
                 case REFRESH_REFERRALS_WITHOUT_APPOINTMENT_PAGE:
-                    //
+                    // args: {"patientID"}
                     refreshReferralWithNoAppointmentPage(args);
                     break;
             }
@@ -950,6 +950,9 @@ public class DataBaseQueryController {
         String addPageQuery = "insert into paget values(" +
                 args[0] + ", " + args[1] + ", '" + args[8] + "');";
         Statement stmt = null;
+
+        System.out.println(addPageQuery);
+
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(addPageQuery);
@@ -984,6 +987,9 @@ public class DataBaseQueryController {
         }
         query += ");";
         Statement stmt2 = null;
+
+        System.out.println(query);
+
         try {
             stmt2 = current_connection.createStatement();
             stmt2.executeUpdate(query);

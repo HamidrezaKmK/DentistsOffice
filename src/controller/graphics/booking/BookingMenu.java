@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -44,6 +45,39 @@ public class BookingMenu implements Initializable {
 
     @FXML
     private TextField selectedTimeEndTimeTextField;
+
+    @FXML
+    private TextField enterOccupiedTimeDate = new TextField();
+
+    @FXML
+    private TextField enterOccupiedTimeBeginTime = new TextField();
+
+    @FXML
+    private TextField enterOccupiedTimeEndTime = new TextField();
+
+    @FXML
+    private TextArea enterOccupiedTimeReason = new TextArea();
+
+    @FXML
+    private TextField enterReferralTimePatientID = new TextField();
+
+    @FXML
+    private void addTimeToScheduleButtonPress(ActionEvent event) {
+        // TODO: add time to schedule
+
+    }
+
+    @FXML
+    private void cancelAppointmentButtonPress(ActionEvent event) {
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.CANCEL_APPOINTMENT,
+                    selectedTimeDateTextField.getText(), selectedTimeBeginTimeTextField.getText(), "0");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        scheduleQueryEnterButtonPress(event);
+    }
+
 
     @FXML
     private void scheduleQueryEnterButtonPress(ActionEvent event) {
@@ -91,11 +125,18 @@ public class BookingMenu implements Initializable {
         System.out.println("Connection successfully created!");
         scheduleQueryFromDateTextField.setText("2021-01-02 09:00:00");
         scheduleQueryToDateTextField.setText("2021-02-21 09:00:00");
+        refreshCurrentSchedule();
     }
 
     public void selectOccupiedTimeOnTimeLine(TimeInterval interval) {
         selectedTimeDateTextField.setText(interval.beginDate.toString());
         selectedTimeBeginTimeTextField.setText(interval.beginTime.toString());
         selectedTimeEndTimeTextField.setText(interval.endTime.toString());
+    }
+
+    public void refreshCurrentSchedule() {
+        // TODO: this query should consider database date not local date
+        // TODO: this query should be implemented
+
     }
 }
