@@ -26,14 +26,10 @@ public class SearchResult {
     }
 
     public void clear() {
-        this.firstNames = null;
-        this.lastNames = null;
-        this.patientIds = null;
-        this.debt = null;
-        this.unique_last_names = null;
-        this.unique_first_names = null;
-        this.sum_debts = null;
-        this.unique_ids = null;
+        this.firstNames = new ArrayList<>();
+        this.lastNames = new ArrayList<>();
+        this.patientIds = new ArrayList<>();
+        this.debt = new ArrayList<>();
     }
 
     public ArrayList<String> getFirstNames() {
@@ -69,6 +65,11 @@ public class SearchResult {
     }
 
     public void sumDebts() {
+            this.unique_last_names = new ArrayList<>();
+            this.unique_first_names = new ArrayList<>();
+            this.sum_debts = new ArrayList<>();
+            this.unique_ids = new ArrayList<>();
+
             HashMap<Integer, ArrayList<Integer>> debts = new HashMap<>();
             HashMap<Integer, String> id_name = new HashMap<>();
             HashMap<Integer, String> id_last_name = new HashMap<>();
