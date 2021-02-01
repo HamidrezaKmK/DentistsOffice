@@ -10,8 +10,8 @@ public class UserInterface {
     public static void main(String[] args) throws Exception {
         DataBaseQueryController dbcontroller = new DataBaseQueryController();
         dbcontroller.setUsername("postgres");
-        dbcontroller.setPassword("dibimibi");
-        dbcontroller.setUrl("jdbc:postgresql://localhost:5432/DentistOfficeDB");
+        dbcontroller.setPassword("kian");
+        dbcontroller.setUrl("jdbc:postgresql://localhost:5432/kian");
         dbcontroller.connect();
         System.out.println("Connection successfully created!");
 

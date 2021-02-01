@@ -1,4 +1,4 @@
- PageNo. should be consequtive
+ PageNo. should be consecutive
 [DONE] PersonalInfoPage number should be '1'
 
 

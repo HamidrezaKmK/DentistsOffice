@@ -10,8 +10,9 @@ public class AppointmentPage {
     private String next_appointment_date;
     private String whole_payment_amount;
     private String paid_payment_amount;
-    private String occupied_time_slot_date_ref;
-    private String occupied_time_slot_begin_time_ref;
+    private String date;
+    private String from;
+    private String to;
 
     public static AppointmentPage getInstance() {
         if (singleInstance == null)
@@ -26,12 +27,9 @@ public class AppointmentPage {
         this.next_appointment_date = null;
         this.whole_payment_amount = null;
         this.paid_payment_amount = null;
-        this.occupied_time_slot_date_ref = null;
-        this.occupied_time_slot_begin_time_ref = null;
-    }
-
-    public static AppointmentPage getSingleInstance() {
-        return singleInstance;
+        this.date = null;
+        this.from = null;
+        this.to = null;
     }
 
     public static void setSingleInstance(AppointmentPage singleInstance) {
@@ -86,19 +84,27 @@ public class AppointmentPage {
         this.paid_payment_amount = paid_payment_amount;
     }
 
-    public String getOccupied_time_slot_date_ref() {
-        return occupied_time_slot_date_ref;
+    public String getDate() {
+        return date;
     }
 
-    public void setOccupied_time_slot_date_ref(String occupied_time_slot_date_ref) {
-        this.occupied_time_slot_date_ref = occupied_time_slot_date_ref;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public String getOccupied_time_slot_begin_time_ref() {
-        return occupied_time_slot_begin_time_ref;
+    public String getFrom() {
+        return from;
     }
 
-    public void setOccupied_time_slot_begin_time_ref(String occupied_time_slot_begin_time_ref) {
-        this.occupied_time_slot_begin_time_ref = occupied_time_slot_begin_time_ref;
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 }
