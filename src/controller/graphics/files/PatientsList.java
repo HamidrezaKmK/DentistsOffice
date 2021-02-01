@@ -1,6 +1,7 @@
 package controller.graphics.files;
 
 import controller.DataBaseQueryController;
+import controller.graphics.FXMLLoadersCommunicator;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import model.QueryType;
 import view.FxmlFileLoader;
 import view.files.FilesGUI;
 
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -110,10 +112,18 @@ public class PatientsList implements Initializable {
             @Override
             public void handle(MouseEvent click) {
                 if (click.getClickCount() == 2) {
-                    String currentItemSelected = patientList.getSelectionModel().getSelectedItem().toString();
-                    // TODO: send query to select file
+                    int currentItemSelected = patientList.getSelectionModel().getSelectedIndex();
+                    int patientID = model.SearchResult.getInstance().getPatientIds().get(currentItemSelected);
+                    // send query to select file
+                    try {
+                        DataBaseQueryController.getInstance().handleQuery(QueryType.REFRESH_FILE_SUMMARY, Integer.toString(patientID));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     FxmlFileLoader object = new FxmlFileLoader();
                     Pane view = object.getPage("PersonalFile", view.files.FilesGUI.class);
+                    ((PersonalFile) FXMLLoadersCommunicator.getLoader("PersonalFile").getController()).setPatientIDLabel(patientID);
+                    ((PersonalFile) FXMLLoadersCommunicator.getLoader("PersonalFile").getController()).refreshFirstPage();
                     mainPane.getChildren().clear();
                     mainPane.getChildren().add(view);
                 }

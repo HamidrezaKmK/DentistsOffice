@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class AppointmentPage implements Initializable, EditablePage {
+    int pageNo;
+
     @FXML
     private TextArea treatmentSummaryTextArea;
 
@@ -54,5 +56,10 @@ public class AppointmentPage implements Initializable, EditablePage {
     public void initialize(URL location, ResourceBundle resources) {
         addComponents(Arrays.asList(treatmentSummaryTextArea, nextAppointmentDateTextField, paidAmountTextField));
         switchEditing(false);
+    }
+
+    @Override
+    public void setPageNo(int pageNo) {
+        this.pageNo = pageNo;
     }
 }

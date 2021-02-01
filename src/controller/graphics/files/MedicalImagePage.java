@@ -1,6 +1,7 @@
 package controller.graphics.files;
 
 import controller.graphics.EditablePage;
+import controller.graphics.FXMLLoadersCommunicator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,6 +14,8 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class MedicalImagePage implements Initializable, EditablePage {
+
+    int pageNo;
 
     @FXML
     private TextArea explanationTextArea;
@@ -46,5 +49,14 @@ public class MedicalImagePage implements Initializable, EditablePage {
         addComponents(Arrays.asList(explanationTextArea, imageTypeChoiceBox));
         switchEditing(false);
         // TODO: query to retrieve medical image page
+    }
+
+    @Override
+    public void setPageNo(int pageNo) {
+        this.pageNo = pageNo;
+    }
+
+    private String getPatinetID() {
+        return ((PersonalFile) FXMLLoadersCommunicator.getLoader("PersonalFile").getController()).getPatientID();
     }
 }

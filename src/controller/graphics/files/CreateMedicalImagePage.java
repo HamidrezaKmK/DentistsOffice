@@ -43,5 +43,6 @@ public class CreateMedicalImagePage implements Initializable {
         imageTypeChoiceBox.getItems().add("CT-Scan");
         imageTypeChoiceBox.getItems().add("OPG");
         imageTypeChoiceBox.getItems().add("Radiographic-Image");
+
     }
 }

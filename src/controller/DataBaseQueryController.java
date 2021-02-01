@@ -583,9 +583,14 @@ public class DataBaseQueryController {
         String query_on_medicalimagepaget = "select * from medicalimagepaget\nwhere patient_id = " + id + " and page_no = " +
                 pn + ";";
         Statement stmt = null;
+        System.out.println(pn);
+
         try {
             stmt = current_connection.createStatement();
             if (pn.equals("1")) {
+                System.out.println(query_on_personalinfopaget);
+
+
                 ResultSet rs = stmt.executeQuery(query_on_personalinfopaget);
                 model.PersonalInfoPage.getInstance().clear();
                 while (rs.next()) {
