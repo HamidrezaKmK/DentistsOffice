@@ -105,4 +105,20 @@ public class SearchResult {
     public void setSum_debts(ArrayList<Integer> sum_debts) {
         this.sum_debts = sum_debts;
     }
+
+    public ArrayList<String> getUnique_first_names() {
+        return unique_first_names;
+    }
+
+    public void setUnique_first_names(ArrayList<String> unique_first_names) {
+        this.unique_first_names = unique_first_names;
+    }
+
+    public ArrayList<String> getUnique_last_names() {
+        return unique_last_names;
+    }
+
+    public void setUnique_last_names(ArrayList<String> unique_last_names) {
+        this.unique_last_names = unique_last_names;
+    }
 }
