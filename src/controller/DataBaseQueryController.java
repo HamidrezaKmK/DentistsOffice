@@ -1175,49 +1175,60 @@ public class DataBaseQueryController {
     // args: {"id"}
     private void refreshReferralWithNoAppointmentPage(String[] args) throws SQLException {
         String id = args[0];
-        String query_on_ref = "select * from referraloccupiedtimeslotst\n" +
-                "where patient_id = " + id + ";";
 
-        String query_on_ap = "select occupied_time_slot_date_ref, occupied_time_slot_begin_time_ref from appointmentpaget\n" +
-                "where patient_id = " + id + ";";
+        String main_query = "select *\n" +
+                "\tfrom referraloccupiedtimeslotst as T1\n" +
+                "    where T1.patient_id = 1 and not exists(\n" +
+                "        select *\n" +
+                "        from appointmentPageT as T2\n" +
+                "        where T2.occupied_time_slot_date_ref = T1.date and\n" +
+                "        \tT2.occupied_time_slot_begin_time_ref = T1.begin_time and\n" +
+                "        T2.patient_id = T1.patient_id);";
+
+
+//        String query_on_ref = "select * from referraloccupiedtimeslotst\n" +
+//                "where patient_id = " + id + ";";
+//
+//        String query_on_ap = "select occupied_time_slot_date_ref, occupied_time_slot_begin_time_ref from appointmentpaget\n" +
+//                "where patient_id = " + id + ";";
 
         ArrayList<String> ref_dates = new ArrayList<>();
         ArrayList<String> ref_begin_times = new ArrayList<>();
         ArrayList<String> ref_reasons = new ArrayList<>();
 
-        ArrayList<String> ap_dates = new ArrayList<>();
-        ArrayList<String> ap_begin_times = new ArrayList<>();
+//        ArrayList<String> ap_dates = new ArrayList<>();
+//        ArrayList<String> ap_begin_times = new ArrayList<>();
 
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query_on_ref);
+            ResultSet rs = stmt.executeQuery(main_query);
             while (rs.next()) {
                 ref_dates.add(rs.getString("date"));
                 ref_begin_times.add(rs.getString("begin_time"));
                 ref_reasons.add(rs.getString("reason"));
             }
 
-            stmt = current_connection.createStatement();
-            ResultSet rs2 = stmt.executeQuery(query_on_ap);
-            while (rs.next()) {
-                ap_dates.add(rs2.getString("occupied_time_slots_date_ref"));
-                ap_begin_times.add(rs2.getString("occupied_time_slot_begin_time_ref"));
-            }
-
-            ArrayList<Integer> toRemoveIndices = new ArrayList<>();
-            for (int i = 0; i < ref_begin_times.size(); i++) {
-                for (int j = 0; j < ap_begin_times.size(); j++) {
-                    if (ref_dates.get(i).equals(ap_dates.get(j)) && ref_begin_times.get(i).equals(ap_begin_times.get(j))) {
-                        toRemoveIndices.add(i);
-                    }
-                }
-            }
-            for(int index : toRemoveIndices) {
-                ref_dates.remove(index);
-                ref_begin_times.remove(index);
-                ref_reasons.remove(index);
-            }
+//            stmt = current_connection.createStatement();
+//            ResultSet rs2 = stmt.executeQuery(query_on_ap);
+//            while (rs.next()) {
+//                ap_dates.add(rs2.getString("occupied_time_slots_date_ref"));
+//                ap_begin_times.add(rs2.getString("occupied_time_slot_begin_time_ref"));
+//            }
+//
+//            ArrayList<Integer> toRemoveIndices = new ArrayList<>();
+//            for (int i = 0; i < ref_begin_times.size(); i++) {
+//                for (int j = 0; j < ap_begin_times.size(); j++) {
+//                    if (ref_dates.get(i).equals(ap_dates.get(j)) && ref_begin_times.get(i).equals(ap_begin_times.get(j))) {
+//                        toRemoveIndices.add(i);
+//                    }
+//                }
+//            }
+//            for(int index : toRemoveIndices) {
+//                ref_dates.remove(index);
+//                ref_begin_times.remove(index);
+//                ref_reasons.remove(index);
+//            }
             model.ReferralOccupiedTimeSlots.getInstance().clear();
             model.ReferralOccupiedTimeSlots.getInstance().setBegin_time(ref_begin_times);
             model.ReferralOccupiedTimeSlots.getInstance().setDate(ref_dates);
