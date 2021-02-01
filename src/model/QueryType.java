@@ -32,6 +32,7 @@ public enum QueryType {
     ADD_OCCUPIED_TIME_SLOT,
     REFRESH_OCCUPIED_TIME_SLOT,
 
+
     //
     REFRESH_SCHEDULE_IN_TIME_INTERVAL
 }

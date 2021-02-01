@@ -15,6 +15,8 @@ public class SearchResult {
 
     private ArrayList<Integer> unique_ids = new ArrayList<>();
     private ArrayList<Integer> sum_debts = new ArrayList<>();
+    private ArrayList<String> unique_first_names = new ArrayList<>();
+    private ArrayList<String> unique_last_names = new ArrayList<>();
 
 
     public static SearchResult getInstance() {
@@ -64,8 +66,12 @@ public class SearchResult {
 
     public void sumDebts() {
             HashMap<Integer, ArrayList<Integer>> debts = new HashMap<>();
+            HashMap<Integer, String> id_name = new HashMap<>();
+            HashMap<Integer, String> id_last_name = new HashMap<>();
             for (int i = 0; i < patientIds.size(); i++) {
                 debts.putIfAbsent(patientIds.get(i), new ArrayList<Integer>());
+                id_name.putIfAbsent(patientIds.get(i), firstNames.get(i));
+                id_last_name.putIfAbsent(patientIds.get(i), lastNames.get(i));
                 debts.get(patientIds.get(i)).add(debt.get(i));
             }
             for (Integer i : debts.keySet()) {
@@ -78,6 +84,9 @@ public class SearchResult {
                     sum += a.get(i);
                 }
                 sum_debts.add(sum);
+
+                unique_first_names.add(id_name.get(unique_ids.get(i)));
+                unique_last_names.add(id_last_name.get(unique_ids.get(i)));
             }
     }
 
