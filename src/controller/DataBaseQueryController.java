@@ -148,6 +148,8 @@ public class DataBaseQueryController {
                     break;
 
                 case CREATE_NEW_WEEKLY_SCHEDULE:
+                    // args: {"from_date", "to_date}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
                     handleCreateNewWeeklySchedule(args);
                     break;
 
@@ -420,7 +422,25 @@ public class DataBaseQueryController {
     private void handleAddNewAvailableTime(String[] args) throws Exception {
     }
 
+
+    // args: {"from_date", "to_date}
+    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
     private void handleCreateNewWeeklySchedule(String[] args) throws Exception {
+        String from = args[0];
+        String to = args[1];
+        String query = "insert into weeklyschedulet values('" + from + "', '" + to + "');";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+           stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     private void handleAddReferralTime(String[] args) throws Exception {
