@@ -114,16 +114,11 @@ public class PatientsList implements Initializable {
                 if (click.getClickCount() == 2) {
                     int currentItemSelected = patientList.getSelectionModel().getSelectedIndex();
                     int patientID = model.SearchResult.getInstance().getPatientIds().get(currentItemSelected);
-                    // send query to select file
-                    try {
-                        DataBaseQueryController.getInstance().handleQuery(QueryType.REFRESH_FILE_SUMMARY, Integer.toString(patientID));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     FxmlFileLoader object = new FxmlFileLoader();
                     Pane view = object.getPage("PersonalFile", view.files.FilesGUI.class);
                     ((PersonalFile) FXMLLoadersCommunicator.getLoader("PersonalFile").getController()).setPatientIDLabel(patientID);
                     ((PersonalFile) FXMLLoadersCommunicator.getLoader("PersonalFile").getController()).refreshFirstPage();
+                    ((PersonalFile) FXMLLoadersCommunicator.getLoader("PersonalFile").getController()).refereshPagesList();
                     mainPane.getChildren().clear();
                     mainPane.getChildren().add(view);
                 }

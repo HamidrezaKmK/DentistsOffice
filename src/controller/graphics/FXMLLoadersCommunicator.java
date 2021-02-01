@@ -18,4 +18,8 @@ public class FXMLLoadersCommunicator {
     public static FXMLLoader getLoader(String loaderName) {
         return fxmlLoaders.get(loaderName);
     }
+
+    public static boolean hasLoader(String loaderName) {
+        return fxmlLoaders.containsKey(loaderName);
+    }
 }

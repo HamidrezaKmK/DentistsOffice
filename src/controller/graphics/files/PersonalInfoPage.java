@@ -88,7 +88,7 @@ public class PersonalInfoPage implements Initializable, EditablePage {
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.EDIT_PERSONAL_INFO, Integer.toString(patientID),
                     "1", generalMedicalRecordsTextArea.getText(),
-                    dentalRecordsTextArea.getText(), sensitiveMedicineTextArea.getText(), doesSmokeCheckBox.isSelected() ? "TRUE" : "FALSE",
+                    dentalRecordsTextArea.getText(), sensitiveMedicineTextArea.getText(), doesSmokeCheckBox.isSelected() ? "YES" : "NO",
                     "null");
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,12 +158,15 @@ public class PersonalInfoPage implements Initializable, EditablePage {
         educationChoiceBox.setValue(inst.getEducation());
         homeAddressTextArea.setText(inst.getHomeAddr());
         workAddressTextArea.setText(inst.getWorkAddr());
-        model.PersonalInfoPage inst1 = model.PersonalInfoPage.getInstance();
-        generalMedicalRecordsTextArea.setText(inst1.getGeneral_medical_records());
-        dentalRecordsTextArea.setText(inst1.getDental_records());
-        sensitiveMedicineTextArea.setText(inst1.getSensitive_medicine());
-        doesSmokeCheckBox.setSelected(inst1.getDoes_smoke().equals("TRUE"));
         titleFirstNameLastNameLabel.setText(inst.getFirst_name() + " " + inst.getLast_name());
         patientIDLabel.setText(patientID);
+
+        model.PersonalInfoPage inst1 = model.PersonalInfoPage.getInstance();
+        if (inst1.getDental_records() != null) {
+            generalMedicalRecordsTextArea.setText(inst1.getGeneral_medical_records());
+            dentalRecordsTextArea.setText(inst1.getDental_records());
+            sensitiveMedicineTextArea.setText(inst1.getSensitive_medicine());
+            doesSmokeCheckBox.setSelected(inst1.getDoes_smoke().equals("t"));
+        }
     }
 }

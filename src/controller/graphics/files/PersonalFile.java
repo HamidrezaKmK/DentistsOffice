@@ -17,6 +17,7 @@ import model.QueryType;
 import view.FxmlFileLoader;
 import view.files.FilesGUI;
 
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -40,11 +41,22 @@ public class PersonalFile implements Initializable {
     private Button addNewPageButton;
 
     @FXML
-    private Button deletePageButton;
-
-    @FXML
     private void deletePageButtonPress(ActionEvent event) {
-        // TODO: query to delete page
+        if (getPageCount() == 1) {
+            return;
+        }
+
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.DELETE_PAGE, getPatientID(), Integer.toString(getPageCount()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        refereshPagesList();
+        FxmlFileLoader object = new FxmlFileLoader();
+        Pane view = object.getPage("PersonalInfoPage", FilesGUI.class);
+        filePagePane.getChildren().clear();
+        filePagePane.getChildren().add(view);
+        ((PersonalInfoPage) FXMLLoadersCommunicator.getLoader("PersonalInfoPage").getController()).refreshPage("1", getPatientID());
     }
 
     @FXML
@@ -69,11 +81,6 @@ public class PersonalFile implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-
-
-        refereshPagesList();
-
-        // select page
         pagesList.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
@@ -87,13 +94,19 @@ public class PersonalFile implements Initializable {
                     System.out.println("CLICKED ON! " + selected);
                     if (Pattern.matches("Personal Info.*", selected)) {
                         view = object.getPage("PersonalInfoPage", view.files.FilesGUI.class);
+                        ((PersonalInfoPage) FXMLLoadersCommunicator.getLoader("PersonalInfoPage").getController()).refreshPage("1", getPatientID());
                     } else if (Pattern.matches("Appointment page.*", selected)) {
                         view = object.getPage("AppointmentPage", view.files.FilesGUI.class);
-                        ((AppointmentPage) FXMLLoadersCommunicator.getLoader("AppointmentPage").getController()).setPageNo(selectedPageNo);
-
+                        AppointmentPage appointmentPage = FXMLLoadersCommunicator.getLoader("AppointmentPage").getController();
+                        appointmentPage.setPageNo(selectedPageNo);
+                        appointmentPage.setPatientID(getPatientID());
+                        appointmentPage.refreshPage();
                     } else if (Pattern.matches("Medical image page.*", selected)) {
                         view = object.getPage("MedicalImagePage", view.files.FilesGUI.class);
-                        ((MedicalImagePage) FXMLLoadersCommunicator.getLoader("MedicalImagePage").getController()).setPageNo(selectedPageNo);
+                        MedicalImagePage medicalImagePage = FXMLLoadersCommunicator.getLoader("MedicalImagePage").getController();
+                        medicalImagePage.setPageNo(selectedPageNo);
+                        medicalImagePage.setPatientID(getPatientID());
+                        medicalImagePage.refreshPage();
                     }
 
                     if (view != null) {
@@ -109,7 +122,13 @@ public class PersonalFile implements Initializable {
         patientIDLabel.setText(Integer.toString(id));
     }
 
-    private void refereshPagesList() {
+    public void refereshPagesList() {
+        pages.clear();
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.REFRESH_FILE_SUMMARY, getPatientID());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         int pgNum = 1;
         while (true) {
             if (pgNum == 1) {
@@ -123,17 +142,27 @@ public class PersonalFile implements Initializable {
             }
             pgNum++;
         }
+        pagesList.getItems().clear();
         pagesList.getItems().addAll(pages);
     }
 
-    public void addPage(String pageName) {
-        System.out.println("HOWDY FROM THE INSIDE");
-        pagesList.setDisable(false);
-        pagesList.getItems().remove("new page...");
-        pagesList.getItems().add(pageName);
-        System.out.println(pagesList.getItems());
-        addNewPageButton.setDisable(false);
+    public int getPageCount() {
+        return pages.size();
     }
+
+    public void pageAdded() {
+        addNewPageButton.setDisable(false);
+        pagesList.setDisable(false );
+    }
+
+//    public void addPage(String pageName) {
+//        System.out.println("HOWDY FROM THE INSIDE");
+//        pagesList.setDisable(false);
+//        pagesList.getItems().remove("new page...");
+//        pagesList.getItems().add(pageName);
+//        System.out.println(pagesList.getItems());
+//        addNewPageButton.setDisable(false);
+//    }
 
     public String getPatientID() {
         return patientIDLabel.getText();

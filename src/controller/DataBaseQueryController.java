@@ -821,6 +821,9 @@ public class DataBaseQueryController {
         }
         query += "\nwhere patient_id = " + args[0] + " and page_no = " + args[1] + ";";
 
+        System.out.println(query);
+
+
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
@@ -896,6 +899,7 @@ public class DataBaseQueryController {
     private void addMedicalImagePage(String[] args) throws Exception {
         String addPageQuery = "insert into paget values(" +
                 args[0] + ", " + args[1] + ", '" + args[5] + "');";
+        System.out.println(addPageQuery);
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
@@ -930,6 +934,9 @@ public class DataBaseQueryController {
             }
         }
         query += ");";
+        System.out.println("----");
+        System.out.println(query);
+        System.out.println("----");
         Statement stmt2 = null;
         try {
             stmt2 = current_connection.createStatement();
