@@ -154,6 +154,9 @@ public class DataBaseQueryController {
                     break;
 
                 case ADD_NEW_AVAILABLE_TIME:
+                    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "duration"}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                    // Time format: HH:MM:SS
                     handleAddNewAvailableTime(args);
                     break;
 
@@ -419,7 +422,23 @@ public class DataBaseQueryController {
     }
 
 
+    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "duration"}
+    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+    // Time format: HH:MM:SS
     private void handleAddNewAvailableTime(String[] args) throws Exception {
+        String query = "insert into availabletimeslotst values('" +
+                args[0] + "', '" + args[1] + "', '" + args[2] + "', '" + args[3] + "');";
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
 
