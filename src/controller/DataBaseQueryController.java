@@ -140,6 +140,9 @@ public class DataBaseQueryController {
                     break;
 
                 case CANCEL_APPOINTMENT:
+                    // args: {"date", "begin_time"}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                    // Time format: HH:MM:SS
                     handleCancelAppointment(args);
                     break;
 
@@ -513,7 +516,29 @@ public class DataBaseQueryController {
         }
     }
 
+    // args: {"date", "begin_time"}
+    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+    // Time format: HH:MM:SS
     private void handleCancelAppointment(String[] args) throws Exception {
+        String date = args[0];
+        String begin_time = args[1];
+        String del_occ_query = "delete from occupiedtimeslotst \n" +
+                "where date = '" + date + "' and begin_time = '" + begin_time + "';";
+        String del_referral_query = "delete from referraloccupiedtimeslotst\n" +
+                "where date = '" + date + "' and begin_time = '" + begin_time + "';";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(del_occ_query);
+            stmt.executeUpdate(del_referral_query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
 
