@@ -11,12 +11,15 @@ import javafx.scene.control.*;
 import model.Patient;
 import model.QueryType;
 
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class PersonalInfoPage implements Initializable, EditablePage {
+
+    int patientID;
 
     @FXML
     private TextField firstNameTextField = new TextField();
@@ -74,10 +77,21 @@ public class PersonalInfoPage implements Initializable, EditablePage {
             switchEditing(true);
             editPersonalInfoButton.setText("Submit");
         } else if (editPersonalInfoButton.getText().equals("Submit")){
-            // TODO : query to edit personal info
-            // TODO : query to get personal info again
+            submitPage();
+            refreshPage("1", Integer.toString(patientID));
             editPersonalInfoButton.setText("Edit");
             switchEditing(false);
+        }
+    }
+
+    private void submitPage() {
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.EDIT_PERSONAL_INFO, Integer.toString(patientID),
+                    "1", generalMedicalRecordsTextArea.getText(),
+                    dentalRecordsTextArea.getText(), sensitiveMedicineTextArea.getText(), doesSmokeCheckBox.isSelected() ? "TRUE" : "FALSE",
+                    "null");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -94,8 +108,17 @@ public class PersonalInfoPage implements Initializable, EditablePage {
                 "Other"
         ));
 
-        addComponents(Arrays.asList(firstNameTextField, lastNameTextField, ageTextField, genderChoiceBox,
-                occupationTextField, referenceTextField, educationChoiceBox, homeAddressTextArea, workAddressTextArea,
+        firstNameTextField.setEditable(false);
+        lastNameTextField.setEditable(false);
+        ageTextField.setEditable(false);
+        genderChoiceBox.setDisable(true);
+        occupationTextField.setEditable(false);
+        referenceTextField.setEditable(false);
+        educationChoiceBox.setDisable(true);
+        homeAddressTextArea.setEditable(false);
+        workAddressTextArea.setEditable(false);
+
+        addComponents(Arrays.asList(
                 generalMedicalRecordsTextArea, dentalRecordsTextArea, sensitiveMedicineTextArea, doesSmokeCheckBox
                 ));
         switchEditing(false);
@@ -111,9 +134,16 @@ public class PersonalInfoPage implements Initializable, EditablePage {
 
     public void refreshPage(String pageNo, String patientID) {
         setPageNo(Integer.valueOf(pageNo));
+        this.patientID = Integer.valueOf(patientID);
 
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.REFRESH_PATIENT, patientID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.REFRESH_PAGE, patientID, "1");
         } catch (Exception e) {
             e.printStackTrace();
         }

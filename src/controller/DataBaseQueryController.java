@@ -735,6 +735,8 @@ public class DataBaseQueryController {
         }
         query += "\nwhere patient_id = " + args[0] + " and page_no = 1";
 
+        System.out.println(query);
+
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
