@@ -1,5 +1,5 @@
-PageNo. should be consequtive
-PersonalInfoPage number should be '1'
+ PageNo. should be consequtive
+[DONE] PersonalInfoPage number should be '1'
 
 
 [DONE] PaidAmount <= wholeAmount
@@ -7,6 +7,9 @@ PersonalInfoPage number should be '1'
 OccupiedTime should be in the time interval of the referenced available time
 OccupiedTimes should not intersect
 Occupied time duration should be in the Available time
-Available time should be in the same day
-Available times should not intersect
-Weekly schedules should not intersect
+?? Available time should be in the same day
+ Available times should not intersect
+ Weekly schedules should not intersect
+
+ delete page1!
+ delete pages

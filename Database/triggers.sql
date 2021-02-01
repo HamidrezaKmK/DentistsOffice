@@ -19,6 +19,7 @@ begin
     delete from AppointmentPageT where patient_id = new.patient_id and page_no = new.page_no;
     raise exception 'next appointment date is not after the current appointment date, %', now();
   end if;
+  return null;
 end;
 $$
   language plpgsql;
@@ -56,6 +57,7 @@ begin
             old.occupied_time_slot_begin_time_ref);
     raise exception 'next appointment date is not after the current appointment date, %', now();
   end if;
+  return null;
 end;
 $$
   language plpgsql;
@@ -113,12 +115,12 @@ begin
   begin
     select duration, begin_time
     from AvailableTimeSlotsT
-    where now.available_time_slots_ref_from_date = weekly_schedule_from_date_ref
-      and now.available_time_slots_ref_week_day = day_of_week
-      and now.available_time_slots_ref_begin_time = begin_time into available_time_record;
+    where new.available_time_slots_ref_from_date = weekly_schedule_from_date_ref
+      and new.available_time_slots_ref_week_day = day_of_week
+      and new.available_time_slots_ref_begin_time = begin_time into available_time_record;
 
-    if now.available_time_slots_ref_begin_time > now.begin_time or
-       available_time_record.duration + available_time_record.begin_time < now.begin_time + now.duration then
+    if new.available_time_slots_ref_begin_time > new.begin_time or
+       available_time_record.duration + available_time_record.begin_time < new.begin_time + new.duration then
       delete from OccupiedTimeSlotsT where new.date = date and new.begin_time = begin_time;
       raise exception 'Occupied time in day does not match with the available time %', now();
     end if;
@@ -140,11 +142,11 @@ $$
 declare
   ret_val record;
 begin
-  delete from OccupiedTimeSlots as T1
+  delete from OccupiedTimeSlotsT as T1
   where T1.date = new.date and T1.begin_time = new.begin_time;
   select insert_occupied_time_slots_trigger_function() into ret_val;
   return ret_val;
-end;
+end
 $$ language plpgsql;
 
 create trigger update_occupied_time_slot
@@ -152,3 +154,150 @@ create trigger update_occupied_time_slot
   on OccupiedTimeSlotsT
   for each row
 execute procedure update_occupied_time_slots_trigger_function();
+
+create function personal_info_page_trigger_function()
+    returns trigger as
+$$
+begin
+    if new.page_no != 1 then
+        raise exception 'Personal info page number should be 1 %', now();
+    end if;
+    return null;
+end
+$$ language plpgsql;
+
+create trigger personal_info_page_trigger
+    before update or insert
+    on personalinfopaget
+    for each row
+    execute procedure personal_info_page_trigger_function();
+
+create function page_no_trigger_function()
+    returns trigger as
+$$
+begin
+    if new.page_no != 1 and (1 > (select count() from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no - 1)) then
+        raise exception 'Personal info page number should be 1 %', now();
+    end if;
+    return null;
+end
+$$ language plpgsql;
+
+create trigger page_no_trigger
+    before update or insert
+    on paget
+    for each row
+execute procedure page_no_trigger_function();
+
+
+create function weekly_schedule_trigger_function()
+    returns trigger as
+$$
+begin
+    if (0 < (select count() from weeklyschedulet
+                    where (from_date < new.from_date and new.from_date <= to_date)
+                            or (from_date <= new.to_date and new.to_date <= to_date))) then
+        raise exception 'Weekly schedules should not overlap %', now();
+    end if;
+    return null;
+end
+$$ language plpgsql;
+
+create trigger weekly_schedule_trigger
+    before update or insert
+    on weeklyschedulet
+    for each row
+execute procedure weekly_schedule_trigger_function();
+
+
+create function available_time_trigger_function()
+    returns trigger as
+$$
+begin
+    if (0 < (select count()
+                from availabletimeslotst
+                where weekly_schedule_from_date_ref = new.weekly_schedule_from_date_ref
+                    and day_of_week = new.day_of_week
+                    and (begin_time < new.begin_time and new.begin_time < begin_time + duration
+                        or begin_time < new.begin_time+new.duration and new.begin_time+new.duration < begin_time + duration))) then
+        raise exception 'Available Times should not overlap %', now();
+    end if;
+    return null;
+end
+$$ language plpgsql;
+
+create trigger available_time_trigger
+    before update or insert
+    on availabletimeslotst
+    for each row
+execute procedure available_time_trigger_function();
+
+
+create function delete_page_trigger_function()
+    returns trigger as
+$$
+begin
+    if old.page_no == 1 or (1 <= (select count() from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no + 1)) then
+        raise exception 'Personal info page number should be 1 %', now();
+    end if;
+    return null;
+end
+$$ language plpgsql;
+
+create trigger delete_page_trigger
+    before delete
+    on paget
+    for each row
+execute procedure delete_page_trigger_function();
+
+
+create function page_uniqueness_trigger_function()
+    returns trigger as
+$$
+begin
+    if page_no = 1 then
+        raise exception 'Page number 1 is reserved for Personal info page %', now();
+    end if;
+    if 1 <= (select count() from appointmentpaget where patient_id = new.patient_id and page_no = new.page_no)
+        and 1 <= (select count() from medicalimagepaget where patient_id = new.patient_id and page_no = new.page_no)
+    then
+        raise exception 'There is another page with this number %', now();
+    end if;
+    return null;
+end
+$$ language plpgsql;
+
+create trigger appointment_page_uniqueness_trigger
+    before insert
+    on appointmentpaget
+    for each row
+execute procedure page_uniqueness_trigger_function();
+
+create trigger medical_image_page_uniqueness_trigger
+    before insert
+    on medicalimagepaget
+    for each row
+execute procedure page_uniqueness_trigger_function();
+
+create function update_page_no_trigger_function()
+    returns trigger as
+$$
+begin
+    raise exception 'Page number can not be updated %', now();
+    return null;
+end
+$$ language plpgsql;
+
+create trigger appointment_page_update_trigger
+    before update
+    of page_no
+    on appointmentpaget
+    for each row
+execute function update_page_no_trigger_function();
+
+create trigger medical_image_page_update_trigger
+    before update
+        of page_no
+    on medicalimagepaget
+    for each row
+execute function update_page_no_trigger_function();
