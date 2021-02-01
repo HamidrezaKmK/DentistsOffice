@@ -1,5 +1,6 @@
 package controller.graphics.files;
 
+import controller.DataBaseQueryController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
@@ -16,12 +17,23 @@ public class FilesGUI implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        //
+        DataBaseQueryController dbcontroller = DataBaseQueryController.getInstance();
+        dbcontroller.setUsername("postgres");
+        dbcontroller.setPassword("dibimibi");
+        dbcontroller.setUrl("jdbc:postgresql://localhost:5432/DentistOfficeDB");
+        try {
+            dbcontroller.connect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("Connection successfully created!");
+
+
         FxmlFileLoader object = new FxmlFileLoader();
         Pane view = object.getPage("PatientsList", view.files.FilesGUI.class);
         mainPane.getChildren().add(view);
-
-        //
-
     }
 
 }

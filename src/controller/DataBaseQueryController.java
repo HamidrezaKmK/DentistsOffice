@@ -1,6 +1,6 @@
 package controller;
 
-import com.sun.codemodel.internal.JMod;
+//import com.sun.codemodel.internal.JMod;
 import model.FileTable;
 import model.QueryType;
 import model.Schedule;
@@ -237,6 +237,7 @@ public class DataBaseQueryController {
 
     // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
     // Does: It fills the single instance of SearchResults.
+    // "null" if an argument does not exist
     public void mainSearch(String[] args) throws Exception {
         String in_debt = args[3];
         boolean checked_in_debt = in_debt.equals("1");
@@ -308,6 +309,8 @@ public class DataBaseQueryController {
 
     // mainSearch uses this function.
     private String mainSearchNotInDebt(String[] args) throws Exception {
+
+
         String first_name = args[0];
         String last_name = args[1];
         String patient_id = args[2];
@@ -316,27 +319,19 @@ public class DataBaseQueryController {
         String patient_id_condition = "patient_id = " + patient_id;
 
         String query = "";
-        boolean had_first_name = false;
-        boolean had_last_name = false;
         query = "select patient_id, first_name, last_name from patientt\nwhere ";
+        query += "True";
+
         if (first_name != null) {
-            query += first_name_condition;
-            had_first_name = true;
+            query += " and " + first_name_condition;
         }
         if (last_name != null) {
-            if (had_first_name) {
-                query += " and ";
-            }
-            query += last_name_condition;
-            had_last_name = true;
+            query += "and " + last_name_condition;
         }
         if (patient_id != null) {
-            if (had_last_name || had_first_name) {
-                query += " and ";
-            }
-            query += patient_id_condition;
-            query += ";";
+            query += " and " + patient_id_condition;
         }
+        query += ";";
         return query;
     }
 
@@ -681,9 +676,14 @@ public class DataBaseQueryController {
         String query_on_medicalimagepaget = "select * from medicalimagepaget\nwhere patient_id = " + id + " and page_no = " +
                 pn + ";";
         Statement stmt = null;
+        System.out.println(pn);
+
         try {
             stmt = current_connection.createStatement();
             if (pn.equals("1")) {
+                System.out.println(query_on_personalinfopaget);
+
+
                 ResultSet rs = stmt.executeQuery(query_on_personalinfopaget);
                 model.PersonalInfoPage.getInstance().clear();
                 while (rs.next()) {
@@ -843,6 +843,8 @@ public class DataBaseQueryController {
         }
         query += "\nwhere patient_id = " + args[0] + " and page_no = 1";
 
+        System.out.println(query);
+
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
@@ -927,6 +929,9 @@ public class DataBaseQueryController {
         }
         query += "\nwhere patient_id = " + args[0] + " and page_no = " + args[1] + ";";
 
+        System.out.println(query);
+
+
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
@@ -1002,6 +1007,7 @@ public class DataBaseQueryController {
     private void addMedicalImagePage(String[] args) throws Exception {
         String addPageQuery = "insert into paget values(" +
                 args[0] + ", " + args[1] + ", '" + args[5] + "');";
+        System.out.println(addPageQuery);
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
@@ -1036,6 +1042,9 @@ public class DataBaseQueryController {
             }
         }
         query += ");";
+        System.out.println("----");
+        System.out.println(query);
+        System.out.println("----");
         Statement stmt2 = null;
         try {
             stmt2 = current_connection.createStatement();

@@ -35,7 +35,7 @@
       <VBox layoutX="538.0" layoutY="170.0" prefHeight="323.0" prefWidth="297.0">
          <children>
             <Label text="Education" />
-            <ChoiceBox fx:id="edicationChoiceBox" prefWidth="150.0" />
+            <ChoiceBox fx:id="educationChoiceBox" prefWidth="150.0" />
             <Label text="Home Address:" />
             <TextArea fx:id="homeAddressTextArea" prefHeight="133.0" prefWidth="297.0" />
             <Label text="Work Address:" />

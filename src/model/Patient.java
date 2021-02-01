@@ -8,15 +8,15 @@ public class Patient {
     private static Patient singleInstance = null;
 
     // ArrayLists below, will have just first element (eg: first_name.get(0))
-    private ArrayList<String> first_name = new ArrayList<>();
-    private ArrayList<String> last_name = new ArrayList<>();
-    private ArrayList<String> age = new ArrayList<>();
-    private ArrayList<String> gender = new ArrayList<>();
-    private ArrayList<String> occupation = new ArrayList<>();
-    private ArrayList<String> reference = new ArrayList<>();
-    private ArrayList<String> education = new ArrayList<>();
-    private ArrayList<String> homeAddr = new ArrayList<>();
-    private ArrayList<String> workAddr = new ArrayList<>();
+    private String first_name = null;
+    private String last_name = null;
+    private String age = null;
+    private String gender = null;
+    private String occupation = null;
+    private String reference = null;
+    private String education = null;
+    private String homeAddr = null;
+    private String workAddr = null;
 
 
     public void clear() {
@@ -38,75 +38,75 @@ public class Patient {
         return singleInstance;
     }
 
-    public ArrayList<String> getFirst_name() {
+    public String getFirst_name() {
         return first_name;
     }
 
     public void setFirst_name(ArrayList<String> first_name) {
-        this.first_name = first_name;
+        this.first_name = first_name.get(0);
     }
 
-    public ArrayList<String> getLast_name() {
+    public String getLast_name() {
         return last_name;
     }
 
     public void setLast_name(ArrayList<String> last_name) {
-        this.last_name = last_name;
+        this.last_name = last_name.get(0);
     }
 
-    public ArrayList<String> getAge() {
+    public String getAge() {
         return age;
     }
 
     public void setAge(ArrayList<String> age) {
-        this.age = age;
+        this.age = age.get(0);
     }
 
-    public ArrayList<String> getGender() {
+    public String getGender() {
         return gender;
     }
 
     public void setGender(ArrayList<String> gender) {
-        this.gender = gender;
+        this.gender = gender.get(0);
     }
 
-    public ArrayList<String> getOccupation() {
+    public String getOccupation() {
         return occupation;
     }
 
     public void setOccupation(ArrayList<String> occupation) {
-        this.occupation = occupation;
+        this.occupation = occupation.get(0);
     }
 
-    public ArrayList<String> getEducation() {
+    public String getEducation() {
         return education;
     }
 
     public void setEducation(ArrayList<String> education) {
-        this.education = education;
+        this.education = education.get(0);
     }
 
-    public ArrayList<String> getHomeAddr() {
+    public String getHomeAddr() {
         return homeAddr;
     }
 
     public void setHomeAddr(ArrayList<String> homeAddr) {
-        this.homeAddr = homeAddr;
+        this.homeAddr = homeAddr.get(0);
     }
 
-    public ArrayList<String> getWorkAddr() {
+    public String getWorkAddr() {
         return workAddr;
     }
 
     public void setWorkAddr(ArrayList<String> workAddr) {
-        this.workAddr = workAddr;
+        this.workAddr = workAddr.get(0);
     }
 
-    public ArrayList<String> getReference() {
+    public String getReference() {
         return reference;
     }
 
     public void setReference(ArrayList<String> reference) {
-        this.reference = reference;
+        this.reference = reference.get(0);
     }
 }
