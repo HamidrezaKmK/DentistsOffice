@@ -144,9 +144,9 @@ public class DataBaseQueryController {
                     break;
 
                 case ADD_REFERRAL_TIME:
-
-
-
+                    // args: {"date", "begin_time", "reason", "patient_id"}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                    // Time format: HH:MM:SS
                     handleAddReferralTime(args);
                     break;
 
@@ -493,7 +493,24 @@ public class DataBaseQueryController {
         }
     }
 
+
+    // args: {"date", "begin_time", "reason", "patient_id"}
+    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+    // Time format: HH:MM:SS
     private void handleAddReferralTime(String[] args) throws Exception {
+        String query = "insert into referraloccupiedtimeslotst values('" + args[0] + "', '" +
+                args[1] + "', '" + args[2] + "', '" + args[3] + "');";
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     private void handleCancelAppointment(String[] args) throws Exception {
