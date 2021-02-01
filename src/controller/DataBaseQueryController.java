@@ -144,7 +144,18 @@ public class DataBaseQueryController {
                     break;
 
                 case ADD_REFERRAL_TIME:
+
+
+
                     handleAddReferralTime(args);
+                    break;
+
+                case ADD_OCCUPIED_TIME_SLOT:
+                    // args: {"date","begin_time", "duration", "available_time_slots_ref_from_date",
+                    // "available_time_slots_ref_week_day", "available_time_slots_ref_begin_time"}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                    // Time format: HH:MM:SS
+                    addOccupiedTimeSlot(args);
                     break;
 
                 case CREATE_NEW_WEEKLY_SCHEDULE:
@@ -161,6 +172,7 @@ public class DataBaseQueryController {
                     break;
 
                 case REFRESH_SCHEDULE_IN_TIME_INTERVAL:
+                    // Hamid you wrote this function.
                     handleRefreshScheduleInTimeInterval(args);
                     break;
             }
@@ -428,6 +440,25 @@ public class DataBaseQueryController {
     private void handleAddNewAvailableTime(String[] args) throws Exception {
         String query = "insert into availabletimeslotst values('" +
                 args[0] + "', '" + args[1] + "', '" + args[2] + "', '" + args[3] + "');";
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+    }
+
+
+    // args: {"date","begin_time", "duration", "available_time_slots_ref_from_date",
+    // "available_time_slots_ref_week_day", "available_time_slots_ref_begin_time"}
+    private void addOccupiedTimeSlot(String[] args) throws SQLException {
+        String query = "insert into occupiedtimeslotst values('" + args[0] + "', '" + args[1] + "', '" +
+                args[2] + "', '" + args[3] + "', '" + args[4] + "', '" + args[5] + "');";
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
