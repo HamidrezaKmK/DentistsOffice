@@ -12,6 +12,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import static java.lang.Integer.parseInt;
+
 public class DataBaseQueryController {
 
     private String username;
@@ -140,7 +142,7 @@ public class DataBaseQueryController {
                     break;
 
                 case CANCEL_APPOINTMENT:
-                    // args: {"date", "begin_time"}
+                    // args: {"date", "begin_time", "isWebUser"} (isWebUser is 1 or 0)
                     // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
                     // Time format: HH:MM:SS
                     handleCancelAppointment(args);
@@ -178,11 +180,60 @@ public class DataBaseQueryController {
                     // Hamid you wrote this function.
                     handleRefreshScheduleInTimeInterval(args);
                     break;
+
+                case REFRESH_OCCUPIED_TIME_SLOT:
+                    refreshOccupiedTimeSlots(args);
+                    break;
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);
         }
     }
+
+    // args: {"webUser"} (webUser is 1 or 0)
+    private void refreshOccupiedTimeSlots(String[] args) throws SQLException {
+        String web = args[0];
+        String query = null;
+
+        if (web.equals("1")) {
+            query = "select * from useroccupiedtimeslotst;";
+        } else if (web.equals("0")) {
+            query = "select * from occupiedtimeslotst;";
+        }
+
+        ArrayList<String> date = new ArrayList<>();
+        ArrayList<String> begin_time = new ArrayList<>();
+        ArrayList<String> duration = new ArrayList<>();
+        ArrayList<String> available_time_slots_ref_from_date = new ArrayList<>();
+        ArrayList<String> available_time_slots_ref_week_day = new ArrayList<>();
+        ArrayList<String> available_time_slots_ref_begin_time = new ArrayList<>();
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            if (web.equals("1")) {
+
+                while (rs.next()) {
+
+                }
+            }
+
+
+
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+
+
+
+    }
+
 
     // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
     // Does: It fills the single instance of SearchResults.
@@ -486,7 +537,7 @@ public class DataBaseQueryController {
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
-           stmt.executeUpdate(query);
+            stmt.executeUpdate(query);
         } catch (SQLException e) {
             throw new Error("Problem", e);
         } finally {
@@ -577,6 +628,48 @@ public class DataBaseQueryController {
         }
     }
 
+
+    private String sumTime(String t, String b) {
+        int hr1 = parseInt(t.substring(0, 2));
+        int hr2 = parseInt(b.substring(0, 2));
+        int s1 = parseInt(t.substring(6, 8));
+        int s2 = parseInt(b.substring(6, 8));
+        int m1 = parseInt(t.substring(3, 5));
+        int m2 = parseInt(b.substring(3, 5));
+
+
+        int totalHours = hr1 + hr2;
+        int totalMinutes = m1 + m2;
+        int totalSeconds = s1 + s2;
+        if (totalSeconds >= 60) {
+            totalMinutes ++;
+            totalSeconds = totalSeconds % 60;
+        }
+        if (totalMinutes >= 60) {
+            totalHours ++;
+            totalMinutes = totalMinutes % 60;
+        }
+        if (totalHours > 23) {
+            totalHours = totalHours - 24;
+        }
+        String h = Integer.toString(totalHours);
+        String m = Integer.toString(totalMinutes);
+        String s = Integer.toString(totalSeconds);
+        String z = "0";
+        if (h.length() < 2) {
+            h = z + h;
+        }
+        if (m.length() < 2) {
+            m = z + m;
+        }
+        if (s.length() < 2) {
+            s = z + s;
+        }
+        String sum = h + ":" + m + ":" + s;
+        return sum;
+    }
+
+
     // args: {"id", "page_no"}
     // does: fills the single object of the relative page (eg: AppointmentPage)
     private void handleRefreshPage(String[] args) throws Exception {
@@ -611,8 +704,23 @@ public class DataBaseQueryController {
                     model.AppointmentPage.getInstance().setNext_appointment_date(rs_app.getString("next_appointment_date"));
                     model.AppointmentPage.getInstance().setWhole_payment_amount(rs_app.getString("whole_payment_amount"));
                     model.AppointmentPage.getInstance().setPaid_payment_amount(rs_app.getString("paid_payment_amount"));
-                    model.AppointmentPage.getInstance().setOccupied_time_slot_date_ref(rs_app.getString("occupied_time_slot_date_ref"));
-                    model.AppointmentPage.getInstance().setOccupied_time_slot_begin_time_ref(rs_app.getString("occupied_time_slot_begin_time_ref"));
+                    model.AppointmentPage.getInstance().setDate(rs_app.getString("occupied_time_slot_date_ref"));
+                    model.AppointmentPage.getInstance().setFrom(rs_app.getString("occupied_time_slot_begin_time_ref"));
+                }
+                if (model.AppointmentPage.getInstance().getPage_no() != null) {
+                    String query_on_occ = "select begin_time, duration from occupiedtimeslotst\n" +
+                            "where date = '" + model.AppointmentPage.getInstance().getDate() + "' " +
+                            "and begin_time = '" + model.AppointmentPage.getInstance().getFrom() + "';";
+                    ResultSet rs_occ = stmt.executeQuery(query_on_occ);
+                    model.OccupiedTimeSlots.getInstance().clear();
+                    String d = null;
+                    String from = null;
+                    while (rs_occ.next()) {
+                        from = rs_occ.getString("begin_time");
+                        d = rs_occ.getString("duration");
+                    }
+                    String to = sumTime(from, d);
+                    model.AppointmentPage.getInstance().setTo(to);
                 }
 
                 ResultSet rs_medicalImage = stmt.executeQuery(query_on_medicalimagepaget);
