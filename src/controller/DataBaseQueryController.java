@@ -64,6 +64,12 @@ public class DataBaseQueryController {
                     mainSearch(args);
                     break;
 
+                case REFRESH_PATIENT:
+                    // args: {"id"}
+                    // Does: it fills the single instance of patient.
+                    refreshPatient(args);
+                    break;
+
                 case CREATE_FILE:
                     // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
                     // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate"}
@@ -116,7 +122,7 @@ public class DataBaseQueryController {
                     break;
 
                 case REFRESH_PAGE:
-                    // args: {"id", "page_no"
+                    // args: {"id", "page_no"}
                     // does: fills the single object of the relative page (eg: AppointmentPage)
                     handleRefreshPage(args);
                     break;
@@ -134,22 +140,42 @@ public class DataBaseQueryController {
                     break;
 
                 case CANCEL_APPOINTMENT:
+                    // args: {"date", "begin_time"}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                    // Time format: HH:MM:SS
                     handleCancelAppointment(args);
                     break;
 
                 case ADD_REFERRAL_TIME:
+                    // args: {"date", "begin_time", "reason", "patient_id"}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                    // Time format: HH:MM:SS
                     handleAddReferralTime(args);
                     break;
 
+                case ADD_OCCUPIED_TIME_SLOT:
+                    // args: {"date","begin_time", "duration", "available_time_slots_ref_from_date",
+                    // "available_time_slots_ref_week_day", "available_time_slots_ref_begin_time"}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                    // Time format: HH:MM:SS
+                    addOccupiedTimeSlot(args);
+                    break;
+
                 case CREATE_NEW_WEEKLY_SCHEDULE:
+                    // args: {"from_date", "to_date}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
                     handleCreateNewWeeklySchedule(args);
                     break;
 
                 case ADD_NEW_AVAILABLE_TIME:
+                    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "duration"}
+                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                    // Time format: HH:MM:SS
                     handleAddNewAvailableTime(args);
                     break;
 
                 case REFRESH_SCHEDULE_IN_TIME_INTERVAL:
+                    // Hamid you wrote this function.
                     handleRefreshScheduleInTimeInterval(args);
                     break;
             }
@@ -353,16 +379,161 @@ public class DataBaseQueryController {
     }
 
 
+    // args: {"id"}
+    // Does: it fills the single instance of patient.
+    private void refreshPatient(String[] args) throws SQLException {
+        String id = args[0];
+        String query = "select * from patientt\nwhere patient_id = " + id + ";";
+
+        ArrayList<String> first_name = new ArrayList<>();
+        ArrayList<String> last_name = new ArrayList<>();
+        ArrayList<String> age = new ArrayList<>();
+        ArrayList<String> gender = new ArrayList<>();
+        ArrayList<String> occupation = new ArrayList<>();
+        ArrayList<String> reference = new ArrayList<>();
+        ArrayList<String> education = new ArrayList<>();
+        ArrayList<String> homeAddr = new ArrayList<>();
+        ArrayList<String> workAddr = new ArrayList<>();
+
+        model.Patient.getInstance().clear();
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                first_name.add(rs.getString("first_name"));
+                last_name.add(rs.getString("last_name"));
+                age.add(rs.getString("age"));
+                gender.add(rs.getString("gender"));
+                occupation.add(rs.getString("occupation"));
+                reference.add(rs.getString("reference"));
+                education.add(rs.getString("education"));
+                homeAddr.add(rs.getString("homeaddress"));
+                workAddr.add(rs.getString("workaddress"));
+            }
+
+            model.Patient.getInstance().setFirst_name(first_name);
+            model.Patient.getInstance().setLast_name(last_name);
+            model.Patient.getInstance().setAge(age);
+            model.Patient.getInstance().setEducation(education);
+            model.Patient.getInstance().setOccupation(occupation);
+            model.Patient.getInstance().setGender(gender);
+            model.Patient.getInstance().setReference(reference);
+            model.Patient.getInstance().setHomeAddr(homeAddr);
+            model.Patient.getInstance().setWorkAddr(workAddr);
+
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+    }
+
+
+    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "duration"}
+    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+    // Time format: HH:MM:SS
     private void handleAddNewAvailableTime(String[] args) throws Exception {
+        String query = "insert into availabletimeslotst values('" +
+                args[0] + "', '" + args[1] + "', '" + args[2] + "', '" + args[3] + "');";
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
+
+    // args: {"date","begin_time", "duration", "available_time_slots_ref_from_date",
+    // "available_time_slots_ref_week_day", "available_time_slots_ref_begin_time"}
+    private void addOccupiedTimeSlot(String[] args) throws SQLException {
+        String query = "insert into occupiedtimeslotst values('" + args[0] + "', '" + args[1] + "', '" +
+                args[2] + "', '" + args[3] + "', '" + args[4] + "', '" + args[5] + "');";
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+    }
+
+
+    // args: {"from_date", "to_date}
+    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
     private void handleCreateNewWeeklySchedule(String[] args) throws Exception {
+        String from = args[0];
+        String to = args[1];
+        String query = "insert into weeklyschedulet values('" + from + "', '" + to + "');";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+           stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
+
+    // args: {"date", "begin_time", "reason", "patient_id"}
+    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+    // Time format: HH:MM:SS
     private void handleAddReferralTime(String[] args) throws Exception {
+        String query = "insert into referraloccupiedtimeslotst values('" + args[0] + "', '" +
+                args[1] + "', '" + args[2] + "', '" + args[3] + "');";
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
+    // args: {"date", "begin_time"}
+    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+    // Time format: HH:MM:SS
     private void handleCancelAppointment(String[] args) throws Exception {
+        String date = args[0];
+        String begin_time = args[1];
+        String del_occ_query = "delete from occupiedtimeslotst \n" +
+                "where date = '" + date + "' and begin_time = '" + begin_time + "';";
+        String del_referral_query = "delete from referraloccupiedtimeslotst\n" +
+                "where date = '" + date + "' and begin_time = '" + begin_time + "';";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(del_occ_query);
+            stmt.executeUpdate(del_referral_query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
 
@@ -384,7 +555,7 @@ public class DataBaseQueryController {
             ResultSet rs = stmt.executeQuery(query);
             ArrayList<String> patientIds = new ArrayList<>();
             ArrayList<String> creation_dates = new ArrayList<>();
-            while(rs.next()) {
+            while (rs.next()) {
                 patientIds.add(rs.getString("patient_id"));
                 creation_dates.add(rs.getString("creation_date"));
             }
@@ -401,7 +572,7 @@ public class DataBaseQueryController {
         }
     }
 
-    // args: {"id", "page_no"
+    // args: {"id", "page_no"}
     // does: fills the single object of the relative page (eg: AppointmentPage)
     private void handleRefreshPage(String[] args) throws Exception {
         String id = args[0];
@@ -479,7 +650,7 @@ public class DataBaseQueryController {
             stmt = current_connection.createStatement();
             ResultSet rs_AP = stmt.executeQuery(query_AP);
             ResultSet rs_MIP = stmt.executeQuery(query_MIP);
-            while(rs_AP.next()) {
+            while (rs_AP.next()) {
                 appointmentPage_page_numbers.add(rs_AP.getString("page_no"));
                 appointmentPage_creation_dates.add(rs_AP.getString("creation_date"));
             }
@@ -660,7 +831,7 @@ public class DataBaseQueryController {
     // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref", "creation_date"}
     private void handleAddAppointmentPage(String[] args) throws Exception {
         String addPageQuery = "insert into paget values(" +
-                args[0] + ", " + args[1] + ", '" + args[8] + "');" ;
+                args[0] + ", " + args[1] + ", '" + args[8] + "');";
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
@@ -717,7 +888,7 @@ public class DataBaseQueryController {
     // args: {"id", "page_no", "content_address", "image_type", "reason", "creation_date"}
     private void addMedicalImagePage(String[] args) throws Exception {
         String addPageQuery = "insert into paget values(" +
-                args[0] + ", " + args[1] + ", '" + args[5] + "');" ;
+                args[0] + ", " + args[1] + ", '" + args[5] + "');";
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();

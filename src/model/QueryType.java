@@ -15,6 +15,7 @@ public enum QueryType {
     DELETE_PAGE,
 
     // refresh file queries
+    REFRESH_PATIENT,
     REFRESH_FILE_SUMMARY,
     REFRESH_PAGE,
     REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE,
@@ -27,6 +28,7 @@ public enum QueryType {
     // scheduling
     CREATE_NEW_WEEKLY_SCHEDULE,
     ADD_NEW_AVAILABLE_TIME,
+    ADD_OCCUPIED_TIME_SLOT,
 
     //
     REFRESH_SCHEDULE_IN_TIME_INTERVAL
