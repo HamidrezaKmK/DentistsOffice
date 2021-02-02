@@ -6,10 +6,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import model.QueryType;
@@ -62,9 +59,29 @@ public class BookingMenu implements Initializable {
     private TextField enterReferralTimePatientID = new TextField();
 
     @FXML
+    private Label fromDateLabel = new Label();
+
+    @FXML
+    private Label toDateLabel = new Label();
+
+    @FXML
     private void addTimeToScheduleButtonPress(ActionEvent event) {
         // TODO: add time to schedule
-
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_OCCUPIED_TIME_SLOT, enterOccupiedTimeDate.getText(),
+                    enterOccupiedTimeBeginTime.getText(), enterOccupiedTimeEndTime.getText());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!enterReferralTimePatientID.getText().isEmpty()) {
+            try {
+                DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_REFERRAL_TIME, enterOccupiedTimeDate.getText(),
+                        enterOccupiedTimeBeginTime.getText(), enterOccupiedTimeReason.getText(), enterReferralTimePatientID.getText());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        scheduleQueryEnterButtonPress(event);
     }
 
     @FXML
@@ -135,6 +152,14 @@ public class BookingMenu implements Initializable {
     }
 
     public void refreshCurrentSchedule() {
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.GET_CURRENT_WEEKLY_SCHEDULE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        model.WeeklySchedule inst = model.WeeklySchedule.getInstance();
+        fromDateLabel.setText(inst.getFrom_date());
+        toDateLabel.setText(inst.getTo_date());
         // TODO: this query should consider database date not local date
         // TODO: this query should be implemented
 

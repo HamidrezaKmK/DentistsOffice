@@ -1,5 +1,6 @@
 package controller.graphics.booking;
 
+import controller.DataBaseQueryController;
 import controller.graphics.FXMLLoadersCommunicator;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -14,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import model.QueryType;
 import view.FxmlFileLoader;
 import view.booking.BookingGUI;
 
@@ -70,6 +72,29 @@ public class AddWeeklySchedule implements Initializable {
 
     @FXML
     private void addScheduleButtonPress(ActionEvent event) {
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.CREATE_NEW_WEEKLY_SCHEDULE,
+                    fromDateTextField.getText(), endDateTextField.getText());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int sz = daysNames.size();
+        for (int i = 0; i < sz; i++) {
+            String day = daysNames.get(i);
+            for (int j = 0; j < daysListViews.get(i).getItems().size() - 1; j++) {
+                String item = daysListViews.get(i).getItems().get(j).toString();
+                String[] parts = item.split("-");
+                String fromTime = parts[0].trim();
+                String toTime = parts[1].trim();
+                // TODO: duration should change to toTime
+                try {
+                    DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_NEW_AVAILABLE_TIME, fromDateTextField.getText(),
+                            day, fromTime, toTime);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override

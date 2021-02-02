@@ -35,18 +35,20 @@
                                           <Button fx:id="refreshSchedule" mnemonicParsing="false" text="Get Schedule" BorderPane.alignment="CENTER" />
                                        </center>
                                        <left>
-                                          <Label prefHeight="21.0" prefWidth="192.0" text="Start Date:" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets left="10.0" />
-                                             </BorderPane.margin>
-                                          </Label>
+                                          <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <Label layoutX="22.0" layoutY="20.0" text="From Date:" />
+                                                <Label fx:id="fromDateLabel" layoutX="100.0" layoutY="20.0" text="SAMPLE" />
+                                             </children>
+                                          </AnchorPane>
                                        </left>
                                        <right>
-                                          <Label prefHeight="21.0" prefWidth="189.0" text="End Date:" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets right="10.0" />
-                                             </BorderPane.margin>
-                                          </Label>
+                                          <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <Label layoutX="14.0" layoutY="20.0" text="To Date:" />
+                                                <Label fx:id="toDateLabel" layoutX="73.0" layoutY="20.0" text="SAMPLE" />
+                                             </children>
+                                          </AnchorPane>
                                        </right>
                                     </BorderPane>
                                  </bottom>
