@@ -854,7 +854,7 @@ public class DataBaseQueryController {
         String begin_time = args[2];
         boolean negativeDuration = checkNegativeInterval(begin_time, to_time);
 
-        if (negativeDuration) {
+        if (!negativeDuration) {
             throw new SQLException("Error: Negative duration.");
         } else {
             String duration = "'" + to_time + "'::time - '" + begin_time + "'::time";
@@ -883,7 +883,9 @@ public class DataBaseQueryController {
 
         boolean negativeDuration = checkNegativeInterval(begin_time, to_time);
 
-        if (negativeDuration) {
+        System.err.println("WTF?! " + negativeDuration);
+
+        if (!negativeDuration) {
             throw new SQLException("Error: Negative duration.");
         } else {
             model.WeeklySchedule.getInstance().clear();
