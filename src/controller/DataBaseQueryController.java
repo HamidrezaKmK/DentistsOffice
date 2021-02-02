@@ -44,7 +44,7 @@ public class DataBaseQueryController {
         this.url = url;
     }
 
-    public void connect() throws Exception {
+    public void connect() throws SQLException {
         try {
             Properties props = new Properties();
             props.setProperty("user", username); // it is good to change this!
@@ -55,181 +55,178 @@ public class DataBaseQueryController {
         }
     }
 
-    public void disconnect() throws Exception {
+    public void disconnect() throws SQLException {
         if (current_connection != null)
             current_connection.close();
     }
 
-    public void handleQuery(QueryType queryType, String... args) throws Exception {
-        try {
-            switch (queryType) {
-                case MAIN_SEARCH:
-                    // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
-                    // Does: It fills the single instance of SearchResults.
-                    mainSearch(args);
-                    break;
+    public void handleQuery(QueryType queryType, String... args) throws SQLException {
 
-                case REFRESH_PATIENT:
-                    // args: {"id"}
-                    // Does: it fills the single instance of patient.
-                    refreshPatient(args);
-                    break;
+        switch (queryType) {
+            case MAIN_SEARCH:
+                // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
+                // Does: It fills the single instance of SearchResults.
+                mainSearch(args);
+                break;
 
-                case CREATE_FILE:
-                    // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
-                    // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate",
-                    // "phone_number", otherPhoneNumbers...}
-                    // important: if any of entries is null, put "null" (string of null) in its place.
-                    // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    handleCreateFile(args);
-                    break;
+            case REFRESH_PATIENT:
+                // args: {"id"}
+                // Does: it fills the single instance of patient.
+                refreshPatient(args);
+                break;
 
-                case ADD_PERSONAL_INFO_PAGE:
-                    // Personal info page is created while creating the file. This function is empty.
-                    handleAddPersonalInfoPage(args);
-                    break;
+            case CREATE_FILE:
+                // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
+                // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate",
+                // "phone_number", otherPhoneNumbers...}
+                // important: if any of entries is null, put "null" (string of null) in its place.
+                // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                handleCreateFile(args);
+                break;
 
-                case ADD_MEDICAL_IMAGE_PAGE:
-                    // args: {"id", "page_no", "content_address", "image_type", "reason", "creation_date"}
-                    addMedicalImagePage(args);
-                    break;
+            case ADD_PERSONAL_INFO_PAGE:
+                // Personal info page is created while creating the file. This function is empty.
+                handleAddPersonalInfoPage(args);
+                break;
 
-                case ADD_APPOINTMENT_PAGE:
-                    // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
-                    // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref", "creation_date"}
-                    handleAddAppointmentPage(args);
-                    break;
+            case ADD_MEDICAL_IMAGE_PAGE:
+                // args: {"id", "page_no", "content_address", "image_type", "reason", "creation_date"}
+                addMedicalImagePage(args);
+                break;
 
-                case EDIT_MEDICAL_IMAGE_PAGE:
-                    // args: {"id", "page_no", "content_address", "image_type", "reason"}
-                    handleEditMedicalImagePage(args);
-                    break;
+            case ADD_APPOINTMENT_PAGE:
+                // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
+                // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref", "creation_date"}
+                handleAddAppointmentPage(args);
+                break;
 
-                case EDIT_APPOINTMENT_PAGE:
-                    // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
-                    // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref"}
-                    handleEditAppointmentPage(args);
-                    break;
+            case EDIT_MEDICAL_IMAGE_PAGE:
+                // args: {"id", "page_no", "content_address", "image_type", "reason"}
+                handleEditMedicalImagePage(args);
+                break;
 
-                case EDIT_PERSONAL_INFO:
-                    // args: {"id", "1", "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr"}
-                    handleEditPersonalInfo(args);
-                    break;
+            case EDIT_APPOINTMENT_PAGE:
+                // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
+                // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref"}
+                handleEditAppointmentPage(args);
+                break;
 
-                case DELETE_PAGE:
-                    // args: {"id", "page_no"}
-                    handleDeletePage(args);
-                    break;
+            case EDIT_PERSONAL_INFO:
+                // args: {"id", "1", "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr"}
+                handleEditPersonalInfo(args);
+                break;
 
-                case REFRESH_FILE_SUMMARY:
-                    // args: {"id"}
-                    // does: fills the single object of FileSummary
-                    handleRefreshFileSummary(args);
-                    break;
+            case DELETE_PAGE:
+                // args: {"id", "page_no"}
+                handleDeletePage(args);
+                break;
 
-                case REFRESH_PAGE:
-                    // args: {"id", "page_no"}
-                    // does: fills the single object of the relative page (eg: AppointmentPage)
-                    handleRefreshPage(args);
-                    break;
+            case REFRESH_FILE_SUMMARY:
+                // args: {"id"}
+                // does: fills the single object of FileSummary
+                handleRefreshFileSummary(args);
+                break;
 
-                case REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE:
-                    // args: {} (empty array of Strings)
-                    // does: fills the single object of FileTable (fills arrayLists in matching order)
-                    handleRefreshListOfPatientFilesByCreationDate(args);
-                    break;
+            case REFRESH_PAGE:
+                // args: {"id", "page_no"}
+                // does: fills the single object of the relative page (eg: AppointmentPage)
+                handleRefreshPage(args);
+                break;
 
-                case REFRESH_PATIENTS_WHO_OWE_MONEY:
-                    // args: Nothing (empty string)
-                    // does: It fills the single instance of SearchResult class.
-                    handleRefreshPatientsWhoOweMoney(args);
-                    break;
+            case REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE:
+                // args: {} (empty array of Strings)
+                // does: fills the single object of FileTable (fills arrayLists in matching order)
+                handleRefreshListOfPatientFilesByCreationDate(args);
+                break;
 
-                case CANCEL_APPOINTMENT:
-                    // args: {"date", "begin_time", "isWebUser"} (isWebUser is 1 or 0)
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    // Time format: HH:MM:SS
-                    handleCancelAppointment(args);
-                    break;
+            case REFRESH_PATIENTS_WHO_OWE_MONEY:
+                // args: Nothing (empty string)
+                // does: It fills the single instance of SearchResult class.
+                handleRefreshPatientsWhoOweMoney(args);
+                break;
 
-                case ADD_REFERRAL_TIME:
-                    // args: {"date", "begin_time", "reason", "patient_id"}
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    // Time format: HH:MM:SS
-                    handleAddReferralTime(args);
-                    break;
+            case CANCEL_APPOINTMENT:
+                // args: {"date", "begin_time", "isWebUser"} (isWebUser is 1 or 0)
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                // Time format: HH:MM:SS
+                handleCancelAppointment(args);
+                break;
 
-                case ADD_OCCUPIED_TIME_SLOT:
-                    // args: {"date","begin_time", "to_time"}
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    // Time format: HH:MM:SS
-                    addOccupiedTimeSlot(args);
-                    break;
+            case ADD_REFERRAL_TIME:
+                // args: {"date", "begin_time", "reason", "patient_id"}
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                // Time format: HH:MM:SS
+                handleAddReferralTime(args);
+                break;
 
-                case CREATE_NEW_WEEKLY_SCHEDULE:
-                    // args: {"from_date", "to_date}
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    handleCreateNewWeeklySchedule(args);
-                    break;
+            case ADD_OCCUPIED_TIME_SLOT:
+                // args: {"date","begin_time", "to_time"}
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                // Time format: HH:MM:SS
+                addOccupiedTimeSlot(args);
+                break;
 
-                case ADD_NEW_AVAILABLE_TIME:
-                    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "to_time"}
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    // Time format: HH:MM:SS
-                    handleAddNewAvailableTime(args);
-                    break;
+            case CREATE_NEW_WEEKLY_SCHEDULE:
+                // args: {"from_date", "to_date}
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                handleCreateNewWeeklySchedule(args);
+                break;
 
-                case REFRESH_SCHEDULE_IN_TIME_INTERVAL:
-                    // Hamid you wrote this function.
-                    handleRefreshScheduleInTimeInterval(args);
-                    break;
+            case ADD_NEW_AVAILABLE_TIME:
+                // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "to_time"}
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                // Time format: HH:MM:SS
+                handleAddNewAvailableTime(args);
+                break;
 
-                case REFRESH_OCCUPIED_TIME_SLOT:
-                    refreshOccupiedTimeSlots(args);
-                    break;
+            case REFRESH_SCHEDULE_IN_TIME_INTERVAL:
+                // Hamid you wrote this function.
+                handleRefreshScheduleInTimeInterval(args);
+                break;
 
-                case REFRESH_REFERRALS_WITHOUT_APPOINTMENT_PAGE:
-                    // args: {"patientID"}
-                    refreshReferralWithNoAppointmentPage(args);
-                    break;
+            case REFRESH_OCCUPIED_TIME_SLOT:
+                refreshOccupiedTimeSlots(args);
+                break;
 
-                case GET_CURRENT_DATE_TIME:
-                    // No args needed
-                    getCurrentDateTime();
-                    break;
+            case REFRESH_REFERRALS_WITHOUT_APPOINTMENT_PAGE:
+                // args: {"patientID"}
+                refreshReferralWithNoAppointmentPage(args);
+                break;
 
-                case GET_CURRENT_WEEKLY_SCHEDULE:
-                    // No args needed.
-                    getCurrentWeeklySchedule();
-                    break;
+            case GET_CURRENT_DATE_TIME:
+                // No args needed
+                getCurrentDateTime();
+                break;
 
-                case GET_WEEKLY_SCHEDULE_BY_DATE:
-                    // args: {"date"}
-                    getWeeklyScheduleByDate(args);
-                    break;
+            case GET_CURRENT_WEEKLY_SCHEDULE:
+                // No args needed.
+                getCurrentWeeklySchedule();
+                break;
 
-                case GET_AVAILABLE_TIMES_BY_DATE:
-                    // args: {"date"}
-                    getAvailableTimeSlotsByDate(args);
-                    break;
+            case GET_WEEKLY_SCHEDULE_BY_DATE:
+                // args: {"date"}
+                getWeeklyScheduleByDate(args);
+                break;
 
-                case GET_CURRENT_AVAILABLE_TIMES:
-                    // No args needed.
-                    getCurrentAvailableTimes();
-                    break;
+            case GET_AVAILABLE_TIMES_BY_DATE:
+                // args: {"date"}
+                getAvailableTimeSlotsByDate(args);
+                break;
 
-                case GET_NEXT_REFERRAL_TIME:
-                    // args: {"id"}
-                    getNextAppointmentTime(args);
-                    break;
+            case GET_CURRENT_AVAILABLE_TIMES:
+                // No args needed.
+                getCurrentAvailableTimes();
+                break;
 
-                case GET_PAYMENTS_IN_TIME_INTERVAL:
-                    // args: {"from_date", "to_date"}
-                    getPaymentsInTimeInterval(args);
-                    break;
-            }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
+            case GET_NEXT_REFERRAL_TIME:
+                // args: {"id"}
+                getNextAppointmentTime(args);
+                break;
+
+            case GET_PAYMENTS_IN_TIME_INTERVAL:
+                // args: {"from_date", "to_date"}
+                getPaymentsInTimeInterval(args);
+                break;
         }
     }
 
@@ -262,8 +259,6 @@ public class DataBaseQueryController {
                 paid_payment.add(rs.getString("paid_payment_amount"));
                 dates.add(rs.getString("occupied_time_slot_date_ref"));
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -293,8 +288,6 @@ public class DataBaseQueryController {
             while (rs.next()) {
                 next_ap_date.add(rs.getString("next_appointment_date"));
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -338,8 +331,6 @@ public class DataBaseQueryController {
                 begin_times.add(rs.getString("begin_time"));
                 duration.add(rs.getString("duration"));
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -368,8 +359,6 @@ public class DataBaseQueryController {
             }
             String[] date_args = {date};
             getWeeklyScheduleByDate(date_args);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -399,8 +388,6 @@ public class DataBaseQueryController {
             model.WeeklySchedule.getInstance().clear();
             model.WeeklySchedule.getInstance().setFrom_date(from);
             model.WeeklySchedule.getInstance().setTo_date(to);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -421,8 +408,6 @@ public class DataBaseQueryController {
             while (rs.next()) {
                 week_day = rs.getString("date_part");
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -448,8 +433,6 @@ public class DataBaseQueryController {
             String week_day = getWeekDayByDate(date);
             model.CurrentDateAndTime.getInstance().setCurrent_date(date);
             model.CurrentDateAndTime.getInstance().setCurrent_week_day(week_day);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -466,8 +449,6 @@ public class DataBaseQueryController {
             }
             time = time.substring(11, 19);
             model.CurrentDateAndTime.getInstance().setCurrent_time(time);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -504,8 +485,6 @@ public class DataBaseQueryController {
 
                 }
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -517,7 +496,7 @@ public class DataBaseQueryController {
     // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
     // Does: It fills the single instance of SearchResults.
     // "null" if an argument does not exist
-    public void mainSearch(String[] args) throws Exception {
+    public void mainSearch(String[] args) throws SQLException {
         String in_debt = args[3];
         boolean checked_in_debt = in_debt.equals("1");
         String query = null;
@@ -552,8 +531,6 @@ public class DataBaseQueryController {
             if (checked_in_debt) {
                 model.SearchResult.getInstance().setDebt(debts);
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -563,7 +540,7 @@ public class DataBaseQueryController {
 
 
     // mainSearch uses this function.
-    private String mainSearchInDebt(String[] args) throws Exception {
+    private String mainSearchInDebt(String[] args) throws SQLException {
         String first_name = args[0];
         String last_name = args[1];
         String patient_id = args[2];
@@ -590,7 +567,7 @@ public class DataBaseQueryController {
 
 
     // mainSearch uses this function.
-    private String mainSearchNotInDebt(String[] args) throws Exception {
+    private String mainSearchNotInDebt(String[] args) throws SQLException {
 
         String first_name = args[0];
         String last_name = args[1];
@@ -618,7 +595,7 @@ public class DataBaseQueryController {
 
 
     // Hamid you wrote this function.
-    private void handleRefreshScheduleInTimeInterval(String[] args) throws Exception {
+    private void handleRefreshScheduleInTimeInterval(String[] args) throws SQLException {
         Schedule.getInstance().clear();
         Statement stmt = null;
         System.err.println("1.begin_date\n2.begin_time\n3.end_date\n4.end_time");
@@ -650,8 +627,6 @@ public class DataBaseQueryController {
                     reason = reason + " patient name: " + rs.getString("first_name") + " " + rs.getString("last_name");
                 Schedule.getInstance().addBusyInterval(new TimeInterval(beginDate, endDate, beginTime, endTime, reason));
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -697,8 +672,6 @@ public class DataBaseQueryController {
                     timeR = LocalTime.parse(end_time);
                 if (lastTime.isBefore(timeR))
                     Schedule.getInstance().addBusyInterval(new TimeInterval(date, date, lastTime, timeR, "Doctor not available"));
-            } catch (SQLException e) {
-                throw new Error("Problem", e);
             } finally {
                 if (stmt != null) {
                     stmt.close();
@@ -752,8 +725,6 @@ public class DataBaseQueryController {
             model.Patient.getInstance().setReference(reference);
             model.Patient.getInstance().setHomeAddr(homeAddr);
             model.Patient.getInstance().setWorkAddr(workAddr);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -771,8 +742,6 @@ public class DataBaseQueryController {
             while (rs.next()) {
                 phones.add(rs.getString("phone_number"));
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -785,7 +754,7 @@ public class DataBaseQueryController {
     // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "to_time"}
     // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
     // Time format: HH:MM:SS
-    private void handleAddNewAvailableTime(String[] args) throws Exception {
+    private void handleAddNewAvailableTime(String[] args) throws SQLException {
         String to_time = args[3];
         String begin_time = args[2];
         String duration = "'" + to_time + "'::time - '" + begin_time + "'::time";
@@ -795,8 +764,6 @@ public class DataBaseQueryController {
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -831,8 +798,6 @@ public class DataBaseQueryController {
             while (rs.next()) {
                 fk_begin_time = rs.getString("begin_time");
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -843,8 +808,6 @@ public class DataBaseQueryController {
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -855,7 +818,7 @@ public class DataBaseQueryController {
 
     // args: {"from_date", "to_date}
     // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-    private void handleCreateNewWeeklySchedule(String[] args) throws Exception {
+    private void handleCreateNewWeeklySchedule(String[] args) throws SQLException {
         String from = args[0];
         String to = args[1];
         String query = "insert into weeklyschedulet values('" + from + "', '" + to + "');";
@@ -864,8 +827,6 @@ public class DataBaseQueryController {
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -877,15 +838,13 @@ public class DataBaseQueryController {
     // args: {"date", "begin_time", "reason", "patient_id"}
     // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
     // Time format: HH:MM:SS
-    private void handleAddReferralTime(String[] args) throws Exception {
+    private void handleAddReferralTime(String[] args) throws SQLException {
         String query = "insert into referraloccupiedtimeslotst values('" + args[0] + "', '" +
                 args[1] + "', '" + args[2] + "', '" + args[3] + "');";
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -896,7 +855,7 @@ public class DataBaseQueryController {
     // args: {"date", "begin_time"}
     // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
     // Time format: HH:MM:SS
-    private void handleCancelAppointment(String[] args) throws Exception {
+    private void handleCancelAppointment(String[] args) throws SQLException {
         String date = args[0];
         String begin_time = args[1];
         String del_occ_query = "delete from occupiedtimeslotst \n" +
@@ -909,8 +868,6 @@ public class DataBaseQueryController {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(del_occ_query);
             stmt.executeUpdate(del_referral_query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -921,7 +878,7 @@ public class DataBaseQueryController {
 
     // args: Nothing (empty string)
     // does: It fills the single instance of SearchResult class.
-    private void handleRefreshPatientsWhoOweMoney(String[] args) throws Exception {
+    private void handleRefreshPatientsWhoOweMoney(String[] args) throws SQLException {
         String[] searchArgs = {null, null, null, "1"};
         mainSearch(searchArgs);
     }
@@ -929,7 +886,7 @@ public class DataBaseQueryController {
 
     // args: {} (empty array of Strings)
     // does: fills the single object of FileTable (fills arrayLists in matching order)
-    private void handleRefreshListOfPatientFilesByCreationDate(String[] args) throws Exception {
+    private void handleRefreshListOfPatientFilesByCreationDate(String[] args) throws SQLException {
         String query = "select * from filet\norder by creation_date;";
         Statement stmt = null;
         try {
@@ -945,8 +902,6 @@ public class DataBaseQueryController {
             model.FileTable.getInstance().setCreation_date(creation_dates);
             model.FileTable.getInstance().setPatient_id(patientIds);
 
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -998,7 +953,7 @@ public class DataBaseQueryController {
 
     // args: {"id", "page_no"}
     // does: fills the single object of the relative page (eg: AppointmentPage)
-    private void handleRefreshPage(String[] args) throws Exception {
+    private void handleRefreshPage(String[] args) throws SQLException {
         String id = args[0];
         String pn = args[1];
         String query_on_personalinfopaget = "select * from personalinfopaget\nwhere patient_id = " + id + " and page_no = 1;";
@@ -1064,8 +1019,6 @@ public class DataBaseQueryController {
                     model.MedicalImagePage.getInstance().setPage_no(rs_medicalImage.getString("page_no"));
                 }
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1075,7 +1028,7 @@ public class DataBaseQueryController {
 
     // args: {"id"}
     // does: fills the single object of FileSummary
-    private void handleRefreshFileSummary(String[] args) throws Exception {
+    private void handleRefreshFileSummary(String[] args) throws SQLException {
         String id = args[0];
         ArrayList<String> medicalImagePage_page_numbers = new ArrayList<>();
         ArrayList<String> appointmentPage_page_numbers = new ArrayList<>();
@@ -1109,8 +1062,6 @@ public class DataBaseQueryController {
             model.FileSummary.getInstance().setMedicalImagePage_creation_dates(medicalImagePage_creation_dates);
             model.FileSummary.getInstance().setMedicalImagePage_page_numbers(medicalImagePage_page_numbers);
 
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1120,7 +1071,7 @@ public class DataBaseQueryController {
 
 
     // args: {"id", "page_no"}
-    private void handleDeletePage(String[] args) throws Exception {
+    private void handleDeletePage(String[] args) throws SQLException {
         String patient_id = args[0];
         String page_no = args[1];
         Statement stmt = null;
@@ -1134,8 +1085,6 @@ public class DataBaseQueryController {
             stmt.executeUpdate(query_personal);
             stmt.executeUpdate(query_appointment);
             stmt.executeUpdate(query_page);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1145,7 +1094,7 @@ public class DataBaseQueryController {
 
 
     // args: {"id", "1", "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr"}
-    private void handleEditPersonalInfo(String[] args) throws Exception {
+    private void handleEditPersonalInfo(String[] args) throws SQLException {
         String query = "update personalinfopaget\nset ";
         if (!args[2].toLowerCase().equals("null")) {
             query += "general_medical_records = '" + args[2] + "', ";
@@ -1180,8 +1129,6 @@ public class DataBaseQueryController {
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1192,7 +1139,7 @@ public class DataBaseQueryController {
 
     // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
     // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref"}
-    private void handleEditAppointmentPage(String[] args) throws Exception {
+    private void handleEditAppointmentPage(String[] args) throws SQLException {
         String query = "update appointmentpaget\nset ";
         if (!args[2].toLowerCase().equals("null")) {
             query += "treatment_summary = '" + args[2] + "', ";
@@ -1230,8 +1177,6 @@ public class DataBaseQueryController {
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1241,7 +1186,7 @@ public class DataBaseQueryController {
 
 
     // args: {"id", "page_no", "content_address", "image_type", "reason"}
-    private void handleEditMedicalImagePage(String[] args) throws Exception {
+    private void handleEditMedicalImagePage(String[] args) throws SQLException {
         String query = "update medicalimagepaget\nset ";
         if (!args[2].toLowerCase().equals("null")) {
             query += "content_address = '" + args[2] + "', ";
@@ -1267,8 +1212,6 @@ public class DataBaseQueryController {
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1278,7 +1221,7 @@ public class DataBaseQueryController {
 
     // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
     // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref", "creation_date"}
-    private void handleAddAppointmentPage(String[] args) throws Exception {
+    private void handleAddAppointmentPage(String[] args) throws SQLException {
         String addPageQuery = "insert into paget values(" +
                 args[0] + ", " + args[1] + ", '" + args[8] + "');";
         Statement stmt = null;
@@ -1288,8 +1231,6 @@ public class DataBaseQueryController {
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(addPageQuery);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1325,8 +1266,6 @@ public class DataBaseQueryController {
         try {
             stmt2 = current_connection.createStatement();
             stmt2.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt2 != null) {
                 stmt2.close();
@@ -1336,12 +1275,12 @@ public class DataBaseQueryController {
 
 
     // Personal info page is created while creating the file. This function is empty.
-    private void handleAddPersonalInfoPage(String[] args) throws Exception {
+    private void handleAddPersonalInfoPage(String[] args) throws SQLException {
     }
 
 
     // args: {"id", "page_no", "content_address", "image_type", "reason", "creation_date"}
-    private void addMedicalImagePage(String[] args) throws Exception {
+    private void addMedicalImagePage(String[] args) throws SQLException {
         String addPageQuery = "insert into paget values(" +
                 args[0] + ", " + args[1] + ", '" + args[5] + "');";
         System.out.println(addPageQuery);
@@ -1349,8 +1288,6 @@ public class DataBaseQueryController {
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(addPageQuery);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1386,8 +1323,6 @@ public class DataBaseQueryController {
         try {
             stmt2 = current_connection.createStatement();
             stmt2.executeUpdate(query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt2 != null) {
                 stmt2.close();
@@ -1400,13 +1335,13 @@ public class DataBaseQueryController {
     // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate",
     // "phone_number", otherPhoneNumbers...}
     // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-    private void handleCreateFile(String[] args) throws Exception {
+    private void handleCreateFile(String[] args) throws SQLException {
         String id = args[0];
         String add_patient_query = InsertPatientQuery(args);
         String add_page_in_page_table_query = addPageQueryForPersonalInfoPage(args);
         String add_personal_info_page_query = addPersonalInfoPageQuery(args);
 
-        for(int i = 0; i < args.length; i++)
+        for (int i = 0; i < args.length; i++)
             System.out.print(args[i] + " ");
         System.out.println("\n===");
         System.out.println(add_patient_query);
@@ -1421,8 +1356,6 @@ public class DataBaseQueryController {
             stmt.executeUpdate(add_patient_query);
             stmt.executeUpdate(add_page_in_page_table_query);
             stmt.executeUpdate(add_personal_info_page_query);
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1444,8 +1377,6 @@ public class DataBaseQueryController {
             for (int i = 0; i < queries.size(); i++) {
                 stmt.executeUpdate(queries.get(i));
             }
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -1584,8 +1515,6 @@ public class DataBaseQueryController {
             model.ReferralOccupiedTimeSlots.getInstance().setDate(ref_dates);
             model.ReferralOccupiedTimeSlots.getInstance().setReason(ref_reasons);
 
-        } catch (SQLException e) {
-            throw new Error("Problem", e);
         } finally {
             if (stmt != null) {
                 stmt.close();

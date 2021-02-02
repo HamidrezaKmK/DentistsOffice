@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="229.0" prefWidth="583.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.PopUpSQLError">
+   <children>
+      <Label layoutX="14.0" layoutY="14.0" text="SQL Error:" />
+      <TextArea fx:id="sqlErrorMessageTextArea" layoutX="14.0" layoutY="43.0" prefHeight="173.0" prefWidth="555.0" />
+   </children>
+</AnchorPane>

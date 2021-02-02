@@ -62,7 +62,6 @@ public class AddNewFile implements Initializable {
 
     @FXML
     private void addButtonPress(ActionEvent event) {
-        // TODO: query to add new file
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.MAIN_SEARCH, null, null, null, "0");
         } catch (Exception e) {
@@ -75,7 +74,7 @@ public class AddNewFile implements Initializable {
         String lastName = lastNameTextField.getText();
         int newId = (((firstName + lastName).hashCode())%10000  + 10000) % 10000 + 1;
         while (S.contains(newId))
-            newId = (newId + 1) % 10000 + 1;
+            newId = newId+1;
         String age = ageTextField.getText();
         String gender = genderChoiceBox.getValue();
         String occupation = occupationTextField.getText();
