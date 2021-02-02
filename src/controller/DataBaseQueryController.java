@@ -195,8 +195,11 @@ public class DataBaseQueryController {
 
                 case GET_CURRENT_DATE_TIME:
                     // No args needed
-                    getCurrent_dateTime();
+                    getCurrentDateTime();
                     break;
+
+                case GET_CURRENT_WEEKLY_SCHEDULE:
+                    getCurrentWeeklySchedule();
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);
@@ -204,6 +207,56 @@ public class DataBaseQueryController {
     }
 
 
+    // No args needed.
+    private void getCurrentWeeklySchedule() throws SQLException {
+        String query = "select current_date";
+        String date = null;
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                date = rs.getString("current_date");
+            }
+            getWeeklyScheduleByDate(date);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+    }
+
+
+    // Other function uses this.
+    private void getWeeklyScheduleByDate(String date) throws SQLException {
+        String query = "select * from weeklyschedulet\n" +
+                "where '" + date + "' between from_date and to_date;";
+        String from = null;
+        String to = null;
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                from = rs.getString("from_date");
+                to = rs.getString("to_date");
+            }
+            model.WeeklySchedule.getInstance().clear();
+            model.WeeklySchedule.getInstance().setFrom_date(from);
+            model.WeeklySchedule.getInstance().setTo_date(to);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+    }
+
+
+    // Some other functions use this.
     private String getWeekDayByDate(String date) throws SQLException {
         String query = "select extract(dow from date '" + date + "');";
         Statement stmt = null;
@@ -226,12 +279,13 @@ public class DataBaseQueryController {
         return days[index];
     }
 
+
     // No args needed
-    private void getCurrent_dateTime() throws SQLException {
+    private void getCurrentDateTime() throws SQLException {
         String query = "select current_date";
         String date = null;
-        Statement stmt = null;
         model.CurrentDateAndTime.getInstance().clear();
+        Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -267,6 +321,7 @@ public class DataBaseQueryController {
             }
         }
     }
+
 
     // args: {"webUser"} (webUser is 1 or 0)
     private void refreshOccupiedTimeSlots(String[] args) throws SQLException {
@@ -576,18 +631,27 @@ public class DataBaseQueryController {
     }
 
 
+
+
     // args: {"date","begin_time", "duration", "available_time_slots_ref_from_date",
     // "available_time_slots_ref_week_day", "available_time_slots_ref_begin_time"}
     private void addOccupiedTimeSlot(String[] args) throws SQLException {
-        String query = "insert into occupiedtimeslotst values('" + args[0] + "', '" + args[1] + "', '" +
-                args[2] + "', '" + args[3] + "', '" + args[4] + "', '" + args[5] + "');";
+        String date = args[0];
+        String begin_time = args[1];
+        String query = "insert into occupiedtimeslotst values('" + date + "', '" + begin_time + ", ";
 
-
-
+        String query_on_wst = "select from_date from weeklyschedulet\n" +
+                "where" + date + " between from_date and to_date;";
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
-            stmt.executeUpdate(query);
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                date = rs.getString("current_date");
+            }
+            String week_day = getWeekDayByDate(date);
+            model.CurrentDateAndTime.getInstance().setCurrent_date(date);
+            model.CurrentDateAndTime.getInstance().setCurrent_week_day(week_day);
         } catch (SQLException e) {
             throw new Error("Problem", e);
         } finally {
@@ -595,6 +659,8 @@ public class DataBaseQueryController {
                 stmt.close();
             }
         }
+
+
     }
 
 
