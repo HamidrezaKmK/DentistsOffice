@@ -304,6 +304,9 @@ public class DataBaseQueryController {
         String from = null;
         String to = null;
         Statement stmt = null;
+
+        System.out.println(query);
+
         try {
             stmt = current_connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);

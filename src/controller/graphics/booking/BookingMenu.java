@@ -88,9 +88,17 @@ public class BookingMenu implements Initializable {
     @FXML
     ListView fridayListView = new ListView();
 
+    @FXML
+    TextField dateInputTextField = new TextField();
+
     ArrayList<String>daysNames = new ArrayList<>();
 
     ArrayList<ListView> daysListViews = new ArrayList<>();
+
+    @FXML
+    private void getScheduleButtonPress(ActionEvent event) {
+        refreshCurrentSchedule();
+    }
 
     @FXML
     private void addTimeToScheduleButtonPress(ActionEvent event) {
@@ -196,18 +204,28 @@ public class BookingMenu implements Initializable {
 
     public void refreshCurrentSchedule() {
         try {
-            DataBaseQueryController.getInstance().handleQuery(QueryType.GET_CURRENT_WEEKLY_SCHEDULE);
+            DataBaseQueryController.getInstance().handleQuery(QueryType.GET_CURRENT_DATE_TIME);
         } catch (Exception e) {
             e.printStackTrace();
         }
         model.WeeklySchedule inst = model.WeeklySchedule.getInstance();
+        String currentDate = model.CurrentDateAndTime.getInstance().getCurrent_date();
+
+        String chosenDate = currentDate;
+        if (!dateInputTextField.getText().isEmpty())
+            chosenDate = dateInputTextField.getText();
+
         fromDateLabel.setText(inst.getFrom_date());
         toDateLabel.setText(inst.getTo_date());
 
+        System.out.println(currentDate);
+
+        System.out.println(chosenDate);
+
         try {
-            DataBaseQueryController.getInstance().handleQuery(QueryType.GET_CURRENT_DATE_TIME);
+            DataBaseQueryController.getInstance().handleQuery(QueryType.GET_WEEKLY_SCHEDULE_BY_DATE, chosenDate);
             DataBaseQueryController.getInstance().handleQuery(QueryType.GET_AVAILABLE_TIMES_BY_DATE,
-                    model.CurrentDateAndTime.getInstance().getCurrent_date());
+                    chosenDate);
         } catch (Exception e) {
             e.printStackTrace();
         }
