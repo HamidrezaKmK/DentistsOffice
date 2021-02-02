@@ -199,7 +199,13 @@ public class DataBaseQueryController {
                     break;
 
                 case GET_CURRENT_WEEKLY_SCHEDULE:
+                    // No args needed.
                     getCurrentWeeklySchedule();
+                    break;
+
+                case GET_WEEKLY_SCHEDULE_BY_DATE:
+                    // args: {"date"}
+                    getWeeklyScheduleByDate(args);
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);
@@ -218,7 +224,8 @@ public class DataBaseQueryController {
             while (rs.next()) {
                 date = rs.getString("current_date");
             }
-            getWeeklyScheduleByDate(date);
+            String[] date_args = {date};
+            getWeeklyScheduleByDate(date_args);
         } catch (SQLException e) {
             throw new Error("Problem", e);
         } finally {
@@ -229,8 +236,9 @@ public class DataBaseQueryController {
     }
 
 
-    // Other function uses this.
-    private void getWeeklyScheduleByDate(String date) throws SQLException {
+    // args: {"date"}
+    private void getWeeklyScheduleByDate(String[] args) throws SQLException {
+        String date = args[0];
         String query = "select * from weeklyschedulet\n" +
                 "where '" + date + "' between from_date and to_date;";
         String from = null;
@@ -631,27 +639,31 @@ public class DataBaseQueryController {
     }
 
 
-
-
-    // args: {"date","begin_time", "duration", "available_time_slots_ref_from_date",
-    // "available_time_slots_ref_week_day", "available_time_slots_ref_begin_time"}
+    // args: {"date","begin_time", "duration"}
     private void addOccupiedTimeSlot(String[] args) throws SQLException {
         String date = args[0];
         String begin_time = args[1];
-        String query = "insert into occupiedtimeslotst values('" + date + "', '" + begin_time + ", ";
+        String duration = args[2];
+        String query = "insert into occupiedtimeslotst values('" + date + "', '" + begin_time + "', '" + duration + "', '";
 
-        String query_on_wst = "select from_date from weeklyschedulet\n" +
-                "where" + date + " between from_date and to_date;";
+        model.WeeklySchedule.getInstance().clear();
+        String[] from_date_args = {date};
+        getWeeklyScheduleByDate(from_date_args);
+        String from_date = model.WeeklySchedule.getInstance().getFrom_date();
+        String week_day = getWeekDayByDate(date);
+        String fk_begin_time = null;
+
+        String query_on_availableTimeT = "select begin_time from availabletimeslotst\n" +
+                "where weekly_schedule_from_date_ref = '" + from_date + "' and day_of_week = '" + week_day + "' and ('" +
+                begin_time + "'::time between begin_time and (begin_time + duration::interval));";
+
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = stmt.executeQuery(query_on_availableTimeT);
             while (rs.next()) {
-                date = rs.getString("current_date");
+                fk_begin_time = rs.getString("begin_time");
             }
-            String week_day = getWeekDayByDate(date);
-            model.CurrentDateAndTime.getInstance().setCurrent_date(date);
-            model.CurrentDateAndTime.getInstance().setCurrent_week_day(week_day);
         } catch (SQLException e) {
             throw new Error("Problem", e);
         } finally {
@@ -659,8 +671,18 @@ public class DataBaseQueryController {
                 stmt.close();
             }
         }
-
-
+        query += from_date + "', '" + week_day + "', '" + fk_begin_time + "');";
+        stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
 
