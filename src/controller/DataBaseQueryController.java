@@ -358,7 +358,7 @@ public class DataBaseQueryController {
             stmt = current_connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                date = rs.getString("current_date");
+                date = rs.getString("date");
             }
             String week_day = getWeekDayByDate(date);
             model.CurrentDateAndTime.getInstance().setCurrent_date(date);
