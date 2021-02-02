@@ -2,6 +2,7 @@ package controller.graphics.booking;
 
 import controller.DataBaseQueryController;
 import controller.graphics.FXMLLoadersCommunicator;
+import controller.graphics.StageSavable;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,13 +14,17 @@ import model.QueryType;
 import model.Schedule;
 import model.TimeInterval;
 import view.FxmlFileLoader;
+import view.PopUpCreater;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class BookingMenu implements Initializable {
+public class BookingMenu implements Initializable, StageSavable {
+
+    private AnchorPane savedPane;
 
     @FXML
     private ScrollPane timeLinePane = new ScrollPane();
@@ -102,19 +107,18 @@ public class BookingMenu implements Initializable {
 
     @FXML
     private void addTimeToScheduleButtonPress(ActionEvent event) {
-        // TODO: add time to schedule
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_OCCUPIED_TIME_SLOT, enterOccupiedTimeDate.getText(),
                     enterOccupiedTimeBeginTime.getText(), enterOccupiedTimeEndTime.getText());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            PopUpCreater.createSQLErrorPopUp(e.getMessage());
         }
         if (!enterReferralTimePatientID.getText().isEmpty()) {
             try {
                 DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_REFERRAL_TIME, enterOccupiedTimeDate.getText(),
                         enterOccupiedTimeBeginTime.getText(), enterOccupiedTimeReason.getText(), enterReferralTimePatientID.getText());
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (SQLException e) {
+                PopUpCreater.createSQLErrorPopUp(e.getMessage());
             }
         }
         scheduleQueryEnterButtonPress(event);
@@ -125,8 +129,8 @@ public class BookingMenu implements Initializable {
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.CANCEL_APPOINTMENT,
                     selectedTimeDateTextField.getText(), selectedTimeBeginTimeTextField.getText(), "0");
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            PopUpCreater.createSQLErrorPopUp(e.getMessage());
         }
         scheduleQueryEnterButtonPress(event);
     }
@@ -150,8 +154,8 @@ public class BookingMenu implements Initializable {
         }
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.REFRESH_SCHEDULE_IN_TIME_INTERVAL, fromDate, fromTime, toDate, toTime);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            PopUpCreater.createSQLErrorPopUp(e.getMessage());
         }
         timelineController.createTimeLine(Schedule.getInstance());
     }
@@ -188,12 +192,11 @@ public class BookingMenu implements Initializable {
             e.printStackTrace();
         }
         System.out.println("Connection successfully created!");
-        scheduleQueryFromDateTextField.setText("2021-01-02 09:00:00");
-        scheduleQueryToDateTextField.setText("2021-02-21 09:00:00");
+
+        scheduleQueryFromDateTextField.setText("2021-01-02 00:00:00");
+        scheduleQueryToDateTextField.setText("2021-02-21 00:00:00");
+
         refreshCurrentSchedule();
-
-
-
     }
 
     public void selectOccupiedTimeOnTimeLine(TimeInterval interval) {
@@ -203,6 +206,7 @@ public class BookingMenu implements Initializable {
     }
 
     public void refreshCurrentSchedule() {
+
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.GET_CURRENT_DATE_TIME);
         } catch (Exception e) {
@@ -215,8 +219,6 @@ public class BookingMenu implements Initializable {
         if (!dateInputTextField.getText().isEmpty())
             chosenDate = dateInputTextField.getText();
 
-        fromDateLabel.setText(inst.getFrom_date());
-        toDateLabel.setText(inst.getTo_date());
 
         System.out.println(currentDate);
 
@@ -245,5 +247,18 @@ public class BookingMenu implements Initializable {
         for (int i = 0; i < 7; i++) {
             daysListViews.get(i).getItems().add(" ");
         }
+
+        fromDateLabel.setText(inst.getFrom_date());
+        toDateLabel.setText(inst.getTo_date());
+    }
+
+    @Override
+    public void saveStage() {
+        savedPane = mainPane;
+    }
+
+    @Override
+    public void loadStage() {
+        mainPane = savedPane;
     }
 }

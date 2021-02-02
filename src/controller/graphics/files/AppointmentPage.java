@@ -18,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import model.QueryType;
 import view.FxmlFileLoader;
+import view.PopUpCreater;
 import view.PopUpSQLError;
 import view.popups.PopupsGUI;
 
@@ -76,15 +77,7 @@ public class AppointmentPage implements Initializable, EditablePage, StageSavabl
             }
         } catch (SQLException e) {
             loadStage();
-            Parent root = null;
-                FxmlFileLoader object = new FxmlFileLoader();
-                root = object.getPage("PopUpSQLError", PopupsGUI.class);
-                ((PopUpSQLError)FXMLLoadersCommunicator.getLoader("PopUpSQLError").getController()).setText(e.getMessage());
-                //root = FXMLLoader.load(getClass().getResource("../../../view/popups/PopUpSQLError.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root));
-                stage.show();
-
+            PopUpCreater.createSQLErrorPopUp(e.getMessage());
         }
     }
 
@@ -138,6 +131,6 @@ public class AppointmentPage implements Initializable, EditablePage, StageSavabl
     @Override
     public void loadStage() {
         mainPane = savedPane;
-        paidAmountTextField.clear();
+        refreshPage();
     }
 }
