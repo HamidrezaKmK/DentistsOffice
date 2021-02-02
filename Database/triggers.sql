@@ -80,11 +80,21 @@ begin
       and new.available_time_slots_ref_begin_time = begin_time into available_time_record;
 
     if new.available_time_slots_ref_begin_time > new.begin_time or
-       available_time_record.duration + available_time_record.begin_time < new.begin_time + new.duration then
+       available_time_record.duration::interval + available_time_record.begin_time < new.begin_time + new.duration::interval then
       raise exception 'Occupied time in day does not match with the available time %', now();
     end if;
   end;
 
+  ------
+  if exists(select *
+            from occupiedtimeslotst
+            where date = new.date
+              and (begin_time < new.begin_time and new.begin_time < begin_time + duration::interval
+                or begin_time < new.begin_time+new.duration::interval and new.begin_time+new.duration::interval < begin_time + duration::interval)) then
+      raise exception 'Occupied Times should not overlap %', now();
+  end if;
+
+  return new;
 end;
 $$
   language plpgsql;
@@ -159,8 +169,8 @@ begin
                 from availabletimeslotst
                 where weekly_schedule_from_date_ref = new.weekly_schedule_from_date_ref
                     and day_of_week = new.day_of_week
-                    and (begin_time < new.begin_time and new.begin_time < begin_time + duration
-                        or begin_time < new.begin_time+new.duration and new.begin_time+new.duration < begin_time + duration)) then
+                    and (begin_time < new.begin_time and new.begin_time < begin_time + duration::interval
+                        or begin_time < new.begin_time+new.duration::interval and new.begin_time+new.duration::interval < begin_time + duration::interval)) then
         raise exception 'Available Times should not overlap %', now();
     end if;
     return new;
@@ -178,7 +188,7 @@ create function delete_page_trigger_function()
     returns trigger as
 $$
 begin
-    if old.page_no == 1 or exists (select * from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no + 1) then
+    if old.page_no = 1 or exists (select * from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no + 1) then
         raise exception 'Personal info page number should be 1 %', now();
     end if;
     return new;

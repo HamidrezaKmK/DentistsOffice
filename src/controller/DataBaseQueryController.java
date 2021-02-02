@@ -748,9 +748,12 @@ public class DataBaseQueryController {
 
                 while (rs.next()) {
                     LocalTime availableTimeL = LocalTime.parse(rs.getString("begin_time"));
-                    if (availableTimeL.isAfter(LocalTime.parse(end_time)))
-                        availableTimeL = LocalTime.parse(end_time);
+
+                    //System.err.println(availableTimeL +  " ==== Endtime: " + );
+                    //if (availableTimeL.isAfter(LocalTime.parse(end_time)))
+                    //    availableTimeL = LocalTime.parse(end_time);
                     LocalTime availableTimeR = LocalTime.parse(rs.getString("end_time"));
+
                     String reason = "Doctor not available!";
                     if (lastTime.isBefore(availableTimeL))
                         Schedule.getInstance().addBusyInterval(new TimeInterval(date, date, lastTime, availableTimeL, reason));
@@ -772,7 +775,7 @@ public class DataBaseQueryController {
         }
 
         // output
-        Schedule.getInstance().printIntervals();
+        //Schedule.getInstance().printIntervals();
     }
 
 
