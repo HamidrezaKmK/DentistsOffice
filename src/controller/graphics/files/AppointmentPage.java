@@ -23,6 +23,7 @@ import view.popups.PopupsGUI;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -73,7 +74,7 @@ public class AppointmentPage implements Initializable, EditablePage, StageSavabl
                 submit();
                 refreshPage();
             }
-        } catch (Error e) {
+        } catch (SQLException e) {
             loadStage();
             Parent root = null;
                 FxmlFileLoader object = new FxmlFileLoader();
@@ -85,12 +86,9 @@ public class AppointmentPage implements Initializable, EditablePage, StageSavabl
                 stage.show();
 
         }
-        catch (Exception e) {
-            System.out.println("kooft");
-        }
     }
 
-    private void submit() throws Exception {
+    private void submit() throws SQLException {
 
         DataBaseQueryController.getInstance().handleQuery(QueryType.EDIT_APPOINTMENT_PAGE, Integer.toString(patientID), Integer.toString(pageNo),
                 treatmentSummaryTextArea.getText(), nextAppointmentDateTextField.getText(), wholeAmountLabel.getText(), paidAmountTextField.getText());
