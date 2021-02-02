@@ -77,7 +77,8 @@ public class DataBaseQueryController {
 
                 case CREATE_FILE:
                     // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
-                    // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate"}
+                    // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate",
+                    // "phone_number", otherPhoneNumbers...}
                     // important: if any of entries is null, put "null" (string of null) in its place.
                     // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
                     handleCreateFile(args);
@@ -308,7 +309,7 @@ public class DataBaseQueryController {
     private void getCurrentAvailableTimes() throws SQLException {
         model.CurrentDateAndTime.getInstance().clear();
         getCurrentDateTime();
-        String current_date =  model.CurrentDateAndTime.getInstance().getCurrent_date();
+        String current_date = model.CurrentDateAndTime.getInstance().getCurrent_date();
         String[] args = {current_date};
         model.AvailableTimeSlots.getInstance().clear();
         getAvailableTimeSlotsByDate(args);
@@ -742,7 +743,6 @@ public class DataBaseQueryController {
                 homeAddr.add(rs.getString("homeaddress"));
                 workAddr.add(rs.getString("workaddress"));
             }
-
             model.Patient.getInstance().setFirst_name(first_name);
             model.Patient.getInstance().setLast_name(last_name);
             model.Patient.getInstance().setAge(age);
@@ -752,7 +752,6 @@ public class DataBaseQueryController {
             model.Patient.getInstance().setReference(reference);
             model.Patient.getInstance().setHomeAddr(homeAddr);
             model.Patient.getInstance().setWorkAddr(workAddr);
-
         } catch (SQLException e) {
             throw new Error("Problem", e);
         } finally {
@@ -760,6 +759,26 @@ public class DataBaseQueryController {
                 stmt.close();
             }
         }
+
+        ArrayList<String> phones = new ArrayList<>();
+        query = "select * from patientphonest\n" +
+                "where patient_id = " + id + ";";
+
+        stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                phones.add(rs.getString("phone_number"));
+            }
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        model.Patient.getInstance().setPhones(phones);
     }
 
 
@@ -1378,8 +1397,8 @@ public class DataBaseQueryController {
 
 
     // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
-    // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate"}
-    // important: if any of entries is null, put "null" (string of null) in its place.
+    // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate",
+    // "phone_number", otherPhoneNumbers...}
     // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
     private void handleCreateFile(String[] args) throws Exception {
         String id = args[0];
@@ -1387,12 +1406,44 @@ public class DataBaseQueryController {
         String add_page_in_page_table_query = addPageQueryForPersonalInfoPage(args);
         String add_personal_info_page_query = addPersonalInfoPageQuery(args);
 
+        for(int i = 0; i < args.length; i++)
+            System.out.print(args[i] + " ");
+        System.out.println("\n===");
+        System.out.println(add_patient_query);
+        System.out.println("----");
+        System.out.println(add_page_in_page_table_query);
+        System.out.println("----");
+        System.out.println(add_personal_info_page_query);
+        System.out.println("----");
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
             stmt.executeUpdate(add_patient_query);
             stmt.executeUpdate(add_page_in_page_table_query);
             stmt.executeUpdate(add_personal_info_page_query);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        addPhones(args, id);
+    }
+
+    // CreateFile uses this function.
+    private void addPhones(String[] args, String id) throws SQLException {
+        int first = 16;
+        ArrayList<String> queries = new ArrayList<>();
+        for (int i = first; i < args.length; i++) {
+            queries.add("insert into patientphonest values('" + id + "', '" + args[i] + "');");
+        }
+        Statement stmt = null;
+        stmt = current_connection.createStatement();
+        try {
+            for (int i = 0; i < queries.size(); i++) {
+                stmt.executeUpdate(queries.get(i));
+            }
         } catch (SQLException e) {
             throw new Error("Problem", e);
         } finally {

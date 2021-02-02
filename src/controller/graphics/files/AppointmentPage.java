@@ -64,6 +64,7 @@ public class AppointmentPage implements Initializable, EditablePage {
             DataBaseQueryController.getInstance().handleQuery(QueryType.EDIT_APPOINTMENT_PAGE, Integer.toString(patientID), Integer.toString(pageNo),
                     treatmentSummaryTextArea.getText(), nextAppointmentDateTextField.getText(), wholeAmountLabel.getText(), paidAmountTextField.getText());
         } catch (Exception e) {
+            System.out.println("HOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOYYYYYYYYY");
             e.printStackTrace();
         }
 

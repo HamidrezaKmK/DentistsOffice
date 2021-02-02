@@ -42,7 +42,7 @@
             <Label text="Work Address:" />
             <TextArea fx:id="workAddressTextArea" prefHeight="56.0" prefWidth="297.0" />
             <Label text="Phone Numbers:" />
-            <ListView fx:id="phoneNumbersListView" prefHeight="200.0" prefWidth="200.0" />
+            <ListView fx:id="phoneNumbersListView" prefHeight="138.0" prefWidth="297.0" />
          </children>
       </VBox>
       <Button fx:id="addButton" layoutX="787.0" layoutY="75.0" mnemonicParsing="false" onAction="#addButtonPress" text="Add" />
