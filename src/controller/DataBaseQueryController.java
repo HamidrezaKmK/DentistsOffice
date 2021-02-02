@@ -742,7 +742,6 @@ public class DataBaseQueryController {
                 homeAddr.add(rs.getString("homeaddress"));
                 workAddr.add(rs.getString("workaddress"));
             }
-
             model.Patient.getInstance().setFirst_name(first_name);
             model.Patient.getInstance().setLast_name(last_name);
             model.Patient.getInstance().setAge(age);
@@ -752,7 +751,6 @@ public class DataBaseQueryController {
             model.Patient.getInstance().setReference(reference);
             model.Patient.getInstance().setHomeAddr(homeAddr);
             model.Patient.getInstance().setWorkAddr(workAddr);
-
         } catch (SQLException e) {
             throw new Error("Problem", e);
         } finally {
@@ -760,6 +758,26 @@ public class DataBaseQueryController {
                 stmt.close();
             }
         }
+
+        ArrayList<String> phones = new ArrayList<>();
+        query = "select * from patientphonest\n" +
+                "where patient_id = " + id + ";";
+
+        stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+               phones.add(rs.getString("phone_number"));
+            }
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        model.Patient.getInstance().setPhones(phones);
     }
 
 

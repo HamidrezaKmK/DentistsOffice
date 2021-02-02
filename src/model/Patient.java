@@ -18,6 +18,23 @@ public class Patient {
     private String homeAddr = null;
     private String workAddr = null;
 
+    private ArrayList<String> phones = null;
+
+    public static Patient getSingleInstance() {
+        return singleInstance;
+    }
+
+    public static void setSingleInstance(Patient singleInstance) {
+        Patient.singleInstance = singleInstance;
+    }
+
+    public ArrayList<String> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(ArrayList<String> phones) {
+        this.phones = phones;
+    }
 
     public void clear() {
         this.age = null;
