@@ -94,8 +94,7 @@ public class AddWeeklySchedule implements Initializable {
                     DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_NEW_AVAILABLE_TIME, fromDateTextField.getText(),
                             day, fromTime, toTime);
                 } catch (Exception e) {
-                    if (!hasPopedUp)
-                        PopUpCreater.createSQLErrorPopUp(e.getMessage());
+                    PopUpCreater.createSQLErrorPopUp(e.getMessage());
                     hasPopedUp = true;
                 }
             }

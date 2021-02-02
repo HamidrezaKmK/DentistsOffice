@@ -8,8 +8,11 @@ public class PopUpSQLError {
     @FXML
     private TextArea sqlErrorMessageTextArea = new TextArea();
 
-    public void setText(String error) {
+    String currentText;
+
+    public void addErrorText(String error) {
         sqlErrorMessageTextArea.setEditable(false);
-        sqlErrorMessageTextArea.setText(error);
+        currentText += "\n - " + error;
+        sqlErrorMessageTextArea.setText(currentText);
     }
 }
