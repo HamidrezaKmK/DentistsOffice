@@ -6,10 +6,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import model.QueryType;
@@ -18,6 +15,8 @@ import model.TimeInterval;
 import view.FxmlFileLoader;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class BookingMenu implements Initializable {
@@ -62,9 +61,55 @@ public class BookingMenu implements Initializable {
     private TextField enterReferralTimePatientID = new TextField();
 
     @FXML
+    private Label fromDateLabel = new Label();
+
+    @FXML
+    private Label toDateLabel = new Label();
+
+
+    @FXML
+    ListView saturdayListView = new ListView();
+
+    @FXML
+    ListView sundayListView = new ListView();
+
+    @FXML
+    ListView mondayListView = new ListView();
+
+    @FXML
+    ListView tuesdayListView = new ListView();
+
+    @FXML
+    ListView wednesdayListView = new ListView();
+
+    @FXML
+    ListView thursdayListView = new ListView();
+
+    @FXML
+    ListView fridayListView = new ListView();
+
+    ArrayList<String>daysNames = new ArrayList<>();
+
+    ArrayList<ListView> daysListViews = new ArrayList<>();
+
+    @FXML
     private void addTimeToScheduleButtonPress(ActionEvent event) {
         // TODO: add time to schedule
-
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_OCCUPIED_TIME_SLOT, enterOccupiedTimeDate.getText(),
+                    enterOccupiedTimeBeginTime.getText(), enterOccupiedTimeEndTime.getText());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!enterReferralTimePatientID.getText().isEmpty()) {
+            try {
+                DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_REFERRAL_TIME, enterOccupiedTimeDate.getText(),
+                        enterOccupiedTimeBeginTime.getText(), enterOccupiedTimeReason.getText(), enterReferralTimePatientID.getText());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        scheduleQueryEnterButtonPress(event);
     }
 
     @FXML
@@ -113,6 +158,18 @@ public class BookingMenu implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        daysListViews.addAll(Arrays.asList(saturdayListView, sundayListView, mondayListView, tuesdayListView, wednesdayListView,
+                thursdayListView, fridayListView));
+        daysNames.addAll(Arrays.asList(
+                "SAT",
+                "SUN",
+                "MON",
+                "TUE",
+                "WED",
+                "THU",
+                "FRI"
+        ));
+
         DataBaseQueryController dbcontroller = DataBaseQueryController.getInstance();
         dbcontroller.setUsername("postgres");
         dbcontroller.setPassword("dibimibi");
@@ -126,6 +183,9 @@ public class BookingMenu implements Initializable {
         scheduleQueryFromDateTextField.setText("2021-01-02 09:00:00");
         scheduleQueryToDateTextField.setText("2021-02-21 09:00:00");
         refreshCurrentSchedule();
+
+
+
     }
 
     public void selectOccupiedTimeOnTimeLine(TimeInterval interval) {
@@ -135,8 +195,37 @@ public class BookingMenu implements Initializable {
     }
 
     public void refreshCurrentSchedule() {
-        // TODO: this query should consider database date not local date
-        // TODO: this query should be implemented
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.GET_CURRENT_WEEKLY_SCHEDULE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        model.WeeklySchedule inst = model.WeeklySchedule.getInstance();
+        fromDateLabel.setText(inst.getFrom_date());
+        toDateLabel.setText(inst.getTo_date());
 
+        try {
+            DataBaseQueryController.getInstance().handleQuery(QueryType.GET_CURRENT_DATE_TIME);
+            DataBaseQueryController.getInstance().handleQuery(QueryType.GET_AVAILABLE_TIMES_BY_DATE,
+                    model.CurrentDateAndTime.getInstance().getCurrent_date());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        model.AvailableTimeSlots inst1 = model.AvailableTimeSlots.getInstance();
+        int sz = inst1.getWeek_days().size();
+        for (int i = 0; i < 7; i++) {
+            daysListViews.get(i).getItems().clear();
+        }
+        for (int i = 0; i < sz; i++) {
+            String weekDay = inst1.getWeek_days().get(i);
+            String beginTime = inst1.getBegin_times().get(i);
+            String endTime = inst1.getEnd_times().get(i);
+
+            int id = daysNames.indexOf(weekDay);
+            daysListViews.get(id).getItems().add(beginTime + " - " + endTime);
+        }
+        for (int i = 0; i < 7; i++) {
+            daysListViews.get(i).getItems().add(" ");
+        }
     }
 }
