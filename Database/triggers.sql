@@ -6,7 +6,8 @@
 -- trigger related to insert, it reverts changes if
 -- the newly added record does not match some constraints
 ---
-create function appointment_page_trigger_function() returns trigger as
+create function appointment_page_trigger_function() returns trigger
+    language plpgsql as
 $$
 begin
   -- check if the paid payment <= whole payment if not revert changes
@@ -17,10 +18,9 @@ begin
   if new.next_appointment_date < new.occupied_time_slot_date_ref then
     raise exception 'next appointment date is not after the current appointment date, %', now();
   end if;
-  return null;
+  return new;
 end;
-$$
-  language plpgsql;
+$$;
 
 -- define insert trigger:
 create trigger appointment_page_trigger
@@ -103,7 +103,7 @@ begin
     if new.page_no != 1 then
         raise exception 'Personal info page number should be 1 %', now();
     end if;
-    return null;
+    return new;
 end
 $$ language plpgsql;
 
@@ -111,7 +111,7 @@ create trigger personal_info_page_trigger
     before update or insert
     on personalinfopaget
     for each row
-    execute procedure personal_info_page_trigger_function();
+execute procedure personal_info_page_trigger_function();
 
 create function page_no_trigger_function()
     returns trigger as
@@ -120,7 +120,7 @@ begin
     if new.page_no != 1 and (1 > (select count() from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no - 1)) then
         raise exception 'Personal info page number should be 1 %', now();
     end if;
-    return null;
+    return new;
 end
 $$ language plpgsql;
 
@@ -140,7 +140,7 @@ begin
                             or (from_date <= new.to_date and new.to_date <= to_date))) then
         raise exception 'Weekly schedules should not overlap %', now();
     end if;
-    return null;
+    return new;
 end
 $$ language plpgsql;
 
@@ -163,7 +163,7 @@ begin
                         or begin_time < new.begin_time+new.duration and new.begin_time+new.duration < begin_time + duration))) then
         raise exception 'Available Times should not overlap %', now();
     end if;
-    return null;
+    return new;
 end
 $$ language plpgsql;
 
@@ -181,7 +181,7 @@ begin
     if old.page_no == 1 or (1 <= (select count() from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no + 1)) then
         raise exception 'Personal info page number should be 1 %', now();
     end if;
-    return null;
+    return new;
 end
 $$ language plpgsql;
 
@@ -204,7 +204,7 @@ begin
     then
         raise exception 'There is another page with this number %', now();
     end if;
-    return null;
+    return new;
 end
 $$ language plpgsql;
 
@@ -225,7 +225,7 @@ create function update_page_no_trigger_function()
 $$
 begin
     raise exception 'Page number can not be updated %', now();
-    return null;
+    return new;
 end
 $$ language plpgsql;
 
