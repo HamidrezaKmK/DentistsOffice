@@ -172,7 +172,7 @@ public class DataBaseQueryController {
                     break;
 
                 case ADD_NEW_AVAILABLE_TIME:
-                    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "duration"}
+                    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "to_time"}
                     // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
                     // Time format: HH:MM:SS
                     handleAddNewAvailableTime(args);
@@ -222,7 +222,7 @@ public class DataBaseQueryController {
         }
     }
 
-    
+
     // No args needed.
     private void getCurrentAvailableTimes() throws SQLException {
         model.CurrentDateAndTime.getInstance().clear();
@@ -679,12 +679,15 @@ public class DataBaseQueryController {
     }
 
 
-    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "duration"}
+    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "to_time"}
     // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
     // Time format: HH:MM:SS
     private void handleAddNewAvailableTime(String[] args) throws Exception {
+        String to_time = args[3];
+        String begin_time = args[2];
+        String duration = "'" + to_time + "'::time - '" + begin_time + "'::time";
         String query = "insert into availabletimeslotst values('" +
-                args[0] + "', '" + args[1] + "', '" + args[2] + "', '" + args[3] + "');";
+                args[0] + "', '" + args[1] + "', '" + args[2] + "', " + duration + ");";
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
