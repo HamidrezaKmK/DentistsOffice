@@ -53,9 +53,9 @@ public class AppointmentPage implements Initializable, EditablePage {
             editButton.setText("Submit");
         } else if (editButton.getText().equals("Submit")) {
             switchEditing(false);
+            editButton.setText("Edit");
             submit();
             refreshPage();
-            editButton.setText("Edit");
         }
     }
 
