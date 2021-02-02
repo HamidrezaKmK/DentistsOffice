@@ -86,7 +86,6 @@ public class AddWeeklySchedule implements Initializable {
                 String[] parts = item.split("-");
                 String fromTime = parts[0].trim();
                 String toTime = parts[1].trim();
-                // TODO: duration should change to toTime
                 try {
                     DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_NEW_AVAILABLE_TIME, fromDateTextField.getText(),
                             day, fromTime, toTime);
@@ -95,6 +94,8 @@ public class AddWeeklySchedule implements Initializable {
                 }
             }
         }
+        //System.out.println("HOWDY");
+        backToBookingMenuButtonPress(event);
     }
 
     @Override

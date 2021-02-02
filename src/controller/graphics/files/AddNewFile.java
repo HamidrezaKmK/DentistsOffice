@@ -66,9 +66,9 @@ public class AddNewFile implements Initializable {
         HashSet<Integer> S = new HashSet<>(model.SearchResult.getInstance().getPatientIds());
         String firstName = firstNameTextField.getText();
         String lastName = lastNameTextField.getText();
-        int newId = (firstName + lastName).hashCode();
+        int newId = (((firstName + lastName).hashCode())%10000  + 10000) % 10000 + 1;
         while (S.contains(newId))
-            newId++;
+            newId = (newId + 1) % 10000 + 1;
         String age = ageTextField.getText();
         String gender = genderChoiceBox.getValue();
         String occupation = occupationTextField.getText();
