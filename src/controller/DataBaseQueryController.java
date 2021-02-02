@@ -643,8 +643,9 @@ public class DataBaseQueryController {
     private void addOccupiedTimeSlot(String[] args) throws SQLException {
         String date = args[0];
         String begin_time = args[1];
-        String duration = args[2];
-        String query = "insert into occupiedtimeslotst values('" + date + "', '" + begin_time + "', '" + duration + "', '";
+        String to_time = args[2];
+        String duration = "'" + to_time + "'::time - '" + begin_time + "'::time";
+        String query = "insert into occupiedtimeslotst values('" + date + "', '" + begin_time + "', " + duration + ", '";
 
         model.WeeklySchedule.getInstance().clear();
         String[] from_date_args = {date};
