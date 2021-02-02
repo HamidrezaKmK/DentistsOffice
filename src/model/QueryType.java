@@ -42,6 +42,7 @@ public enum QueryType {
     // more queries:
     GET_NEXT_REFERRAL_TIME,
     GET_PAYMENTS_IN_TIME_INTERVAL,
+    REMOVE_FUTURE_REFERRALS_IN_GIVEN_DATE_INTERVAL,
 
 
 
