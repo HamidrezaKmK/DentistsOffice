@@ -84,6 +84,7 @@ public class CreateAppointmentPage implements Initializable {
     public void setChoices() {
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.REFRESH_REFERRALS_WITHOUT_APPOINTMENT_PAGE, Integer.toString(patientID));
+            System.err.println("HOOOO");
         } catch (Exception e) {
             e.printStackTrace();
         }

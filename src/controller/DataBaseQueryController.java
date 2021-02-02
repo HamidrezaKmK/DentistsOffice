@@ -1396,7 +1396,7 @@ public class DataBaseQueryController {
 
         String main_query = "select *\n" +
                 "\tfrom referraloccupiedtimeslotst as T1\n" +
-                "    where T1.patient_id = 1 and not exists(\n" +
+                "    where T1.patient_id = " + id + " and not exists(\n" +
                 "        select *\n" +
                 "        from appointmentPageT as T2\n" +
                 "        where T2.occupied_time_slot_date_ref = T1.date and\n" +
