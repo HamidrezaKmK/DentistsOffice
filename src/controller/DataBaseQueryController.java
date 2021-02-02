@@ -1406,6 +1406,15 @@ public class DataBaseQueryController {
         String add_page_in_page_table_query = addPageQueryForPersonalInfoPage(args);
         String add_personal_info_page_query = addPersonalInfoPageQuery(args);
 
+        for(int i = 0; i < args.length; i++)
+            System.out.print(args[i] + " ");
+        System.out.println("\n===");
+        System.out.println(add_patient_query);
+        System.out.println("----");
+        System.out.println(add_page_in_page_table_query);
+        System.out.println("----");
+        System.out.println(add_personal_info_page_query);
+        System.out.println("----");
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
