@@ -216,10 +216,91 @@ public class DataBaseQueryController {
                     // No args needed.
                     getCurrentAvailableTimes();
                     break;
+
+                case GET_NEXT_REFERRAL_TIME:
+                    // args: {"id"}
+                    getNextAppointmentTime(args);
+                    break;
+
+                case GET_PAYMENTS_IN_TIME_INTERVAL:
+                    // args: {"from_date", "to_date"}
+                    getPaymentsInTimeInterval(args);
+                    break;
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);
         }
+    }
+
+
+    // args: {"from_date", "to_date"}
+    private void getPaymentsInTimeInterval(String[] args) throws SQLException {
+        String from = args[0];
+        String to = args[1];
+
+        ArrayList<String> patient_ids = new ArrayList<>();
+        ArrayList<String> first_names = new ArrayList<>();
+        ArrayList<String> last_names = new ArrayList<>();
+        ArrayList<String> whole_payment = new ArrayList<>();
+        ArrayList<String> paid_payment = new ArrayList<>();
+        ArrayList<String> dates = new ArrayList<>();
+
+        String query = "select patient_id, first_name, last_name, whole_payment_amount, paid_payment_amount, occupied_time_slot_date_ref\n" +
+                "from patientt natural join appointmentpaget\n" +
+                "where occupied_time_slot_date_ref between '" + from + "' and '" + to + "';";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                patient_ids.add(rs.getString("patient_id"));
+                first_names.add(rs.getString("first_name"));
+                last_names.add(rs.getString("last_name"));
+                whole_payment.add(rs.getString("whole_payment_amount"));
+                paid_payment.add(rs.getString("paid_payment_amount"));
+                dates.add(rs.getString("occupied_time_slot_date_ref"));
+            }
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        model.PaymentsHistory.getInstance().clear();
+        model.PaymentsHistory.getInstance().setPatient_ids(patient_ids);
+        model.PaymentsHistory.getInstance().setFirst_names(first_names);
+        model.PaymentsHistory.getInstance().setLast_names(last_names);
+        model.PaymentsHistory.getInstance().setDates(dates);
+        model.PaymentsHistory.getInstance().setWhole_payment(whole_payment);
+        model.PaymentsHistory.getInstance().setPaid_payment(paid_payment);
+    }
+
+
+    // args: {"id"}
+    private void getNextAppointmentTime(String[] args) throws SQLException {
+        String id = args[0];
+        String query = "select next_appointment_date from appointmentpaget\n" +
+                "where patient_id = " + id + "\norder by next_appointment_date;";
+
+        ArrayList<String> next_ap_date = new ArrayList<>();
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                next_ap_date.add(rs.getString("next_appointment_date"));
+            }
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        model.AppointmentPage.getInstance().clear();
+        model.AppointmentPage.getInstance().setNext_appointment_date(next_ap_date.get(next_ap_date.size() - 1));
     }
 
 
