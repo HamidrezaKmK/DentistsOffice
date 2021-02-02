@@ -6,17 +6,15 @@
 -- trigger related to insert, it reverts changes if
 -- the newly added record does not match some constraints
 ---
-create function insert_appointment_page_trigger_function() returns trigger as
+create function appointment_page_trigger_function() returns trigger as
 $$
 begin
   -- check if the paid payment <= whole payment if not revert changes
   if new.whole_payment_amount < new.paid_payment_amount then
-    delete from AppointmentPageT where patient_id = new.patient_id and page_no = new.page_no;
     raise exception 'paid amount is larger than whole amount in query, %', now();
   end if;
   -- check if next appointment date is after the current appointment date if not revert changes
   if new.next_appointment_date < new.occupied_time_slot_date_ref then
-    delete from AppointmentPageT where patient_id = new.patient_id and page_no = new.page_no;
     raise exception 'next appointment date is not after the current appointment date, %', now();
   end if;
   return null;
@@ -25,53 +23,17 @@ $$
   language plpgsql;
 
 -- define insert trigger:
-create trigger insert_appointment_page
-  after insert
+create trigger appointment_page_trigger
+  before insert or update
   on AppointmentPageT
   for each row
-execute procedure insert_appointment_page_trigger_function();
+execute procedure appointment_page_trigger_function();
 
-
----
--- trigger related to update it uses the previous function
--- and rewrites update as a delete and insert
----
-create function update_appointment_page_trigger_function() returns trigger as
-$$
-begin
-  if new.whole_payment_amount < new.paid_payment_amount then
-    delete from AppointmentPageT where patient_id = new.patient_id and page_no = new.page_no;
-    insert into AppointmentPageT
-    values (old.patient_id, old.page_no, old.treatment_summary,
-            old.next_appointment_date, old.whole_payment_amount,
-            old.paid_payment_amount, old.occupied_time_slot_date_ref,
-            old.occupied_time_slot_begin_time_ref);
-    raise exception 'paid amount is larger than whole amount in query, %', now();
-  end if;
-  if new.next_appointment_date < new.occupied_time_slot_date_ref then
-    delete from AppointmentPageT where patient_id = new.patient_id and page_no = new.page_no;
-    insert into AppointmentPageT
-    values (old.patient_id, old.page_no, old.treatment_summary,
-            old.next_appointment_date, old.whole_payment_amount,
-            old.paid_payment_amount, old.occupied_time_slot_date_ref,
-            old.occupied_time_slot_begin_time_ref);
-    raise exception 'next appointment date is not after the current appointment date, %', now();
-  end if;
-  return null;
-end;
-$$
-  language plpgsql;
-
-create trigger update_appointment_page
-  after update
-  on AppointmentPageT
-  for each row
-execute procedure update_appointment_page_trigger_function();
 
 -- trigger for occupied time
 
 -- -- trigger for occupied time insert
-create function insert_occupied_time_slots_trigger_function()
+create function occupied_time_slots_trigger_function()
   returns trigger as
 $$
 begin
@@ -79,7 +41,6 @@ begin
   if new.date < new.available_time_slots_ref_from_date or
      new.date > (select to_date from WeeklyScheduleT where from_date = new.available_time_slots_ref_from_date)
   then
-    delete from OccupiedTimeSlotsT where new.date = date and new.begin_time = begin_time;
     raise exception 'Occupied time date does not match the weekly schedule%', now();
   end if;
   -- check if the date matches the available time in schedules week day
@@ -105,7 +66,6 @@ begin
         occupied_time_day_of_week_as_string := 'SAT';
       end case;
     if occupied_time_day_of_week_as_string != new.available_time_slots_ref_week_day then
-      delete from OccupiedTimeSlotsT where new.date = date and new.begin_time = begin_time;
       raise exception 'Occupied time date does not match the day of week field %', now();
     end if;
   end;
@@ -121,7 +81,6 @@ begin
 
     if new.available_time_slots_ref_begin_time > new.begin_time or
        available_time_record.duration + available_time_record.begin_time < new.begin_time + new.duration then
-      delete from OccupiedTimeSlotsT where new.date = date and new.begin_time = begin_time;
       raise exception 'Occupied time in day does not match with the available time %', now();
     end if;
   end;
@@ -130,30 +89,12 @@ end;
 $$
   language plpgsql;
 
-create trigger insert_occupied_time_slot
-  after insert
+create trigger occupied_time_slot_trigger
+  before insert or update
   on OccupiedTimeSlotsT
   for each row
-execute procedure insert_occupied_time_slots_trigger_function();
+execute procedure occupied_time_slots_trigger_function();
 
-create function update_occupied_time_slots_trigger_function()
-  returns trigger as
-$$
-declare
-  ret_val record;
-begin
-  delete from OccupiedTimeSlotsT as T1
-  where T1.date = new.date and T1.begin_time = new.begin_time;
-  select insert_occupied_time_slots_trigger_function() into ret_val;
-  return ret_val;
-end
-$$ language plpgsql;
-
-create trigger update_occupied_time_slot
-  after update
-  on OccupiedTimeSlotsT
-  for each row
-execute procedure update_occupied_time_slots_trigger_function();
 
 create function personal_info_page_trigger_function()
     returns trigger as
@@ -290,14 +231,14 @@ $$ language plpgsql;
 
 create trigger appointment_page_update_trigger
     before update
-    of page_no
+        of page_no
     on appointmentpaget
     for each row
-execute function update_page_no_trigger_function();
+execute procedure update_page_no_trigger_function();
 
 create trigger medical_image_page_update_trigger
     before update
         of page_no
     on medicalimagepaget
     for each row
-execute function update_page_no_trigger_function();
+execute procedure update_page_no_trigger_function();
