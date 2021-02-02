@@ -159,8 +159,7 @@ public class DataBaseQueryController {
                     break;
 
                 case ADD_OCCUPIED_TIME_SLOT:
-                    // args: {"date","begin_time", "duration", "available_time_slots_ref_from_date",
-                    // "available_time_slots_ref_week_day", "available_time_slots_ref_begin_time"}
+                    // args: {"date","begin_time", "to_time"}
                     // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
                     // Time format: HH:MM:SS
                     addOccupiedTimeSlot(args);
@@ -639,7 +638,7 @@ public class DataBaseQueryController {
     }
 
 
-    // args: {"date","begin_time", "duration"}
+    // args: {"date","begin_time", "to_time"}
     private void addOccupiedTimeSlot(String[] args) throws SQLException {
         String date = args[0];
         String begin_time = args[1];
