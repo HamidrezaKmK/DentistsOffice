@@ -17,9 +17,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import model.QueryType;
 import view.FxmlFileLoader;
+import view.PopUpCreater;
 import view.booking.BookingGUI;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
@@ -72,11 +74,13 @@ public class AddWeeklySchedule implements Initializable {
 
     @FXML
     private void addScheduleButtonPress(ActionEvent event) {
+        boolean hasPopedUp = false;
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.CREATE_NEW_WEEKLY_SCHEDULE,
                     fromDateTextField.getText(), endDateTextField.getText());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            PopUpCreater.createSQLErrorPopUp(e.getMessage());
+            hasPopedUp = true;
         }
         int sz = daysNames.size();
         for (int i = 0; i < sz; i++) {
@@ -90,12 +94,15 @@ public class AddWeeklySchedule implements Initializable {
                     DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_NEW_AVAILABLE_TIME, fromDateTextField.getText(),
                             day, fromTime, toTime);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    if (!hasPopedUp)
+                        PopUpCreater.createSQLErrorPopUp(e.getMessage());
+                    hasPopedUp = true;
                 }
             }
         }
         //System.out.println("HOWDY");
-        backToBookingMenuButtonPress(event);
+        if (!hasPopedUp)
+            backToBookingMenuButtonPress(event);
     }
 
     @Override
