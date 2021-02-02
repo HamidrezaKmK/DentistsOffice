@@ -16,17 +16,7 @@ import java.util.jar.Attributes;
 
 import static java.lang.Integer.parseInt;
 
-/*
-select *
-	from referraloccupiedtimeslotst as T1
-    where T1.patient_id = 1 and not exists(
-        select *
-        from appointmentPageT as T2
-        where T2.occupied_time_slot_date_ref = T1.date and
-        	T2.occupied_time_slot_begin_time_ref = T1.begin_time and
-        T2.patient_id = T1.patient_id);
 
- */
 public class DataBaseQueryController {
 
     private String username;
@@ -202,9 +192,79 @@ public class DataBaseQueryController {
                     // args: {"patientID"}
                     refreshReferralWithNoAppointmentPage(args);
                     break;
+
+                case GET_CURRENT_DATE_TIME:
+                    // No args needed
+                    getCurrent_dateTime();
+                    break;
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);
+        }
+    }
+
+
+    private String getWeekDayByDate(String date) throws SQLException {
+        String query = "select extract(dow from date '" + date + "');";
+        Statement stmt = null;
+        String week_day = null;
+        String[] days = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                week_day = rs.getString("date_part");
+            }
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        int index = parseInt(week_day);
+        return days[index];
+    }
+
+    // No args needed
+    private void getCurrent_dateTime() throws SQLException {
+        String query = "select current_date";
+        String date = null;
+        Statement stmt = null;
+        model.CurrentDateAndTime.getInstance().clear();
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                date = rs.getString("current_date");
+            }
+            String week_day = getWeekDayByDate(date);
+            model.CurrentDateAndTime.getInstance().setCurrent_date(date);
+            model.CurrentDateAndTime.getInstance().setCurrent_week_day(week_day);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        query = "select NOW();";
+        stmt = null;
+        String time = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                time = rs.getString("now");
+            }
+            time = time.substring(11, 19);
+            model.CurrentDateAndTime.getInstance().setCurrent_time(time);
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
         }
     }
 
@@ -521,6 +581,9 @@ public class DataBaseQueryController {
     private void addOccupiedTimeSlot(String[] args) throws SQLException {
         String query = "insert into occupiedtimeslotst values('" + args[0] + "', '" + args[1] + "', '" +
                 args[2] + "', '" + args[3] + "', '" + args[4] + "', '" + args[5] + "');";
+
+
+
         Statement stmt = null;
         try {
             stmt = current_connection.createStatement();
