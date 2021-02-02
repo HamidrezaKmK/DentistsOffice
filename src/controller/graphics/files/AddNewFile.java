@@ -1,15 +1,19 @@
 package controller.graphics.files;
 
 import controller.DataBaseQueryController;
+import controller.graphics.FXMLLoadersCommunicator;
+import controller.graphics.booking.PopupAddAvailableTime;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import model.QueryType;
 import view.FxmlFileLoader;
 
@@ -54,8 +58,10 @@ public class AddNewFile implements Initializable {
     private Button addButton;
 
     @FXML
+    private ListView phoneNumbersListView = new ListView();
+
+    @FXML
     private void addButtonPress(ActionEvent event) {
-        // TODO: query to add new file
         try {
             DataBaseQueryController.getInstance().handleQuery(QueryType.MAIN_SEARCH, null, null, null, "0");
         } catch (Exception e) {
@@ -68,7 +74,7 @@ public class AddNewFile implements Initializable {
         String lastName = lastNameTextField.getText();
         int newId = (((firstName + lastName).hashCode())%10000  + 10000) % 10000 + 1;
         while (S.contains(newId))
-            newId = (newId + 1) % 10000 + 1;
+            newId = newId+1;
         String age = ageTextField.getText();
         String gender = genderChoiceBox.getValue();
         String occupation = occupationTextField.getText();
@@ -85,10 +91,21 @@ public class AddNewFile implements Initializable {
         String fileCreationDate = java.time.LocalDate.now().toString();
 
         try {
-            DataBaseQueryController.getInstance().handleQuery(QueryType.CREATE_FILE,
-                    Integer.toString(newId), firstName, lastName, age, gender,
+            ArrayList<String> args = new ArrayList<>();
+            args.addAll(Arrays.asList(Integer.toString(newId), firstName, lastName, age, gender,
                     occupation, ref, education, homeAddr, workAddr, generalMedicalRecords,
-                    dentalRec, sensitiveMed, smoke, signitureAddr, fileCreationDate);
+                    dentalRec, sensitiveMed, smoke, signitureAddr, fileCreationDate));
+            for (int i = 0; i < phoneNumbersListView.getItems().size(); i++) {
+                args.add(phoneNumbersListView.getItems().get(i).toString());
+            }
+            String[] allArgs = new String[args.size() - 1];
+            for (int i = 0; i < args.size() - 1; i++)
+                allArgs[i] = args.get(i);
+
+            for (int i = 0; i < allArgs.length; i++)
+                System.err.print(allArgs[i] + " ");
+            System.err.println("\n----");
+            DataBaseQueryController.getInstance().handleQuery(QueryType.CREATE_FILE, allArgs);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -115,5 +132,31 @@ public class AddNewFile implements Initializable {
                 "Doctoral-Degree",
                 "Other"
         ));
+        phoneNumbersListView.getItems().add("2xClick to add...");
+        phoneNumbersListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getClickCount() == 2) {
+                    try {
+                        FxmlFileLoader object = new FxmlFileLoader();
+                        Parent root1 = object.getPage("PopupAddPhoneNumber", view.files.FilesGUI.class);
+                        //PopupAddAvailableTime controller = FXMLLoadersCommunicator.getLoader("PopupAddAvailableTime").getController();
+                        //controller.setDay(daysNames.get(d));
+                        Stage stage = new Stage();
+                        stage.setScene(new Scene(root1));
+                        stage.show();
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    public void addPhoneNumber(String phoneNumber) {
+        int delInd = phoneNumbersListView.getItems().size() - 1;
+        phoneNumbersListView.getItems().remove(delInd);
+        phoneNumbersListView.getItems().add(phoneNumber);
+        phoneNumbersListView.getItems().add("2xClick to add...");
     }
 }

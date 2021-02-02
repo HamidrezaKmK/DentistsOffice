@@ -69,6 +69,8 @@ public class PersonalInfoPage implements Initializable, EditablePage {
     @FXML
     private Button editPersonalInfoButton;
 
+    @FXML
+    private ListView phoneNumbersListView = new ListView();
 
     @FXML
     private void editPersonalInfoButtonPress(ActionEvent event) {
@@ -158,6 +160,9 @@ public class PersonalInfoPage implements Initializable, EditablePage {
         educationChoiceBox.setValue(inst.getEducation());
         homeAddressTextArea.setText(inst.getHomeAddr());
         workAddressTextArea.setText(inst.getWorkAddr());
+        phoneNumbersListView.getItems().clear();
+        phoneNumbersListView.getItems().addAll(inst.getPhones());
+
         titleFirstNameLastNameLabel.setText(inst.getFirst_name() + " " + inst.getLast_name());
         patientIDLabel.setText(patientID);
 

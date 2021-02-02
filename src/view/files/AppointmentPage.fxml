@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="571.0" prefWidth="692.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.files.AppointmentPage">
+<AnchorPane fx:id="mainPane" prefHeight="571.0" prefWidth="692.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.graphics.files.AppointmentPage">
    <children>
       <Button fx:id="editButton" layoutX="634.0" layoutY="526.0" mnemonicParsing="false" onAction="#editButtonPress" text="Edit" />
       <Label layoutX="14.0" layoutY="478.0" text="Appointment:" />

@@ -2,23 +2,37 @@ package controller.graphics.files;
 
 import controller.DataBaseQueryController;
 import controller.graphics.EditablePage;
+import controller.graphics.FXMLLoadersCommunicator;
+import controller.graphics.StageSavable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import model.QueryType;
+import view.FxmlFileLoader;
+import view.PopUpSQLError;
+import view.popups.PopupsGUI;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class AppointmentPage implements Initializable, EditablePage {
+public class AppointmentPage implements Initializable, EditablePage, StageSavable {
     int pageNo, patientID;
+    AnchorPane savedPane;
+
+    @FXML
+    private AnchorPane mainPane;
 
     @FXML
     private TextArea treatmentSummaryTextArea;
@@ -48,24 +62,37 @@ public class AppointmentPage implements Initializable, EditablePage {
 
     @FXML
     private void editButtonPress(ActionEvent event) {
-        if (editButton.getText().equals("Edit"))  {
-            switchEditing(true);
-            editButton.setText("Submit");
-        } else if (editButton.getText().equals("Submit")) {
-            switchEditing(false);
-            editButton.setText("Edit");
-            submit();
-            refreshPage();
+        try {
+            saveStage();
+
+            if (editButton.getText().equals("Edit")) {
+                switchEditing(true);
+                editButton.setText("Submit");
+            } else if (editButton.getText().equals("Submit")) {
+                switchEditing(false);
+                editButton.setText("Edit");
+                submit();
+                refreshPage();
+            }
+        } catch (SQLException e) {
+            loadStage();
+            Parent root = null;
+                FxmlFileLoader object = new FxmlFileLoader();
+                root = object.getPage("PopUpSQLError", PopupsGUI.class);
+                ((PopUpSQLError)FXMLLoadersCommunicator.getLoader("PopUpSQLError").getController()).setText(e.getMessage());
+                //root = FXMLLoader.load(getClass().getResource("../../../view/popups/PopUpSQLError.fxml"));
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.show();
+
         }
     }
 
-    private void submit() {
-        try {
-            DataBaseQueryController.getInstance().handleQuery(QueryType.EDIT_APPOINTMENT_PAGE, Integer.toString(patientID), Integer.toString(pageNo),
-                    treatmentSummaryTextArea.getText(), nextAppointmentDateTextField.getText(), wholeAmountLabel.getText(), paidAmountTextField.getText());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void submit() throws SQLException {
+
+        DataBaseQueryController.getInstance().handleQuery(QueryType.EDIT_APPOINTMENT_PAGE, Integer.toString(patientID), Integer.toString(pageNo),
+                treatmentSummaryTextArea.getText(), nextAppointmentDateTextField.getText(), wholeAmountLabel.getText(), paidAmountTextField.getText());
+
 
 
     }
@@ -101,5 +128,16 @@ public class AppointmentPage implements Initializable, EditablePage {
         appointmentFromTimeLabel.setText(inst.getFrom());
         appointmentToTimeLabel.setText(inst.getTo());
 
+    }
+
+    @Override
+    public void saveStage() {
+        savedPane = mainPane;
+    }
+
+    @Override
+    public void loadStage() {
+        mainPane = savedPane;
+        paidAmountTextField.clear();
     }
 }
