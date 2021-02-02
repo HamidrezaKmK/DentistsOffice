@@ -264,7 +264,7 @@ public class DataBaseQueryController {
                 last_names.add(rs.getString("last_name"));
                 patient_ids.add(rs.getString("patient_id"));
                 dates.add(rs.getString("date"));
-                begin_times.add(rs.getString("begin_times"));
+                begin_times.add(rs.getString("begin_time"));
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);
@@ -279,7 +279,7 @@ public class DataBaseQueryController {
             ArrayList<String> eachP_phone_numbers = new ArrayList<>();
             try {
                 stmt = current_connection.createStatement();
-                ResultSet rs = stmt.executeQuery(query);
+                ResultSet rs = stmt.executeQuery(q);
                 while (rs.next()) {
                     eachP_phone_numbers.add(rs.getString("phone_number"));
                 }
