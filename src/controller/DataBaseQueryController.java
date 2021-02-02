@@ -227,10 +227,77 @@ public class DataBaseQueryController {
                     // args: {"from_date", "to_date"}
                     getPaymentsInTimeInterval(args);
                     break;
+                case REMOVE_FUTURE_REFERRALS_IN_GIVEN_DATE_INTERVAL:
+                    // args: {"from_date", "to_date"}
+                    removeFutureReferralsInGivenDateInterval(args);
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);
         }
+    }
+
+
+    // args: {"from_date", "to_date"}
+    private void removeFutureReferralsInGivenDateInterval(String[] args) throws SQLException {
+        String from_date = args[0];
+        String to_date = args[1];
+
+        String query = "select patient_id, first_name, last_name, date, begin_time\n" +
+                "from patientt natural join referraloccupiedtimeslotst\n" +
+                "where date between '" + from_date + "' and '" + to_date + "';";
+
+        ArrayList<String> first_names = new ArrayList<>();
+        ArrayList<String> last_names = new ArrayList<>();
+        ArrayList<String> patient_ids = new ArrayList<>();
+        ArrayList<String> dates = new ArrayList<>();
+        ArrayList<String> begin_times = new ArrayList<>();
+
+        ArrayList<ArrayList<String>> phone_numbers = new ArrayList<>();
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                first_names.add(rs.getString("first_name"));
+                last_names.add(rs.getString("last_name"));
+                patient_ids.add(rs.getString("patient_id"));
+                dates.add(rs.getString("date"));
+                begin_times.add(rs.getString("begin_time"));
+            }
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+        for (String id : patient_ids) {
+            String q = "select phone_number from patientphonest\nwhere patient_id = " + id + ";";
+            ArrayList<String> eachP_phone_numbers = new ArrayList<>();
+            try {
+                stmt = current_connection.createStatement();
+                ResultSet rs = stmt.executeQuery(q);
+                while (rs.next()) {
+                    eachP_phone_numbers.add(rs.getString("phone_number"));
+                }
+            } catch (SQLException e) {
+                throw new Error("Problem", e);
+            } finally {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            }
+            phone_numbers.add(eachP_phone_numbers);
+        }
+        model.CancelledReferralPatients.getInstance().clear();
+        model.CancelledReferralPatients.getInstance().setBegin_times(begin_times);
+        model.CancelledReferralPatients.getInstance().setDates(dates);
+        model.CancelledReferralPatients.getInstance().setPatient_ids(patient_ids);
+        model.CancelledReferralPatients.getInstance().setFirst_names(first_names);
+        model.CancelledReferralPatients.getInstance().setPhone_numbers(phone_numbers);
+        model.CancelledReferralPatients.getInstance().setLast_names(last_names);
     }
 
 
