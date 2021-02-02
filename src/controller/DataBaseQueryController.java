@@ -205,10 +205,71 @@ public class DataBaseQueryController {
                 case GET_WEEKLY_SCHEDULE_BY_DATE:
                     // args: {"date"}
                     getWeeklyScheduleByDate(args);
+                    break;
+
+                case GET_AVAILABLE_TIMES_BY_DATE:
+                    // args: {"date"}
+                    getAvailableTimeSlotsByDate(args);
+                    break;
+
+                case GET_CURRENT_AVAILABLE_TIMES:
+                    // No args needed.
+                    getCurrentAvailableTimes();
+                    break;
             }
         } catch (SQLException e) {
             throw new Error("Problem", e);
         }
+    }
+
+    
+    // No args needed.
+    private void getCurrentAvailableTimes() throws SQLException {
+        model.CurrentDateAndTime.getInstance().clear();
+        getCurrentDateTime();
+        String current_date =  model.CurrentDateAndTime.getInstance().getCurrent_date();
+        String[] args = {current_date};
+        model.AvailableTimeSlots.getInstance().clear();
+        getAvailableTimeSlotsByDate(args);
+    }
+
+
+    // args: {"date"}
+    private void getAvailableTimeSlotsByDate(String[] args) throws SQLException {
+        getWeeklyScheduleByDate(args);
+        String ref_from_date = model.WeeklySchedule.getInstance().getFrom_date();
+
+        ArrayList<String> week_days = new ArrayList<>();
+        ArrayList<String> begin_times = new ArrayList<>();
+        ArrayList<String> duration = new ArrayList<>();
+        ArrayList<String> to_times = new ArrayList<>();
+
+        String query = "select * from availabletimeslotst\n" +
+                "where weekly_schedule_from_date_ref = '" + ref_from_date + "';";
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                week_days.add(rs.getString("day_of_week"));
+                begin_times.add(rs.getString("begin_time"));
+                duration.add(rs.getString("duration"));
+            }
+        } catch (SQLException e) {
+            throw new Error("Problem", e);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        for (int i = 0; i < begin_times.size(); i++) {
+            to_times.add(sumTime(begin_times.get(i), duration.get(i)));
+        }
+        model.AvailableTimeSlots.getInstance().clear();
+        model.AvailableTimeSlots.getInstance().setBegin_times(begin_times);
+        model.AvailableTimeSlots.getInstance().setEnd_times(to_times);
+        model.AvailableTimeSlots.getInstance().setWeek_days(week_days);
     }
 
 
