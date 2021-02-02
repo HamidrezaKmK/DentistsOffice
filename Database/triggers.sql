@@ -117,8 +117,8 @@ create function page_no_trigger_function()
     returns trigger as
 $$
 begin
-    if new.page_no != 1 and (1 > (select count() from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no - 1)) then
-        raise exception 'Personal info page number should be 1 %', now();
+    if new.page_no != 1 and not exists(select * from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no - 1) then
+        raise exception 'Page Numbers should be consecutive %', now();
     end if;
     return new;
 end
@@ -135,9 +135,9 @@ create function weekly_schedule_trigger_function()
     returns trigger as
 $$
 begin
-    if (0 < (select count() from weeklyschedulet
+    if exists (select * from weeklyschedulet
                     where (from_date < new.from_date and new.from_date <= to_date)
-                            or (from_date <= new.to_date and new.to_date <= to_date))) then
+                            or (from_date <= new.to_date and new.to_date <= to_date)) then
         raise exception 'Weekly schedules should not overlap %', now();
     end if;
     return new;
@@ -155,12 +155,12 @@ create function available_time_trigger_function()
     returns trigger as
 $$
 begin
-    if (0 < (select count()
+    if exists(select *
                 from availabletimeslotst
                 where weekly_schedule_from_date_ref = new.weekly_schedule_from_date_ref
                     and day_of_week = new.day_of_week
                     and (begin_time < new.begin_time and new.begin_time < begin_time + duration
-                        or begin_time < new.begin_time+new.duration and new.begin_time+new.duration < begin_time + duration))) then
+                        or begin_time < new.begin_time+new.duration and new.begin_time+new.duration < begin_time + duration)) then
         raise exception 'Available Times should not overlap %', now();
     end if;
     return new;
@@ -178,7 +178,7 @@ create function delete_page_trigger_function()
     returns trigger as
 $$
 begin
-    if old.page_no == 1 or (1 <= (select count() from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no + 1)) then
+    if old.page_no == 1 or exists (select * from paget where paget.patient_id = new.patient_id and paget.page_no = new.page_no + 1) then
         raise exception 'Personal info page number should be 1 %', now();
     end if;
     return new;
@@ -199,8 +199,8 @@ begin
     if page_no = 1 then
         raise exception 'Page number 1 is reserved for Personal info page %', now();
     end if;
-    if 1 <= (select count() from appointmentpaget where patient_id = new.patient_id and page_no = new.page_no)
-        and 1 <= (select count() from medicalimagepaget where patient_id = new.patient_id and page_no = new.page_no)
+    if exists(select * from appointmentpaget where patient_id = new.patient_id and page_no = new.page_no)
+        and exists(select * from medicalimagepaget where patient_id = new.patient_id and page_no = new.page_no)
     then
         raise exception 'There is another page with this number %', now();
     end if;
