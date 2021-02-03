@@ -653,8 +653,10 @@ public class DataBaseQueryController {
                 query += " and last_name = '" + last_name + "'";
             }
         }
+        query += "\norder by debt";
         query += ";";
         return query;
+
     }
 
 
@@ -883,7 +885,7 @@ public class DataBaseQueryController {
 
         boolean negativeDuration = checkNegativeInterval(begin_time, to_time);
 
-        if (negativeDuration) {
+        if (!negativeDuration) {
             throw new SQLException("Error: Negative duration.");
         } else {
             model.WeeklySchedule.getInstance().clear();
