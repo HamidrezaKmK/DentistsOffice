@@ -256,7 +256,35 @@ public class DataBaseQueryController {
                 futureReferralGivenReason(args);
                 break;
 
+            case PATIENTS_WITH_MORE_THAN_N_REFERRALS_IN_GIVEN_DATE_INTERVAL:
+                // args:{"n", "from", "to"}
+                patientsWithMoreThanNReferralInDate(args);
+                break;
         }
+    }
+
+    private void patientsWithMoreThanNReferralInDate(String[] args) throws SQLException {
+        String query = "select patient_id from referraloccupiedtimeslotst " +
+                "where date between '" + args[1] + "' and '" + args[2] + "' " +
+                "group by patient_id " +
+                "having count(*) > " + args[0] +";";
+
+        ArrayList<String> patient_ids = new ArrayList<>();
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                patient_ids.add(rs.getString("patient_id"));
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        System.out.println("patient_id(s):");
+        System.out.println(patient_ids);
     }
 
     // reason
