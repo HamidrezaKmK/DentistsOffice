@@ -639,11 +639,11 @@ public class DataBaseQueryController {
         String query = null;
 
         if (patient_id != null) {
-            query = "select patient_id, first_name, last_name, whole_payment_amount - paid_payment_amount as debt\n"
+            query = "select patient_id, first_name, last_name, sum(whole_payment_amount) - sum(paid_payment_amount) as debt\n"
                     + "from patientt natural join appointmentpaget\n" + "where patient_id = " + patient_id
-                    + " and whole_payment_amount - paid_payment_amount > 0";
+                    + "\nand whole_payment_amount - paid_payment_amount > 0";
         } else {
-            query = "select patient_id, first_name, last_name, whole_payment_amount - paid_payment_amount as debt\n"
+            query = "select patient_id, first_name, last_name, sum(whole_payment_amount) - sum(paid_payment_amount) as debt\n"
                     + "from patientt natural join appointmentpaget\n"
                     + "where whole_payment_amount - paid_payment_amount > 0";
             if (first_name != null) {
@@ -653,6 +653,7 @@ public class DataBaseQueryController {
                 query += " and last_name = '" + last_name + "'";
             }
         }
+        query += "group by patient_id";
         query += "\norder by debt desc";
         query += ";";
         return query;
