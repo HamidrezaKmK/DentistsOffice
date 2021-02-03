@@ -653,7 +653,7 @@ public class DataBaseQueryController {
                 query += " and last_name = '" + last_name + "'";
             }
         }
-        query += "\norder DESC by debt";
+        query += "\norder by debt desc";
         query += ";";
         return query;
 
