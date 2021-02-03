@@ -150,6 +150,10 @@ begin
                             or (from_date <= new.to_date and new.to_date <= to_date)) then
         raise exception 'Weekly schedules should not overlap %', now();
     end if;
+
+    if new.to_date < new.from_date then
+        raise exception  'End date can not be before start date.';
+    end if;
     return new;
 end
 $$ language plpgsql;
@@ -206,7 +210,7 @@ create function page_uniqueness_trigger_function()
     returns trigger as
 $$
 begin
-    if page_no = 1 then
+    if new.page_no = 1 then
         raise exception 'Page number 1 is reserved for Personal info page %', now();
     end if;
     if exists(select * from appointmentpaget where patient_id = new.patient_id and page_no = new.page_no)
