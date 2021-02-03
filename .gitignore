@@ -90,5 +90,6 @@ modules.xml
 
 # Sonarlint plugin
 .idea/sonarlint
+lib/javafx-sdk-11.0.2/
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all

@@ -229,7 +229,217 @@ public class DataBaseQueryController {
             case REMOVE_FUTURE_REFERRALS_IN_GIVEN_DATE_INTERVAL:
                 // args: {"from_date", "to_date"}
                 removeFutureReferralsInGivenDateInterval(args);
+                break;
+
+            case REFERRALS_GIVEN_DATE_INTERVAL_AND_REASON:
+                // args = {"from_date", "to_date", "reason"}
+                referralsByDateIntervalAndReason(args);
+                break;
+
+            case FOLLOWUP_REFERRALS_GIVEN_DATE_INTERVAL:
+                // args: {from_date", "to_date"}
+                followUpReferralsGivenDateInterval(args);
+                break;
+
+            case PATIENTS_GIVEN_REFERENCE:
+                // args:{"reference"}
+                patientsWithGivenReference(args);
+                break;
+
+            case PATIENTS_GIVEN_AGE_INTERVAL:
+                // args: {"from", "to"}
+                patientsGivenAgeInterval(args);
+                break;
+
+            case FUTURE_REFERRALS_GIVEN_REASON:
+                // args:{"reason"}
+                futureReferralGivenReason(args);
+                break;
+
         }
+    }
+
+    // reason
+    private void futureReferralGivenReason(String[] args) throws SQLException {
+        String query = "select * from referraloccupiedtimeslotst\n" +
+                "where date > current_date  and reason = '" + args[0] + "';";
+
+        ArrayList<String> dates = new ArrayList<>();
+        ArrayList<String> begin_times = new ArrayList<>();
+        ArrayList<String> patient_ids = new ArrayList<>();
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                patient_ids.add(rs.getString("patient_id"));
+                dates.add(rs.getString("date"));
+                begin_times.add(rs.getString("begin_time"));
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        System.out.println("patient_id(s):");
+        System.out.println(patient_ids);
+        System.out.println("dates:");
+        System.out.println(dates);
+        System.out.println("referral times:");
+        System.out.println(begin_times);
+    }
+
+
+    // args: {"from", "to"}
+    private void patientsGivenAgeInterval(String[] args) throws SQLException {
+        String query = "select * from patientt\n" +
+                "where age between '" + args[0] + "' and '" + args[1] + "';";
+
+        ArrayList<String> first_name = new ArrayList<>();
+        ArrayList<String> last_name = new ArrayList<>();
+        ArrayList<String> age = new ArrayList<>();
+        ArrayList<String> gender = new ArrayList<>();
+        ArrayList<String> occupation = new ArrayList<>();
+        ArrayList<String> reference = new ArrayList<>();
+        ArrayList<String> education = new ArrayList<>();
+        ArrayList<String> homeAddr = new ArrayList<>();
+        ArrayList<String> workAddr = new ArrayList<>();
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                first_name.add(rs.getString("first_name"));
+                last_name.add(rs.getString("last_name"));
+                age.add(rs.getString("age"));
+                gender.add(rs.getString("gender"));
+                occupation.add(rs.getString("occupation"));
+                reference.add(rs.getString("reference"));
+                education.add(rs.getString("education"));
+                homeAddr.add(rs.getString("homeaddress"));
+                workAddr.add(rs.getString("workaddress"));
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        System.out.println("first_names:");
+        System.out.println(first_name);
+        System.out.println("last_names:");
+        System.out.println(last_name);
+        System.out.println("ages:");
+        System.out.println(age);
+        System.out.println("genders:");
+        System.out.println(gender);
+        System.out.println("occupations:");
+        System.out.println(occupation);
+        System.out.println("education:");
+        System.out.println(education);
+        System.out.println("home address:");
+        System.out.println(homeAddr);
+        System.out.println("work address:");
+        System.out.println(workAddr);
+    }
+
+
+    // args:{"reference"}
+    private void patientsWithGivenReference(String[] args) throws SQLException {
+        String query = "select * from patientt\n" +
+                "where reference = '" + args[0] + "';";
+
+        ArrayList<String> first_name = new ArrayList<>();
+        ArrayList<String> last_name = new ArrayList<>();
+        ArrayList<String> age = new ArrayList<>();
+        ArrayList<String> gender = new ArrayList<>();
+        ArrayList<String> occupation = new ArrayList<>();
+        ArrayList<String> reference = new ArrayList<>();
+        ArrayList<String> education = new ArrayList<>();
+        ArrayList<String> homeAddr = new ArrayList<>();
+        ArrayList<String> workAddr = new ArrayList<>();
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                first_name.add(rs.getString("first_name"));
+                last_name.add(rs.getString("last_name"));
+                age.add(rs.getString("age"));
+                gender.add(rs.getString("gender"));
+                occupation.add(rs.getString("occupation"));
+                reference.add(rs.getString("reference"));
+                education.add(rs.getString("education"));
+                homeAddr.add(rs.getString("homeaddress"));
+                workAddr.add(rs.getString("workaddress"));
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        System.out.println("first_names:");
+        System.out.println(first_name);
+        System.out.println("last_names:");
+        System.out.println(last_name);
+        System.out.println("ages:");
+        System.out.println(age);
+        System.out.println("genders:");
+        System.out.println(gender);
+        System.out.println("occupations:");
+        System.out.println(occupation);
+        System.out.println("education:");
+        System.out.println(education);
+        System.out.println("home address:");
+        System.out.println(homeAddr);
+        System.out.println("work address:");
+        System.out.println(workAddr);
+    }
+
+
+
+    // // args: {from_date", "to_date"}
+    private void followUpReferralsGivenDateInterval(String[] args) throws SQLException {
+        String from_date = args[0];
+        String to_date = args[1];
+        String reason = "Follow up";
+        String[] a = {from_date, to_date, reason};
+        referralsByDateIntervalAndReason(a);
+    }
+
+
+    // args = {"from_date", "to_date", "reason"}
+    private void referralsByDateIntervalAndReason(String[] args) throws SQLException {
+
+        String query = "select * from referraloccupiedtimeslotst\n" +
+                "where date between '" + args[0] + "' and '" + args[1] + "' and reason = '" + args[2] + "';";
+
+        ArrayList<String> dates = new ArrayList<>();
+        ArrayList<String> begin_times = new ArrayList<>();
+        ArrayList<String> patient_ids = new ArrayList<>();
+
+        Statement stmt = null;
+        try {
+            stmt = current_connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                patient_ids.add(rs.getString("patient_id"));
+                dates.add(rs.getString("date"));
+                begin_times.add(rs.getString("begin_time"));
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        System.out.println("patient_id(s):");
+        System.out.println(patient_ids);
+        System.out.println("dates:");
+        System.out.println(dates);
+        System.out.println("referral times:");
+        System.out.println(begin_times);
     }
 
 
