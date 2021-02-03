@@ -61,175 +61,205 @@ public class DataBaseQueryController {
     }
 
     public void handleQuery(QueryType queryType, String... args) throws SQLException {
-            switch (queryType) {
-                case MAIN_SEARCH:
-                    // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
-                    // Does: It fills the single instance of SearchResults.
-                    mainSearch(args);
-                    break;
+        switch (queryType) {
+            case MAIN_SEARCH:
+                // args = {"fn", "ln", "id", "1" or "0"} (1 as in_debt and 0 as not in_debt)
+                // Does: It fills the single instance of SearchResults.
+                mainSearch(args);
+                break;
 
-                case REFRESH_PATIENT:
-                    // args: {"id"}
-                    // Does: it fills the single instance of patient.
-                    refreshPatient(args);
-                    break;
+            case REFRESH_PATIENT:
+                // args: {"id"}
+                // Does: it fills the single instance of patient.
+                refreshPatient(args);
+                break;
 
-                case CREATE_FILE:
-                    // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
-                    // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate",
-                    // "phone_number", otherPhoneNumbers...}
-                    // important: if any of entries is null, put "null" (string of null) in its place.
-                    // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    handleCreateFile(args);
-                    break;
+            case CREATE_FILE:
+                // args: {"id", "fn", "ln", "age", "gander", "occupation", "ref", "edu', "homeAddr", "workAddr",
+                // "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr", "fileCreationDate",
+                // "phone_number", otherPhoneNumbers...}
+                // important: if any of entries is null, put "null" (string of null) in its place.
+                // fileCreationDate format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                handleCreateFile(args);
+                break;
 
-                case ADD_PERSONAL_INFO_PAGE:
-                    // Personal info page is created while creating the file. This function is empty.
-                    handleAddPersonalInfoPage(args);
-                    break;
+            case ADD_PERSONAL_INFO_PAGE:
+                // Personal info page is created while creating the file. This function is empty.
+                handleAddPersonalInfoPage(args);
+                break;
 
-                case ADD_MEDICAL_IMAGE_PAGE:
-                    // args: {"id", "page_no", "content_address", "image_type", "reason", "creation_date"}
-                    addMedicalImagePage(args);
-                    break;
+            case ADD_MEDICAL_IMAGE_PAGE:
+                // args: {"id", "page_no", "content_address", "image_type", "reason", "creation_date"}
+                addMedicalImagePage(args);
+                break;
 
-                case ADD_APPOINTMENT_PAGE:
-                    // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
-                    // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref", "creation_date"}
-                    handleAddAppointmentPage(args);
-                    break;
+            case ADD_APPOINTMENT_PAGE:
+                // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
+                // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref", "creation_date"}
+                handleAddAppointmentPage(args);
+                break;
 
-                case EDIT_MEDICAL_IMAGE_PAGE:
-                    // args: {"id", "page_no", "content_address", "image_type", "reason"}
-                    handleEditMedicalImagePage(args);
-                    break;
+            case EDIT_MEDICAL_IMAGE_PAGE:
+                // args: {"id", "page_no", "content_address", "image_type", "reason"}
+                handleEditMedicalImagePage(args);
+                break;
 
-                case EDIT_APPOINTMENT_PAGE:
-                    // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
-                    // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref"}
-                    handleEditAppointmentPage(args);
-                    break;
+            case EDIT_APPOINTMENT_PAGE:
+                // args: {"id", "page_no", "treatment_summary", "next_appointment_date", "whole_payment_amount", "paid_payment_amount",
+                // "occupied_time_slot_date_ref", "occupied_time_slot_begin_time_ref"}
+                handleEditAppointmentPage(args);
+                break;
 
-                case EDIT_PERSONAL_INFO:
-                    // args: {"id", "1", "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr"}
-                    handleEditPersonalInfo(args);
-                    break;
+            case EDIT_PERSONAL_INFO:
+                // args: {"id", "1", "generalMedicalRec", "dentalRec", "sensitiveMed", "smoke", "signatureAddr"}
+                handleEditPersonalInfo(args);
+                break;
 
-                case DELETE_PAGE:
-                    // args: {"id", "page_no"}
-                    handleDeletePage(args);
-                    break;
+            case DELETE_PAGE:
+                // args: {"id", "page_no"}
+                handleDeletePage(args);
+                break;
 
-                case REFRESH_FILE_SUMMARY:
-                    // args: {"id"}
-                    // does: fills the single object of FileSummary
-                    handleRefreshFileSummary(args);
-                    break;
+            case REFRESH_FILE_SUMMARY:
+                // args: {"id"}
+                // does: fills the single object of FileSummary
+                handleRefreshFileSummary(args);
+                break;
 
-                case REFRESH_PAGE:
-                    // args: {"id", "page_no"}
-                    // does: fills the single object of the relative page (eg: AppointmentPage)
-                    handleRefreshPage(args);
-                    break;
+            case REFRESH_PAGE:
+                // args: {"id", "page_no"}
+                // does: fills the single object of the relative page (eg: AppointmentPage)
+                handleRefreshPage(args);
+                break;
 
-                case REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE:
-                    // args: {} (empty array of Strings)
-                    // does: fills the single object of FileTable (fills arrayLists in matching order)
-                    handleRefreshListOfPatientFilesByCreationDate(args);
-                    break;
+            case REFRESH_LIST_OF_PATIENT_FILES_BY_CREATION_DATE:
+                // args: {} (empty array of Strings)
+                // does: fills the single object of FileTable (fills arrayLists in matching order)
+                handleRefreshListOfPatientFilesByCreationDate(args);
+                break;
 
-                case REFRESH_PATIENTS_WHO_OWE_MONEY:
-                    // args: Nothing (empty string)
-                    // does: It fills the single instance of SearchResult class.
-                    handleRefreshPatientsWhoOweMoney(args);
-                    break;
+            case REFRESH_PATIENTS_WHO_OWE_MONEY:
+                // args: Nothing (empty string)
+                // does: It fills the single instance of SearchResult class.
+                handleRefreshPatientsWhoOweMoney(args);
+                break;
 
-                case CANCEL_APPOINTMENT:
-                    // args: {"date", "begin_time", "isWebUser"} (isWebUser is 1 or 0)
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    // Time format: HH:MM:SS
-                    handleCancelAppointment(args);
-                    break;
+            case CANCEL_APPOINTMENT:
+                // args: {"date", "begin_time", "isWebUser"} (isWebUser is 1 or 0)
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                // Time format: HH:MM:SS
+                handleCancelAppointment(args);
+                break;
 
-                case ADD_REFERRAL_TIME:
-                    // args: {"date", "begin_time", "reason", "patient_id"}
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    // Time format: HH:MM:SS
-                    handleAddReferralTime(args);
-                    break;
+            case ADD_REFERRAL_TIME:
+                // args: {"date", "begin_time", "reason", "patient_id"}
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                // Time format: HH:MM:SS
+                handleAddReferralTime(args);
+                break;
 
-                case ADD_OCCUPIED_TIME_SLOT:
-                    // args: {"date","begin_time", "to_time"}
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    // Time format: HH:MM:SS
-                    addOccupiedTimeSlot(args);
-                    break;
+            case ADD_OCCUPIED_TIME_SLOT:
+                // args: {"date","begin_time", "to_time"}
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                // Time format: HH:MM:SS
+                addOccupiedTimeSlot(args);
+                break;
 
-                case CREATE_NEW_WEEKLY_SCHEDULE:
-                    // args: {"from_date", "to_date}
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    handleCreateNewWeeklySchedule(args);
-                    break;
+            case CREATE_NEW_WEEKLY_SCHEDULE:
+                // args: {"from_date", "to_date}
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                handleCreateNewWeeklySchedule(args);
+                break;
 
-                case ADD_NEW_AVAILABLE_TIME:
-                    // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "to_time"}
-                    // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
-                    // Time format: HH:MM:SS
-                    handleAddNewAvailableTime(args);
-                    break;
+            case ADD_NEW_AVAILABLE_TIME:
+                // args: {"weekly_schedule_from_date_ref", "day_of_week", "begin_time", "to_time"}
+                // Date format: MM/DD/YYYY or YYYY-MM-DD both are ok.
+                // Time format: HH:MM:SS
+                handleAddNewAvailableTime(args);
+                break;
 
-                case REFRESH_SCHEDULE_IN_TIME_INTERVAL:
-                    // Hamid you wrote this function.
-                    handleRefreshScheduleInTimeInterval(args);
-                    break;
+            case REFRESH_SCHEDULE_IN_TIME_INTERVAL:
+                // Hamid you wrote this function.
+                handleRefreshScheduleInTimeInterval(args);
+                break;
 
-                case REFRESH_OCCUPIED_TIME_SLOT:
-                    refreshOccupiedTimeSlots(args);
-                    break;
+            case REFRESH_OCCUPIED_TIME_SLOT:
+                refreshOccupiedTimeSlots(args);
+                break;
 
-                case REFRESH_REFERRALS_WITHOUT_APPOINTMENT_PAGE:
-                    // args: {"patientID"}
-                    refreshReferralWithNoAppointmentPage(args);
-                    break;
+            case REFRESH_REFERRALS_WITHOUT_APPOINTMENT_PAGE:
+                // args: {"patientID"}
+                refreshReferralWithNoAppointmentPage(args);
+                break;
 
-                case GET_CURRENT_DATE_TIME:
-                    // No args needed
-                    getCurrentDateTime();
-                    break;
+            case GET_CURRENT_DATE_TIME:
+                // No args needed
+                getCurrentDateTime();
+                break;
 
-                case GET_CURRENT_WEEKLY_SCHEDULE:
-                    // No args needed.
-                    getCurrentWeeklySchedule();
-                    break;
+            case GET_CURRENT_WEEKLY_SCHEDULE:
+                // No args needed.
+                getCurrentWeeklySchedule();
+                break;
 
-                case GET_WEEKLY_SCHEDULE_BY_DATE:
-                    // args: {"date"}
-                    getWeeklyScheduleByDate(args);
-                    break;
+            case GET_WEEKLY_SCHEDULE_BY_DATE:
+                // args: {"date"}
+                getWeeklyScheduleByDate(args);
+                break;
 
-                case GET_AVAILABLE_TIMES_BY_DATE:
-                    // args: {"date"}
-                    getAvailableTimeSlotsByDate(args);
-                    break;
+            case GET_AVAILABLE_TIMES_BY_DATE:
+                // args: {"date"}
+                getAvailableTimeSlotsByDate(args);
+                break;
 
-                case GET_CURRENT_AVAILABLE_TIMES:
-                    // No args needed.
-                    getCurrentAvailableTimes();
-                    break;
+            case GET_CURRENT_AVAILABLE_TIMES:
+                // No args needed.
+                getCurrentAvailableTimes();
+                break;
 
-                case GET_NEXT_REFERRAL_TIME:
-                    // args: {"id"}
-                    getNextAppointmentTime(args);
-                    break;
+            case GET_NEXT_REFERRAL_TIME:
+                // args: {"id"}
+                getNextAppointmentTime(args);
+                break;
 
-                case GET_PAYMENTS_IN_TIME_INTERVAL:
-                    // args: {"from_date", "to_date"}
-                    getPaymentsInTimeInterval(args);
-                    break;
-                case REMOVE_FUTURE_REFERRALS_IN_GIVEN_DATE_INTERVAL:
-                    // args: {"from_date", "to_date"}
-                    removeFutureReferralsInGivenDateInterval(args);
+            case GET_PAYMENTS_IN_TIME_INTERVAL:
+                // args: {"from_date", "to_date"}
+                getPaymentsInTimeInterval(args);
+                break;
+            case REMOVE_FUTURE_REFERRALS_IN_GIVEN_DATE_INTERVAL:
+                // args: {"from_date", "to_date"}
+                removeFutureReferralsInGivenDateInterval(args);
+        }
+    }
+
+
+    private static boolean checkNegativeInterval(String t, String b) {
+
+        String[] a = t.split(":");
+        String[] c = b.split(":");
+
+        int hr1 = parseInt(a[0]);
+        int hr2 = parseInt(c[0]);
+        int m1 = parseInt(a[1]);
+        int m2 = parseInt(c[1]);
+        int s1;
+        int s2;
+
+        if (hr1 > hr2) {
+            return false;
+        } else if (hr1 == hr2 && m1 > m2) {
+            return false;
+        }
+        if (a.length > 2) {
+            s1 = parseInt(a[2]);
+            if (c.length > 2) {
+                s2 = parseInt(a[2]);
+                if (hr1 == hr2 && m1 == m2 && s1 > s2) {
+                    return false;
+                }
             }
+        }
+        return true;
     }
 
 
@@ -718,9 +748,12 @@ public class DataBaseQueryController {
 
                 while (rs.next()) {
                     LocalTime availableTimeL = LocalTime.parse(rs.getString("begin_time"));
-                    if (availableTimeL.isAfter(LocalTime.parse(end_time)))
-                        availableTimeL = LocalTime.parse(end_time);
+
+                    //System.err.println(availableTimeL +  " ==== Endtime: " + );
+                    //if (availableTimeL.isAfter(LocalTime.parse(end_time)))
+                    //    availableTimeL = LocalTime.parse(end_time);
                     LocalTime availableTimeR = LocalTime.parse(rs.getString("end_time"));
+
                     String reason = "Doctor not available!";
                     if (lastTime.isBefore(availableTimeL))
                         Schedule.getInstance().addBusyInterval(new TimeInterval(date, date, lastTime, availableTimeL, reason));
@@ -742,7 +775,7 @@ public class DataBaseQueryController {
         }
 
         // output
-        Schedule.getInstance().printIntervals();
+        //Schedule.getInstance().printIntervals();
     }
 
 
@@ -819,16 +852,22 @@ public class DataBaseQueryController {
     private void handleAddNewAvailableTime(String[] args) throws SQLException {
         String to_time = args[3];
         String begin_time = args[2];
-        String duration = "'" + to_time + "'::time - '" + begin_time + "'::time";
-        String query = "insert into availabletimeslotst values('" +
-                args[0] + "', '" + args[1] + "', '" + args[2] + "', " + duration + ");";
-        Statement stmt = null;
-        try {
-            stmt = current_connection.createStatement();
-            stmt.executeUpdate(query);
-        } finally {
-            if (stmt != null) {
-                stmt.close();
+        boolean negativeDuration = checkNegativeInterval(begin_time, to_time);
+
+        if (!negativeDuration) {
+            throw new SQLException("Error: Negative duration.");
+        } else {
+            String duration = "'" + to_time + "'::time - '" + begin_time + "'::time";
+            String query = "insert into availabletimeslotst values('" +
+                    args[0] + "', '" + args[1] + "', '" + args[2] + "', " + duration + ");";
+            Statement stmt = null;
+            try {
+                stmt = current_connection.createStatement();
+                stmt.executeUpdate(query);
+            } finally {
+                if (stmt != null) {
+                    stmt.close();
+                }
             }
         }
     }
@@ -842,37 +881,45 @@ public class DataBaseQueryController {
         String duration = "'" + to_time + "'::time - '" + begin_time + "'::time";
         String query = "insert into occupiedtimeslotst values('" + date + "', '" + begin_time + "', " + duration + ", '";
 
-        model.WeeklySchedule.getInstance().clear();
-        String[] from_date_args = {date};
-        getWeeklyScheduleByDate(from_date_args);
-        String from_date = model.WeeklySchedule.getInstance().getFrom_date();
-        String week_day = getWeekDayByDate(date);
-        String fk_begin_time = null;
+        boolean negativeDuration = checkNegativeInterval(begin_time, to_time);
 
-        String query_on_availableTimeT = "select begin_time from availabletimeslotst\n" +
-                "where weekly_schedule_from_date_ref = '" + from_date + "' and day_of_week = '" + week_day + "' and ('" +
-                begin_time + "'::time between begin_time and (begin_time + duration::interval));";
+        System.err.println("WTF?! " + negativeDuration);
 
-        Statement stmt = null;
-        try {
-            stmt = current_connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query_on_availableTimeT);
-            while (rs.next()) {
-                fk_begin_time = rs.getString("begin_time");
+        if (!negativeDuration) {
+            throw new SQLException("Error: Negative duration.");
+        } else {
+            model.WeeklySchedule.getInstance().clear();
+            String[] from_date_args = {date};
+            getWeeklyScheduleByDate(from_date_args);
+            String from_date = model.WeeklySchedule.getInstance().getFrom_date();
+            String week_day = getWeekDayByDate(date);
+            String fk_begin_time = null;
+
+            String query_on_availableTimeT = "select begin_time from availabletimeslotst\n" +
+                    "where weekly_schedule_from_date_ref = '" + from_date + "' and day_of_week = '" + week_day + "' and ('" +
+                    begin_time + "'::time between begin_time and (begin_time + duration::interval));";
+
+            Statement stmt = null;
+            try {
+                stmt = current_connection.createStatement();
+                ResultSet rs = stmt.executeQuery(query_on_availableTimeT);
+                while (rs.next()) {
+                    fk_begin_time = rs.getString("begin_time");
+                }
+            } finally {
+                if (stmt != null) {
+                    stmt.close();
+                }
             }
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-        }
-        query += from_date + "', '" + week_day + "', '" + fk_begin_time + "');";
-        stmt = null;
-        try {
-            stmt = current_connection.createStatement();
-            stmt.executeUpdate(query);
-        } finally {
-            if (stmt != null) {
-                stmt.close();
+            query += from_date + "', '" + week_day + "', '" + fk_begin_time + "');";
+            stmt = null;
+            try {
+                stmt = current_connection.createStatement();
+                stmt.executeUpdate(query);
+            } finally {
+                if (stmt != null) {
+                    stmt.close();
+                }
             }
         }
     }
