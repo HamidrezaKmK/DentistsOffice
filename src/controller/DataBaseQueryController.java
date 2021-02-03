@@ -1372,6 +1372,8 @@ public class DataBaseQueryController {
 
         System.out.println(query);
 
+        System.out.println(query);
+
         try {
             stmt2 = current_connection.createStatement();
             stmt2.executeUpdate(query);

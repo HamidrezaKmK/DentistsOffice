@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import model.QueryType;
 import model.ReferralOccupiedTimeSlots;
 import view.FxmlFileLoader;
+import view.PopUpCreater;
 import view.files.FilesGUI;
 
 import java.net.URL;
@@ -61,7 +62,7 @@ public class CreateAppointmentPage implements Initializable {
                     treatmentSummaryTextArea.getText(), nextAppointmentTextField.getText(), wholeAmountTextField.getText(),
                     paidAmountTextField.getText(), refDates.get(selectedIndex), refStartTimes.get(selectedIndex), java.time.LocalDate.now().toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            PopUpCreater.createSQLErrorPopUp(e.getMessage());
         }
         ((PersonalFile) FXMLLoadersCommunicator.getLoader("PersonalFile").getController()).refereshPagesList();
         ((PersonalFile) FXMLLoadersCommunicator.getLoader("PersonalFile").getController()).pageAdded();

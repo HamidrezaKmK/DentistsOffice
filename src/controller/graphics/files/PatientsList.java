@@ -135,6 +135,7 @@ public class PatientsList implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         sendSearchQuery(null, null, null, "0");
         updateListView(false);
         patientList.setOnMouseClicked(new EventHandler<MouseEvent>() {
