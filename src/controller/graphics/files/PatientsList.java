@@ -101,27 +101,22 @@ public class PatientsList implements Initializable {
             }
         } else {
             model.SearchResult inst = model.SearchResult.getInstance();
-            inst.sumDebts();
-            int sz = inst.getSum_debts().size();
-
-            System.out.println(inst.getSum_debts());
-            System.out.println(inst.getUnique_first_names());
-            System.out.println(inst.getUnique_last_names());
+            int sz = inst.getDebt().size();
 
             for (int i = 0; i < sz; i++) {
                 StringBuilder stb = new StringBuilder();
-                stb.append(model.SearchResult.getInstance().getUnique_first_names().get(i));
+                stb.append(model.SearchResult.getInstance().getFirstNames().get(i));
                 stb.append(" ");
-                stb.append(model.SearchResult.getInstance().getUnique_last_names().get(i));
+                stb.append(model.SearchResult.getInstance().getLastNames().get(i));
                 String firstPart = stb.toString();
                 stb = new StringBuilder();
                 stb.append(" Debt value: ");
-                stb.append(model.SearchResult.getInstance().getSum_debts().get(i));
+                stb.append(model.SearchResult.getInstance().getDebt().get(i));
                 String secondPart = stb.toString();
                 stb = new StringBuilder();
 
                 stb.append("Patient id: ");
-                stb.append(model.SearchResult.getInstance().getUnique_ids().get(i));
+                stb.append(model.SearchResult.getInstance().getPatientIds().get(i));
                 String thirdPart = stb.toString();
 
                 String formatted = String.format("%-60s%s%60s", firstPart, secondPart, thirdPart);
