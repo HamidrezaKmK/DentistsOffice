@@ -11,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import model.QueryType;
 import view.FxmlFileLoader;
+import view.PopUpCreater;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -40,15 +41,16 @@ public class CreateMedicalImagePage implements Initializable {
             DataBaseQueryController.getInstance().handleQuery(QueryType.ADD_MEDICAL_IMAGE_PAGE, patientID, Integer.toString(pageNo),
                     "./chiz", imageTypeChoiceBox.getValue(), explanationTextArea.getText(), java.time.LocalDate.now().toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            PopUpCreater.createSQLErrorPopUp(e.getMessage());
         }
         controller.pageAdded();
-        controller.refereshPagesList();
 
         mainPane.getChildren().clear();
         FxmlFileLoader object = new FxmlFileLoader();
         Pane view = object.getPage("PersonalInfoPage", view.files.FilesGUI.class);
         mainPane.getChildren().add(view);
+        controller.refereshPagesList();
+        ((PersonalInfoPage) FXMLLoadersCommunicator.getLoader("PersonalInfoPage").getController()).refreshPage("1", patientID);
     }
 
 
