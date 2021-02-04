@@ -700,27 +700,29 @@ public class DataBaseQueryController {
     // args: {"date"}
     private void getWeeklyScheduleByDate(String[] args) throws SQLException {
         String date = args[0];
-        String query = "select * from weeklyschedulet\n" +
-                "where '" + date + "' between from_date and to_date;";
-        String from = null;
-        String to = null;
-        Statement stmt = null;
+        if (!date.equals("null")) {
+            String query = "select * from weeklyschedulet\n" +
+                    "where '" + date + "' between from_date and to_date;";
+            String from = null;
+            String to = null;
+            Statement stmt = null;
 
-        System.out.println(query);
+            System.out.println(query);
 
-        try {
-            stmt = current_connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                from = rs.getString("from_date");
-                to = rs.getString("to_date");
-            }
-            model.WeeklySchedule.getInstance().clear();
-            model.WeeklySchedule.getInstance().setFrom_date(from);
-            model.WeeklySchedule.getInstance().setTo_date(to);
-        } finally {
-            if (stmt != null) {
-                stmt.close();
+            try {
+                stmt = current_connection.createStatement();
+                ResultSet rs = stmt.executeQuery(query);
+                while (rs.next()) {
+                    from = rs.getString("from_date");
+                    to = rs.getString("to_date");
+                }
+                model.WeeklySchedule.getInstance().clear();
+                model.WeeklySchedule.getInstance().setFrom_date(from);
+                model.WeeklySchedule.getInstance().setTo_date(to);
+            } finally {
+                if (stmt != null) {
+                    stmt.close();
+                }
             }
         }
     }
